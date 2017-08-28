@@ -1,10 +1,12 @@
 let id = 0;
 let projects = [];
 
-const AddProject = (name) => {
+const AddProject = (project) => {
   projects.push({
     id: ++id,
-    name: name,
+    name: project.name,
+    description: project.description,
+    tasks: project.tasks,
     details: '/details/' + id
   });
 };

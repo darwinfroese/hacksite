@@ -17,9 +17,11 @@
 import database from '@/database';
 
 export default {
-  data: () => ({
-    projects: database().GetProjects()
-  })
+  data () {
+    return {
+      projects: database().GetProjects()
+    };
+  }
 };
 </script>
 
