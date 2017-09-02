@@ -6,21 +6,35 @@
       <router-link to='/create'>Add a project</router-link>
     </div>
     <ul>
-      <li v-for="project in projects" v-bind:key="project.id">
-        <router-link :to="project.details"> {{ project.name}} </router-link>
-      </li>
+      <Project v-for="project in projects" :project="project" :key="project.id" v-on:update="Update" />
     </ul>
   </div>
 </template>
 
 <script>
 import database from '@/database';
+import router from '@/router';
+import Project from '@/components/Project';
 
 export default {
+  components: {
+    'Project': Project
+  },
   data () {
     return {
       projects: database.GetProjects()
     };
+  },
+  methods: {
+    Update: function () {
+      this.projects = database.GetProjects();
+    },
+    RemoveProject: function (id) {
+      database.RemoveProject(id);
+    },
+    ViewProject: function (id) {
+      router.push('/details/' + id);
+    }
   }
 };
 </script>
@@ -38,5 +52,20 @@ ul {
 a {
   width: 90%;
   display: block;
+}
+.project {
+  width: 90%;
+  position: relative;
+  margin: 0;
+  display: inline-block;
+}
+.project:hover {
+  cursor: pointer;
+}
+.removeButton {
+  display: none;
+}
+.removeButton:hover {
+  cursor: pointer;
 }
 </style>

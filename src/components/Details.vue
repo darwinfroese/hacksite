@@ -9,8 +9,10 @@
       </span>
       <ul>
         <li v-for="task in project.tasks" v-bind:key='task.id' class='task'>
-          <input type='checkbox' class='checkbox' v-model="task.completed" @click="Update(task)">
-          <span v-bind:class="{ completed: task.completed }"> {{task.task}} </span>
+          <label>
+            <input type='checkbox' class='checkbox' v-model="task.completed" @click="Update(task)">
+            <span v-bind:class="{ completed: task.completed }"> {{task.task}} </span>
+          </label>
         </li>
       </ul>
     </div>
@@ -52,6 +54,9 @@ export default {
 .checkbox {
   display: inline;
   margin: 0;
+}
+label:hover {
+  cursor: pointer;
 }
 </style>
 

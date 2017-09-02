@@ -27,6 +27,12 @@ const UpdateTask = (projectId, task) => {
   project.tasks[task.idx - 1] = task;
 };
 
+const RemoveProject = (projectId) => {
+  projects = projects.filter((project) => {
+    return project.id !== projectId;
+  });
+};
+
 AddProject({
   name: 'Hacksite',
   description: 'A website for listing weekend hack projects',
@@ -42,5 +48,6 @@ export default {
   AddProject,
   GetProject,
   GetProjects,
-  UpdateTask
+  UpdateTask,
+  RemoveProject
 };
