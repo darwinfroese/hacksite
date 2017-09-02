@@ -2,8 +2,13 @@ let id = 0;
 let projects = [];
 
 const AddProject = (project) => {
+  ++id;
+  project.tasks.forEach((task) => {
+    task.projectId = id;
+  });
+
   projects.push({
-    id: ++id,
+    id: id,
     name: project.name,
     description: project.description,
     tasks: project.tasks,
@@ -88,7 +93,7 @@ AddProject({
   tasks: [
     {task: 'Setup API and file serving', id: 1, completed: true},
     {task: 'Setup database', id: 2, completed: false},
-    {task: 'Setup API endpoints for tasks and projects', id: 3, completed: false},
+    {task: 'Setup API endpoints for tasks and projects', id: 3, completed: true},
     {task: 'Replace javascript storage with API calls', id: 4, completed: false}
   ]
 });

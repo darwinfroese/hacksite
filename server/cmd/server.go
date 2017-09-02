@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/darwinfroese/hacksite/server/api"
+	"github.com/darwinfroese/hacksite/server/database"
 )
 
 const (
@@ -10,12 +13,15 @@ const (
 )
 
 func main() {
+	fmt.Println("Setting up the server.")
+
 	m := http.NewServeMux()
+	db := database.CreateBoltDB()
 
 	m.Handle("/", http.FileServer(http.Dir("./webdist")))
-	m.HandleFunc("/api/v1/version", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "API Version: %s", version)
-	})
 
+	api.RegisterRoutes(m, db)
+
+	fmt.Println("Starting the server.")
 	http.ListenAndServe(":8800", m)
 }
