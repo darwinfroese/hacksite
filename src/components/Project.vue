@@ -46,6 +46,7 @@ export default {
   margin-left: 5%;
   font-style: italic;
   font-weight: 600;
+  font-size: 14px;
 }
 .name:hover {
   cursor: pointer;

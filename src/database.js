@@ -29,9 +29,9 @@ const UpdateTask = (projectId, task) => {
   let project = GetProject(projectId);
 
   // Since the tasks may not line up 1:1 id to index
-  project.tasks.forEach((t, idx) => {
-    if (task.idx === t.idx) {
-      project.tasks[idx] = task;
+  project.tasks.forEach((t, id) => {
+    if (task.id === t.id) {
+      project.tasks[id] = task;
       return;
     }
   });
@@ -50,7 +50,7 @@ const RemoveTask = (projectId, task) => {
   let tasks = project.tasks;
 
   tasks = tasks.filter((t) => {
-    return t.idx !== task.idx;
+    return t.id !== task.id;
   });
 
   project.tasks = tasks;
@@ -74,10 +74,22 @@ AddProject({
   description: 'A website for listing weekend hack projects',
   completed: true,
   tasks: [
-    {task: 'Add and View projects', idx: 1, completed: true},
-    {task: 'Complete Tasks', idx: 2, completed: true},
-    {task: 'Remove projects and tasks', idx: 3, completed: true},
-    {task: 'Complete Projects', idx: 4, completed: true}
+    {task: 'Add and View projects', id: 1, completed: true},
+    {task: 'Complete Tasks', id: 2, completed: true},
+    {task: 'Remove projects and tasks', id: 3, completed: true},
+    {task: 'Complete Projects', id: 4, completed: true}
+  ]
+});
+
+AddProject({
+  name: 'Hacksite v0.2',
+  description: 'Second iteration of hacksite, building the backend',
+  completed: false,
+  tasks: [
+    {task: 'Setup API and file serving', id: 1, completed: false},
+    {task: 'Setup database', id: 2, completed: false},
+    {task: 'Setup API endpoints for tasks and projects', id: 3, completed: false},
+    {task: 'Replace javascript storage with API calls', id: 4, completed: false}
   ]
 });
 
