@@ -22,8 +22,25 @@ const GetProjects = () => {
   return projects;
 };
 
+const UpdateTask = (projectId, task) => {
+  let project = projects[projectId - 1];
+  project.tasks[task.idx - 1] = task;
+};
+
+AddProject({
+  name: 'Hacksite',
+  description: 'A website for listing weekend hack projects',
+  tasks: [
+    {task: 'Add and View projects', idx: 1, completed: true},
+    {task: 'Complete Tasks', idx: 2, completed: true},
+    {task: 'Remove projects and tasks', idx: 3, completed: false},
+    {task: 'Complete Projects', idx: 4, completed: false}
+  ]
+});
+
 export default {
   AddProject,
   GetProject,
-  GetProjects
+  GetProjects,
+  UpdateTask
 };

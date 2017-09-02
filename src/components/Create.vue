@@ -8,7 +8,7 @@
       <input type='text' placeholder='Task Description' name='taskInput'>
     </section>
     <p v-if="warningDisplayed"> Task Limit Reached! </p>
-    <button name='addTaskButton' id='addTaskButton' @click="AddTask"> Add Task </button>
+    <button name='addTaskButton' id='addTaskButton' @click="AddTask()"> Add Task </button>
     <hr />
     <div>
       <button @click="SaveProject()"> Save Project </button>
@@ -38,7 +38,7 @@ export default {
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
-        this.project.tasks.push({'task': i.value, 'id': idx});
+        this.project.tasks.push({'task': i.value, 'id': idx, 'completed': false});
       });
 
       database.AddProject(this.project);

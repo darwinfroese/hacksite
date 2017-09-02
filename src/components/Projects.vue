@@ -7,7 +7,7 @@
     </div>
     <ul>
       <li v-for="project in projects" v-bind:key="project.id">
-        <router-link :to="project.details">{{ project.name}}</router-link>
+        <router-link :to="project.details"> {{ project.name}} </router-link>
       </li>
     </ul>
   </div>
@@ -31,9 +31,12 @@ h1, h2 {
   font-weight: normal;
   text-align: center;
 }
-
 ul {
   text-decoration: none;
   list-style: none;
+}
+a {
+  width: 90%;
+  display: block;
 }
 </style>

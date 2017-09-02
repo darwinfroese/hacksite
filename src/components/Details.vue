@@ -3,9 +3,15 @@
     <router-link to='/'>Back to Projects</router-link>
     <br>
     <div>
-      <span> [ {{ project.id }} ] {{ project.name }} </span>
+      <div> [ {{ project.id }} ] {{ project.name }} </div>
+      <span class='description'>
+        {{ project.description }}
+      </span>
       <ul>
-        <li v-for="task in project.tasks" v-bind:key='task.id'>{{task.task}}</li>
+        <li v-for="task in project.tasks" v-bind:key='task.id' class='task'>
+          <input type='checkbox' class='checkbox' v-model="task.completed" @click="Update(task)">
+          <span v-bind:class="{ completed: task.completed }"> {{task.task}} </span>
+        </li>
       </ul>
     </div>
   </div>
@@ -20,11 +26,32 @@ export default {
       project: database.GetProject(this.pid)
     };
   },
-  props: ['pid']
+  props: ['pid'],
+  methods: {
+    Update: function (task) {
+      database.UpdateTask(this.pid, task);
+    }
+  }
 };
 </script>
 
 <style scoped>
-
+.description {
+  margin-left: 30px;
+  font-style: italic;
+}
+.completed {
+  text-decoration: line-through;
+  color: slategray;
+}
+.task {
+  display: block;
+  font-size: 18px;
+  line-height: 18px;
+}
+.checkbox {
+  display: inline;
+  margin: 0;
+}
 </style>
 
