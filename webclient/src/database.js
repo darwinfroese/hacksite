@@ -86,7 +86,7 @@ AddProject({
   description: 'Second iteration of hacksite, building the backend',
   completed: false,
   tasks: [
-    {task: 'Setup API and file serving', id: 1, completed: false},
+    {task: 'Setup API and file serving', id: 1, completed: true},
     {task: 'Setup database', id: 2, completed: false},
     {task: 'Setup API endpoints for tasks and projects', id: 3, completed: false},
     {task: 'Replace javascript storage with API calls', id: 4, completed: false}

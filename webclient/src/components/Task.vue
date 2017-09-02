@@ -25,6 +25,9 @@ export default {
 </script>
 
 <style scoped>
+input {
+  display: inline-block;
+}
 .task {
   display: block;
   font-size: 18px;

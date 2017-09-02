@@ -10,9 +10,9 @@ p {
   font-style: italic;
 }
 .bottom {
-  position: absolute;
-  bottom: 0;
+  margin-top: 30px;
   text-align: center;
-  width: 100%;
+  width: auto;
+  display: block;
 }
 </style>

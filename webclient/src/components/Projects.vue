@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h2> Projects </h2>
-    <hr />
+    <h3> Projects </h3>
     <div>
       <router-link to='/create'>Add a project</router-link>
     </div>
