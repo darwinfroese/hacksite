@@ -59,9 +59,6 @@ a {
   margin: 0;
   display: inline-block;
 }
-.project:hover {
-  cursor: pointer;
-}
 .removeButton {
   display: none;
 }

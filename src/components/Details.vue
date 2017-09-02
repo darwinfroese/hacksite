@@ -7,33 +7,27 @@
       <span class='description'>
         {{ project.description }}
       </span>
-      <ul>
-        <li v-for="task in project.tasks" v-bind:key='task.id' class='task'>
-          <label>
-            <input type='checkbox' class='checkbox' v-model="task.completed" @click="Update(task)">
-            <span v-bind:class="{ completed: task.completed }"> {{task.task}} </span>
-          </label>
-        </li>
-      </ul>
+      <div class='tasks'>
+        <Task v-for="task in project.tasks" v-bind:key='task.id' :task="task" :pid="project.id" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import database from '@/database';
+import Task from '@/components/Task';
 
 export default {
+  components: {
+    'Task': Task
+  },
   data () {
     return {
       project: database.GetProject(this.pid)
     };
   },
-  props: ['pid'],
-  methods: {
-    Update: function (task) {
-      database.UpdateTask(this.pid, task);
-    }
-  }
+  props: ['pid']
 };
 </script>
 
@@ -42,14 +36,8 @@ export default {
   margin-left: 30px;
   font-style: italic;
 }
-.completed {
-  text-decoration: line-through;
-  color: slategray;
-}
-.task {
-  display: block;
-  font-size: 18px;
-  line-height: 18px;
+.tasks {
+  margin: 25px;
 }
 .checkbox {
   display: inline;

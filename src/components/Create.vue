@@ -27,7 +27,8 @@ export default {
       project: {
         name: '',
         description: '',
-        tasks: []
+        tasks: [],
+        completed: false
       },
       taskCount: 1,
       warningDisplayed: false

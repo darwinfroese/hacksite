@@ -1,6 +1,7 @@
 <template>
   <div class='project'>
-    <span @click="ShowProject()"> {{ project.name }} </span>
+    <span class='name' @click="ShowProject()"> {{ project.name }} </span>
+    <span v-if="project.completed" class='completed'> COMPLETED </span>
     <button class="dropdown" id='dropdown' @click="ToggleMenu()"> ... </button>
     <div v-if="active" class='menu'>
       <span class='menu-item' @click="ShowProject()"> View Project </span>
@@ -40,6 +41,14 @@ export default {
 .project {
   width: 90%;
   position: relative;
+}
+.completed {
+  margin-left: 5%;
+  font-style: italic;
+  font-weight: 600;
+}
+.name:hover {
+  cursor: pointer;
 }
 .menu {
   right: 0;
