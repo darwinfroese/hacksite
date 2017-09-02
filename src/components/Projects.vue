@@ -19,7 +19,7 @@ import database from '@/database';
 export default {
   data () {
     return {
-      projects: database().GetProjects()
+      projects: database.GetProjects()
     };
   }
 };

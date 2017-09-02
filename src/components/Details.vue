@@ -4,6 +4,9 @@
     <br>
     <div>
       <span> [ {{ project.id }} ] {{ project.name }} </span>
+      <ul>
+        <li v-for="task in project.tasks" v-bind:key='task.id'>{{task.task}}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -14,7 +17,7 @@ import database from '@/database';
 export default {
   data () {
     return {
-      project: database().GetProject(this.pid)
+      project: database.GetProject(this.pid)
     };
   },
   props: ['pid']

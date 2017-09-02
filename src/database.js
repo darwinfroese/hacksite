@@ -22,10 +22,8 @@ const GetProjects = () => {
   return projects;
 };
 
-export default () => {
-  return {
-    GetProjects: GetProjects,
-    GetProject: GetProject,
-    AddProject: AddProject
-  };
+export default {
+  AddProject,
+  GetProject,
+  GetProjects
 };

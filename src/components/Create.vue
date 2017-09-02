@@ -7,6 +7,7 @@
     <section id='tasks'>
       <input type='text' placeholder='Task Description' name='taskInput'>
     </section>
+    <p v-if="warningDisplayed"> Task Limit Reached! </p>
     <button name='addTaskButton' id='addTaskButton' @click="AddTask"> Add Task </button>
     <hr />
     <div>
@@ -36,18 +37,15 @@ export default {
     SaveProject: function () {
       let inputs = document.getElementsByName('taskInput');
 
-      inputs.forEach((i) => {
-        this.project.tasks.push(i.value);
+      inputs.forEach((i, idx) => {
+        this.project.tasks.push({'task': i.value, 'id': idx});
       });
 
-      database().AddProject(this.project);
+      database.AddProject(this.project);
       router.push('/');
     },
     AddTask: function () {
       if (this.taskCount === 4) {
-        let node = document.createElement('p');
-        node.appendChild(document.createTextNode('Task limit reached'));
-        document.getElementById('tasks').appendChild(node);
         document.getElementById('addTaskButton').disabled = true;
         this.warningDisplayed = true;
         return;
