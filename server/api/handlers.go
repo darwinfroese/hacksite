@@ -4,20 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
-type message struct {
-	Message string
-}
-
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
 func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Method:", r.Method)
 		switch r.Method {
 		case "GET":
 			getAllProjects(ctx, w)
@@ -27,6 +23,9 @@ func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 			return
 		case "DELETE":
 			deleteProject(ctx, w, r)
+			return
+		case "OPTIONS":
+			corsResponse(w, r)
 			return
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -48,14 +47,21 @@ func getProject(ctx context, w http.ResponseWriter, r *http.Request) http.Handle
 		id, err := strconv.Atoi(str)
 
 		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
 
-		msg := fmt.Sprintf("Get Project %d", id)
+		project, err := ctx.db.GetProject(id)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 
-		ctx.db.GetProject(id)
-		json.NewEncoder(w).Encode(message{Message: msg})
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(project)
 	}
 }
 
@@ -71,6 +77,9 @@ func tasks(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc
 		case "DELETE":
 			removeTask(ctx, w, r)
 			return
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
 		default:
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			return
@@ -80,8 +89,17 @@ func tasks(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc
 
 // Handlers for specific methods on /projects
 func getAllProjects(ctx context, w http.ResponseWriter) {
-	ctx.db.GetProjects()
-	json.NewEncoder(w).Encode(message{Message: "Get All Projects"})
+	projects, err := ctx.db.GetProjects()
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(projects)
 }
 
 func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
@@ -89,13 +107,23 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&project)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	ctx.db.AddProject(project)
+	project, err = ctx.db.AddProject(project)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(message{Message: "Created a new project"})
+	json.NewEncoder(w).Encode(project)
 }
 
 func deleteProject(ctx context, w http.ResponseWriter, r *http.Request) {
@@ -107,10 +135,14 @@ func deleteProject(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := fmt.Sprintf("Project %d deleted", project.ID)
+	err = ctx.db.RemoveProject(project.ID)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
-	ctx.db.RemoveProject(project.ID)
-	json.NewEncoder(w).Encode(message{Message: msg})
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
 
 // Handlers for specific methods on /tasks
@@ -123,8 +155,16 @@ func updateTask(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx.db.UpdateTask(task)
-	json.NewEncoder(w).Encode(message{Message: "Task Updated"})
+	project, err := ctx.db.UpdateTask(task)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(project)
 }
 
 func removeTask(ctx context, w http.ResponseWriter, r *http.Request) {
@@ -136,6 +176,22 @@ func removeTask(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx.db.RemoveTask(task)
-	json.NewEncoder(w).Encode(message{Message: "Task Deleted"})
+	project, err := ctx.db.RemoveTask(task)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(project)
+}
+
+// Variety handlers
+func corsResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+	w.WriteHeader(http.StatusOK)
 }

@@ -1,7 +1,7 @@
 <template>
   <div class='project'>
-    <span class='name' @click="ShowProject()"> {{ project.name }} </span>
-    <span v-if="project.completed" class='completed'> COMPLETED </span>
+    <span class='name' @click="ShowProject()"> {{ project.Name }} </span>
+    <span v-if="project.Completed" class='completed'> COMPLETED </span>
     <button class="dropdown" id='dropdown' @click="ToggleMenu()"> ... </button>
     <div v-if="active" class='menu'>
       <span class='menu-item' @click="ShowProject()"> View Project </span>
@@ -26,12 +26,14 @@ export default {
       this.active = !this.active;
     },
     ShowProject: function () {
-      router.push(this.project.details);
+      router.push(this.project.Details);
     },
     RemoveProject: function () {
       this.active = false;
-      database.RemoveProject(this.project.id);
-      this.$emit('update');
+      database.RemoveProject(this.project)
+        .then((response) => {
+          this.$emit('update');
+        });
     }
   }
 };

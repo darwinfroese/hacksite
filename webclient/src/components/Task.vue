@@ -1,8 +1,8 @@
 <template>
   <div class='task'>
     <label class='taskItem'>
-      <input type='checkbox' class='checkbox' v-model="task.completed" @click="Update()">
-      <span v-bind:class="{ completed: task.completed }"> {{ task.task }} </span>
+      <input type='checkbox' class='checkbox' v-model="task.Completed" @click="Update()">
+      <span v-bind:class="{ completed: task.Completed }"> {{ task.Task }} </span>
     </label>
     <span class='removeButton' @click="RemoveTask()"> x </span>
   </div>
@@ -15,10 +15,13 @@ export default {
   props: ['task', 'pid'],
   methods: {
     Update: function () {
-      database.UpdateTask(this.pid, this.task);
+      database.UpdateTask(this.task);
     },
     RemoveTask: function () {
-      database.RemoveTask(this.pid, this.task);
+      database.RemoveTask(this.task)
+        .then((response) => {
+          this.$emit('GetProject');
+        });
     }
   }
 };

@@ -1,6 +1,6 @@
 <template>
   <div class='bottom'>
-    <p> <b> Hacksite </b> -- v0.1.0 </p>
+    <p> <b> Hacksite </b> -- v0.2.0 </p>
   </div>
 </template>
 

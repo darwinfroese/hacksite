@@ -5,14 +5,13 @@
       <router-link to='/create'>Add a project</router-link>
     </div>
     <ul>
-      <Project v-for="project in projects" :project="project" :key="project.id" v-on:update="Update" />
+      <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
     </ul>
   </div>
 </template>
 
 <script>
 import database from '@/database';
-import router from '@/router';
 import Project from '@/components/Project';
 
 export default {
@@ -21,19 +20,21 @@ export default {
   },
   data () {
     return {
-      projects: database.GetProjects()
+      projects: []
     };
   },
   methods: {
     Update: function () {
-      this.projects = database.GetProjects();
-    },
-    RemoveProject: function (id) {
-      database.RemoveProject(id);
-    },
-    ViewProject: function (id) {
-      router.push('/details/' + id);
+      let promise = database.GetProjects();
+      promise.then((response) => {
+        return response.json();
+      }).then((json) => {
+        this.projects = json;
+      });
     }
+  },
+  mounted () {
+    this.Update();
   }
 };
 </script>

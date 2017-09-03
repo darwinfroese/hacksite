@@ -2,8 +2,8 @@
   <div>
     <span>Create a new project</span>
     <br>
-    <input type='text' placeholder='Project Name' v-model='project.name'>
-    <input type='text' placeholder='Project Description' v-model='project.description'>
+    <input type='text' placeholder='Project Name' v-model='project.Name'>
+    <input type='text' placeholder='Project Description' v-model='project.Description'>
     <section id='tasks'>
       <input type='text' placeholder='Task Description' name='taskInput'>
     </section>
@@ -25,10 +25,10 @@ export default {
   data () {
     return {
       project: {
-        name: '',
-        description: '',
-        tasks: [],
-        completed: false
+        Name: '',
+        Description: '',
+        Tasks: [],
+        Completed: false
       },
       taskCount: 1,
       warningDisplayed: false
@@ -39,11 +39,14 @@ export default {
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
-        this.project.tasks.push({'task': i.value, 'id': idx, 'completed': false});
+        this.project.Tasks.push({'task': i.value, 'id': idx, 'completed': false});
       });
 
-      database.AddProject(this.project);
-      router.push('/');
+      database.AddProject(this.project)
+        .then(() => {
+          console.log('project added.');
+          router.push('/');
+        });
     },
     AddTask: function () {
       if (this.taskCount === 4) {

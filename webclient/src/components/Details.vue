@@ -3,12 +3,12 @@
     <router-link to='/'>Back to Projects</router-link>
     <br>
     <div>
-      <div> [ {{ project.id }} ] {{ project.name }} </div>
+      <div> [ {{ project.ID }} ] {{ project.Name }} </div>
       <span class='description'>
-        {{ project.description }}
+        {{ project.Description }}
       </span>
       <div class='tasks'>
-        <Task v-for="task in project.tasks" v-bind:key='task.id' :task="task" :pid="project.id" />
+        <Task v-for="task in project.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="GetProject" />
       </div>
     </div>
   </div>
@@ -24,10 +24,24 @@ export default {
   },
   data () {
     return {
-      project: database.GetProject(this.pid)
+      project: {}
     };
   },
-  props: ['pid']
+  props: ['pid'],
+  methods: {
+    GetProject: function () {
+      database.GetProject(this.pid)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.project = json;
+      });
+    }
+  },
+  mounted () {
+    this.GetProject();
+  }
 };
 </script>
 
