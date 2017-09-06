@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Projects from '@/components/Projects';
-import Details from '@/components/Details';
-import Create from '@/components/Create';
+import Projects from '@/components/views/ProjectList';
+import Details from '@/components/views/Details';
+import Create from '@/components/views/Create';
 
 Vue.use(Router);
 

@@ -1,7 +1,10 @@
 import 'whatwg-fetch';
 
+const devApiBase = 'http://localhost:8800/api/v1';
+// const prodApiBase = '/api/v1';
+
 const AddProject = (p) => {
-  return fetch('http://localhost:8800/api/v1/projects', {
+  return fetch(devApiBase + '/projects', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -11,16 +14,16 @@ const AddProject = (p) => {
 };
 
 const GetProject = (id) => {
-  let url = 'http://localhost:8800/api/v1/project?id=' + id;
+  let url = devApiBase + '/project?id=' + id;
   return fetch(url);
 };
 
 const GetProjects = () => {
-  return fetch('http://localhost:8800/api/v1/projects');
+  return fetch(devApiBase + '/projects');
 };
 
 const UpdateTask = (task) => {
-  return fetch('http://localhost:8800/api/v1/tasks', {
+  return fetch(devApiBase + '/tasks', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
@@ -30,7 +33,7 @@ const UpdateTask = (task) => {
 };
 
 const RemoveProject = (project) => {
-  return fetch('http://localhost:8800/api/v1/projects', {
+  return fetch(devApiBase + '/projects', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -40,7 +43,7 @@ const RemoveProject = (project) => {
 };
 
 const RemoveTask = (task) => {
-  return fetch('http://localhost:8800/api/v1/tasks', {
+  return fetch(devApiBase + '/tasks', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -48,31 +51,6 @@ const RemoveTask = (task) => {
     body: JSON.stringify(task)
   });
 };
-
-// Temporary Project filling
-// AddProject({
-//   name: 'Hacksite',
-//   description: 'A website for listing weekend hack projects',
-//   completed: true,
-//   tasks: [
-//     {task: 'Add and View projects', id: 1, completed: true},
-//     {task: 'Complete Tasks', id: 2, completed: true},
-//     {task: 'Remove projects and tasks', id: 3, completed: true},
-//     {task: 'Complete Projects', id: 4, completed: true}
-//   ]
-// });
-
-// AddProject({
-//   name: 'Hacksite v0.2',
-//   description: 'Second iteration of hacksite, building the backend',
-//   completed: false,
-//   tasks: [
-//     {task: 'Setup API and file serving', id: 1, completed: true},
-//     {task: 'Setup database', id: 2, completed: true},
-//     {task: 'Setup API endpoints for tasks and projects', id: 3, completed: true},
-//     {task: 'Replace javascript storage with API calls', id: 4, completed: false}
-//   ]
-// });
 
 export default {
   AddProject,

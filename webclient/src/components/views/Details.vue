@@ -16,7 +16,7 @@
 
 <script>
 import database from '@/database';
-import Task from '@/components/Task';
+import Task from '@/components/elements/Task';
 
 export default {
   components: {

@@ -1,18 +1,22 @@
 <template>
-  <div>
+  <div class='list'>
     <h3> Projects </h3>
-    <div>
-      <router-link to='/create'>Add a project</router-link>
+    <div class='menu-bar'>
+        <router-link class='menu-button' to='/create'>
+          <i class='fa fa-plus'></i>
+          Add a project
+        </router-link>
+      </span>
     </div>
-    <ul>
+    <div class='list-container'>
       <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
-    </ul>
+    </div>
   </div>
 </template>
 
 <script>
 import database from '@/database';
-import Project from '@/components/Project';
+import Project from '@/components/elements/Project';
 
 export default {
   components: {
@@ -50,14 +54,35 @@ ul {
   list-style: none;
 }
 a {
-  width: 90%;
-  display: block;
-}
-.project {
-  width: 90%;
-  position: relative;
-  margin: 0;
   display: inline-block;
+}
+.list {
+  margin: 50px;
+}
+.list-container {
+  margin: 10px;
+}
+.menu-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 0 5%;
+}
+.menu-button {
+  background-color: #3764ad;
+  padding: 7px 10px;
+  line-height: 16px;
+  font-size: 16px;
+}
+.menu-button > i {
+  padding-right: 5px;
+  width: 16px;
+  height: 16px;
+}
+.menu-button:hover {
+  background-color: #25467c;
+}
+.menu-button:visited {
+  color: #fff;
 }
 .removeButton {
   display: none;

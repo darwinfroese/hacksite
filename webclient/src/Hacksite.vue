@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <HeaderBar />
+    <TitleHeader />
     <router-view></router-view>
-    <Info />
+    <InfoFooter />
   </div>
 </template>
 
 <script>
-import Info from '@/components/Info';
-import HeaderBar from '@/components/HeaderBar';
+import InfoFooter from '@/components/elements/InfoFooter';
+import TitleHeader from '@/components/elements/TitleHeader';
 
 export default {
   name: 'app',
   components: {
-    'Info': Info,
-    'HeaderBar': HeaderBar
+    'InfoFooter': InfoFooter,
+    'TitleHeader': TitleHeader
   }
 };
 </script>
