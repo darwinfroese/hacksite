@@ -7,11 +7,11 @@
       </router-link>
     </div>
     <br>
-    <div>
-      <div> [ {{ project.ID }} ] {{ project.Name }} </div>
-      <span class='description'>
+    <div class='detail-card'>
+      <div class='project-header'> [ {{ project.ID }} ] {{ project.Name }} </div>
+      <div class='description'>
         {{ project.Description }}
-      </span>
+      </div>
       <div class='tasks'>
         <Task v-for="task in project.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="GetProject" />
       </div>
@@ -54,8 +54,13 @@ export default {
 .details-container {
   margin: 50px;
 }
+.detail-card {
+  padding: 25px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
 .description {
   margin-left: 30px;
+  margin-top: 20px;
   font-style: italic;
 }
 .tasks {
@@ -88,6 +93,10 @@ label:hover {
 }
 .menu-button:visited {
   color: #fff;
+}
+.project-header {
+  font-size: 18px;
+  font-weight: 500;
 }
 </style>
 
