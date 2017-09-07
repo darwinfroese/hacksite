@@ -1,18 +1,17 @@
 <template>
   <div class='project'>
-    <i class='fa fa-check' aria-hidden='true' v-if="project.Completed"></i>
-    <i class='fa fa-clock-o' aria-hidden='true' v-if="!project.Completed"></i>
+    <span class='status-icon'>
+      <i class='fa fa-check' aria-hidden='true' v-if="project.Completed"></i>
+      <i class='fa fa-clock-o' aria-hidden='true' v-if="!project.Completed"></i>
+    </span>
     <span class='name' @click="ShowProject()" v-bind:class="{completed: project.Completed}">
       {{ project.Name }}
     </span>
-    <span class='dropdown'>
-      <i class="fa fa-chevron-down" id='dropdown' @click="ToggleMenu()" v-if="!active"></i>
-      <i class="fa fa-chevron-up" id='dropdown' @click="ToggleMenu()" v-if="active"></i>
-    </span class='dropdown'>
-    <div v-if="active" class='menu'>
-      <i class='menu-item fa fa-eye' @click="ShowProject()"></i>
-      <i class='menu-item fa fa-trash-o' @click="RemoveProject()"></i>
-    </div>
+    <span class='description'> {{ project.Description }} </span>
+    <span class='control-icon'>
+      <i class='fa fa-eye' title='View Project' @click="ShowProject()"></i>
+      <i class='fa fa-trash-o' title='Delete Project' @click="RemoveProject()"></i>
+    </span>
   </div>
 </template>
 
@@ -51,10 +50,14 @@ i {
   height: 16px;
 }
 .project {
-  padding: 2px 50px;
+  display: flex;
+  padding: 5px 50px;
+  margin: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 .project:hover {
-  background-color: #e5e6e8;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 .completed {
   font-style: italic;
@@ -62,25 +65,33 @@ i {
 }
 .name {
   margin-left: 5%;
+  flex-grow: 1;
+  max-width: 300px;
 }
 .name:hover {
   cursor: pointer;
 }
-.menu {
-  display: flex;
-  flex-direction: row;
-}
-.menu-item {
+.description {
   flex-grow: 1;
-  text-align: center;
-  padding: 10px 0;
+  margin: auto;
+  color: #325778;
+  text-align: left;
+  font-size: 13px;
+  font-style: italic;
+  vertical-align: middle;
 }
-.menu-item:hover {
-  background-color: #eee;
+.span-icon {
+  flex-grow: 1;
+}
+.control-icon {
+  flex-grow: 1;
+  text-align: right;
+}
+.control-icon > i {
+  margin: 0 5px;
+}
+.control-icon > i:hover {
   cursor: pointer;
-}
-.dropdown {
-  float: right;
 }
 /* Icon (Color) Overrides */
 .fa-check { 

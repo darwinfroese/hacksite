@@ -1,6 +1,5 @@
 <template>
   <div class='list'>
-    <h3> Projects </h3>
     <div class='menu-bar'>
         <router-link class='menu-button' to='/create'>
           <i class='fa fa-plus'></i>
@@ -68,10 +67,11 @@ a {
   margin: 0 5%;
 }
 .menu-button {
-  background-color: #3764ad;
-  padding: 7px 10px;
+  background-color: #529A7F;
+  padding: 10px;
   line-height: 16px;
   font-size: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 .menu-button > i {
   padding-right: 5px;
@@ -79,7 +79,7 @@ a {
   height: 16px;
 }
 .menu-button:hover {
-  background-color: #25467c;
+  background-color: #176548;
 }
 .menu-button:visited {
   color: #fff;
