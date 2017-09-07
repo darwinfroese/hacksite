@@ -84,10 +84,4 @@ a {
 .menu-button:visited {
   color: #fff;
 }
-.removeButton {
-  display: none;
-}
-.removeButton:hover {
-  cursor: pointer;
-}
 </style>

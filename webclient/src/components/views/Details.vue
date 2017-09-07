@@ -1,6 +1,11 @@
 <template>
-  <div>
-    <router-link to='/'>Back to Projects</router-link>
+  <div class='details-container'>
+    <div class='menu-bar'>
+      <router-link class='menu-button' to='/'>
+        <i class='fa fa-chevron-left'></i>
+        Back to Projects
+      </router-link>
+    </div>
     <br>
     <div>
       <div> [ {{ project.ID }} ] {{ project.Name }} </div>
@@ -46,6 +51,9 @@ export default {
 </script>
 
 <style scoped>
+.details-container {
+  margin: 50px;
+}
 .description {
   margin-left: 30px;
   font-style: italic;
@@ -59,6 +67,27 @@ export default {
 }
 label:hover {
   cursor: pointer;
+}
+.menu-bar {
+  display: flex;
+}
+.menu-button {
+  background-color: #529A7F;
+  padding: 10px;
+  line-height: 16px;
+  font-size: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.menu-button > i {
+  padding-right: 5px;
+  width: 16px;
+  height: 16px;
+}
+.menu-button:hover {
+  background-color: #176548;
+}
+.menu-button:visited {
+  color: #fff;
 }
 </style>
 
