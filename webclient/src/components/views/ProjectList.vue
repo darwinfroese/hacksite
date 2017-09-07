@@ -64,7 +64,7 @@ a {
 .menu-bar {
   display: flex;
   flex-direction: row-reverse;
-  margin: 0 5%;
+  margin: 25px 5%;
 }
 .menu-button {
   background-color: #529A7F;
