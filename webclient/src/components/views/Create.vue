@@ -57,8 +57,10 @@ export default {
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
-        if (i.value !== '') {
-          this.project.Tasks.push({'task': i.value, 'id': idx, 'completed': false});
+        let contents = i.value;
+
+        if (/\S/.test(contents)) {
+          this.project.Tasks.push({'task': contents, 'id': idx, 'completed': false});
         }
       });
 
