@@ -67,6 +67,7 @@ i {
   margin-left: 5%;
   flex-grow: 1;
   max-width: 300px;
+  min-width: 300px;
   text-overflow: ellipsis;
 }
 .name:hover {
@@ -81,6 +82,11 @@ i {
   font-style: italic;
   vertical-align: middle;
   text-overflow: ellipsis;
+  min-width: 400px;
+  max-width: 400px;
+  max-height: 18px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .span-icon {
   flex-grow: 1;
