@@ -79,6 +79,7 @@ i {
   font-size: 13px;
   font-style: italic;
   vertical-align: middle;
+  text-overflow: ellipsis;
 }
 .span-icon {
   flex-grow: 1;

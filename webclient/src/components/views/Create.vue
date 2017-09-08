@@ -1,18 +1,36 @@
 <template>
-  <div>
-    <span>Create a new project</span>
-    <br>
-    <input type='text' placeholder='Project Name' v-model='project.Name'>
-    <input type='text' placeholder='Project Description' v-model='project.Description'>
-    <section id='tasks'>
-      <input type='text' placeholder='Task Description' name='taskInput'>
-    </section>
-    <p v-if="warningDisplayed"> Task Limit Reached! </p>
-    <button name='addTaskButton' id='addTaskButton' @click="AddTask()"> Add Task </button>
-    <hr />
-    <div>
-      <button @click="SaveProject()"> Save Project </button>
-      <router-link to='/'> Cancel </router-link>
+  <div class='create-container'>
+    <div class='create-card'>
+      <h4>Create a new project</h4>
+      <div class='create-form'>
+        <div class='input'>
+          <span class='input-label'> Project Name </span>
+          <input type='text' placeholder='Project Name' v-model='project.Name'>
+        </div>
+        <div class='input'>
+          <span class='input-label'> Project Description </span>
+          <textarea placeholder='Enter your project description' v-model='project.Description'></textarea>
+        </div>
+        <section id='tasks' class='tasks'>
+          <span class='input-label'>
+            Project Tasks
+            <i class='fa fa-info-circle info'>
+              <span class='info-text'>
+                Hacksite only lets you select four tasks for your projects to keep them
+                small and achievable!
+              </span>
+            </i>
+          </span>
+          <input type='text' placeholder='Task 1 Description' name='taskInput'>
+          <input type='text' placeholder='Task 2 Description' name='taskInput'>
+          <input type='text' placeholder='Task 3 Description' name='taskInput'>
+          <input type='text' placeholder='Task 4 Description' name='taskInput'>
+        </section>
+        <div class='menu-bar'>
+          <button class='menu-button' @click="SaveProject()"> Add Project </button>
+          <router-link to='/'> Cancel </router-link>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,7 +57,9 @@ export default {
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
-        this.project.Tasks.push({'task': i.value, 'id': idx, 'completed': false});
+        if (i.value !== '') {
+          this.project.Tasks.push({'task': i.value, 'id': idx, 'completed': false});
+        }
       });
 
       database.AddProject(this.project)
@@ -47,27 +67,99 @@ export default {
           console.log('project added.');
           router.push('/');
         });
-    },
-    AddTask: function () {
-      if (this.taskCount === 4) {
-        document.getElementById('addTaskButton').disabled = true;
-        this.warningDisplayed = true;
-        return;
-      }
-
-      let node = document.createElement('input');
-      node.type = 'text';
-      node.placeholder = 'Task Description';
-      node.name = 'taskInput';
-      document.getElementById('tasks').appendChild(node);
-      this.taskCount++;
     }
   }
 };
 </script>
 
 <style>
-  input {
-    display: block;
-  }
+input, textarea {
+  display: block;
+  font-size: 16px;
+  padding: 2px;
+  width: 300px;
+  border: 1px solid #325778;
+  font-weight: 100;
+}
+textarea {
+  margin: 0;
+  height: 75px;
+  width: 300px!important;
+}
+h4 {
+  margin-left: 15px;
+}
+a, a:visited {
+  color: #325778;
+}
+a:hover {
+  color: #1B3F60;
+}
+button, a {
+  border-radius: 0;
+  border: none;
+}
+button:hover {
+  cursor: pointer;
+}
+.info {
+  position: relative;
+}
+.info .info-text {
+  visibility: hidden;
+  width: 400px;
+  background-color: #325778;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-style: italic;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  left: 25px;
+  z-index: 1;
+}
+.info:hover .info-text{
+  visibility: visible;
+}
+.tasks {
+  margin-top: 10px;
+}
+.tasks > input {
+  margin: 10px 0;
+}
+.input-label {
+  font-size: 14px;
+  margin-left: 5px;
+}
+.create-form {
+  padding-left: 15px;
+}
+.create-container {
+  margin: 50px;
+}
+.create-card {
+  padding: 25px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.menu-bar {
+  display: flex;
+  margin-top: 25px;
+  align-items: center;
+  margin-left: 10px;
+}
+.menu-button {
+  background-color: #529A7F;
+  padding: 10px;
+  line-height: 16px;
+  font-size: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  color: #fff;
+  margin-right: 10px;
+}
+.menu-button:hover {
+  background-color: #176548;
+}
 </style>
