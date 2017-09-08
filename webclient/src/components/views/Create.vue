@@ -79,7 +79,7 @@ input, textarea {
   display: block;
   font-size: 16px;
   padding: 2px 10px;
-  width: 300px;
+  width: 500px;
   border: none;
   font-weight: 100;
   outline: none;
@@ -88,7 +88,7 @@ input, textarea {
 textarea {
   margin: 0;
   height: 75px;
-  width: 300px!important;
+  width: 500px!important;
   border: 1px solid #eee;
   resize: none;
   overflow: auto;
