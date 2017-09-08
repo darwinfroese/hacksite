@@ -67,6 +67,7 @@ i {
   margin-left: 5%;
   flex-grow: 1;
   max-width: 300px;
+  text-overflow: ellipsis;
 }
 .name:hover {
   cursor: pointer;

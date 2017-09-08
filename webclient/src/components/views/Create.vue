@@ -11,7 +11,7 @@
           <span class='input-label'> Project Description </span>
           <textarea placeholder='Enter your project description' v-model='project.Description'></textarea>
         </div>
-        <section id='tasks' class='tasks'>
+        <section id='tasks' class='tasks input'>
           <span class='input-label'>
             Project Tasks
             <i class='fa fa-info-circle info'>
@@ -76,15 +76,20 @@ export default {
 input, textarea {
   display: block;
   font-size: 16px;
-  padding: 2px;
+  padding: 2px 10px;
   width: 300px;
-  border: 1px solid #325778;
+  border: none;
   font-weight: 100;
+  outline: none;
+  color: #325778;
 }
 textarea {
   margin: 0;
   height: 75px;
   width: 300px!important;
+  border: 1px solid #eee;
+  resize: none;
+  overflow: auto;
 }
 h4 {
   margin-left: 15px;
@@ -101,6 +106,9 @@ button, a {
 }
 button:hover {
   cursor: pointer;
+}
+.input {
+  margin-top: 20px;
 }
 .info {
   position: relative;
@@ -133,6 +141,7 @@ button:hover {
 .input-label {
   font-size: 14px;
   margin-left: 5px;
+  font-weight: 500;
 }
 .create-form {
   padding-left: 15px;
