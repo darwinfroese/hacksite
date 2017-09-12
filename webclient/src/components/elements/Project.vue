@@ -10,6 +10,7 @@
     <span class='description'> {{ project.Description }} </span>
     <span class='control-icon'>
       <i class='fa fa-eye' title='View Project' @click="ShowProject()"></i>
+      <i class='fa fa-pencil' title='Edit Project' @click="EditProject()"></i>
       <i class='fa fa-trash-o' title='Delete Project' @click="RemoveProject()"></i>
     </span>
   </div>
@@ -17,7 +18,7 @@
 
 <script>
 import router from '@/router';
-import database from '@/database';
+import { RemoveProject } from '@/database';
 
 export default {
   data () {
@@ -31,11 +32,14 @@ export default {
       this.active = !this.active;
     },
     ShowProject: function () {
-      router.push(this.project.Details);
+      router.push('/details/' + this.project.ID);
+    },
+    EditProject: function () {
+      router.push('/edit/' + this.project.ID);
     },
     RemoveProject: function () {
       this.active = false;
-      database.RemoveProject(this.project)
+      RemoveProject(this.project)
         .then((response) => {
           this.$emit('update');
         });

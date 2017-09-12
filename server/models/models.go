@@ -6,7 +6,6 @@ type Project struct {
 	ID          int
 	Name        string
 	Description string
-	Details     string
 	Tasks       []Task
 	Completed   bool
 }

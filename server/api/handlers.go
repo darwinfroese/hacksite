@@ -12,6 +12,23 @@ import (
 
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
+func project(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			getProject(ctx, w, r)
+			return
+		case "OPTIONS":
+			// TODO: This one should only support GET
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
 func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -20,6 +37,9 @@ func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 			return
 		case "POST":
 			createProject(ctx, w, r)
+			return
+		case "PUT":
+			updateProject(ctx, w, r)
 			return
 		case "DELETE":
 			deleteProject(ctx, w, r)
@@ -31,37 +51,6 @@ func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 			return
 		}
-	}
-}
-
-func getProject(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		args := r.URL.Query()
-		str := args.Get("id")
-
-		if str == "" {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		id, err := strconv.Atoi(str)
-
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		project, err := ctx.db.GetProject(id)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(project)
 	}
 }
 
@@ -85,6 +74,35 @@ func tasks(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc
 			return
 		}
 	}
+}
+
+func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
+	args := r.URL.Query()
+	str := args.Get("id")
+
+	if str == "" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(str)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	project, err := ctx.db.GetProject(id)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(project)
 }
 
 // Handlers for specific methods on /projects
@@ -113,7 +131,29 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	project, err = ctx.db.AddProject(project)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(project)
+}
+
+func updateProject(ctx context, w http.ResponseWriter, r *http.Request) {
+	// TODO: this can be refactored
+	var project models.Project
+	err := json.NewDecoder(r.Body).Decode(&project)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	err = ctx.db.UpdateProject(project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

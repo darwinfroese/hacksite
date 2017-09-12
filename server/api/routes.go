@@ -13,6 +13,6 @@ const (
 // RegisterRoutes registers all the routes into the mux
 func RegisterRoutes(mux *http.ServeMux, db database.Database) {
 	mux.Handle(apiPrefix+"/projects", context{db: db, handler: projects})
-	mux.Handle(apiPrefix+"/project", context{db: db, handler: getProject})
+	mux.Handle(apiPrefix+"/project", context{db: db, handler: project})
 	mux.Handle(apiPrefix+"/tasks", context{db: db, handler: tasks})
 }

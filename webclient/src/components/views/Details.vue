@@ -5,6 +5,10 @@
         <i class='fa fa-chevron-left'></i>
         Back to Projects
       </router-link>
+      <router-link class='menu-button' :to="editRoute">
+        <i class='fa fa-pencil'></i>
+        Edit Project
+      </router-link>
     </div>
     <br>
     <div class='detail-card'>
@@ -13,19 +17,24 @@
         {{ project.Description }}
       </div>
       <div class='tasks'>
-        <Task v-for="task in project.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="GetProject" />
+        <Task v-for="task in project.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import database from '@/database';
+import { GetProject } from '@/database';
 import Task from '@/components/elements/Task';
 
 export default {
   components: {
     'Task': Task
+  },
+  computed: {
+    editRoute: function () {
+      return '/edit/' + this.project.ID;
+    }
   },
   data () {
     return {
@@ -34,8 +43,8 @@ export default {
   },
   props: ['pid'],
   methods: {
-    GetProject: function () {
-      database.GetProject(this.pid)
+    Update: function () {
+      GetProject(this.pid)
       .then((response) => {
         return response.json();
       })
@@ -45,12 +54,15 @@ export default {
     }
   },
   mounted () {
-    this.GetProject();
+    this.Update();
   }
 };
 </script>
 
 <style scoped>
+a {
+  color: #fff;
+}
 .details-container {
   margin: 50px;
 }
@@ -78,6 +90,7 @@ label:hover {
 }
 .menu-button {
   background-color: #529A7F;
+  margin: 0 10px;
   padding: 10px;
   line-height: 16px;
   font-size: 16px;

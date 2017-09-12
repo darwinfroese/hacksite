@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import database from '@/database';
+import { GetProjects } from '@/database';
 import Project from '@/components/elements/Project';
 
 export default {
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     Update: function () {
-      let promise = database.GetProjects();
+      let promise = GetProjects();
       promise.then((response) => {
         return response.json();
       }).then((json) => {

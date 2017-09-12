@@ -64,7 +64,6 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 		}
 
 		project.ID = int(id)
-		project.Details = fmt.Sprintf("/details/%d", int(id))
 		for i, task := range project.Tasks {
 			task.ProjectID = int(id)
 			project.Tasks[i] = task
@@ -147,6 +146,34 @@ func (b *boltDB) GetProjects() ([]models.Project, error) {
 	}
 
 	return projects, nil
+}
+
+// UpdateProject will store the new project in the database
+func (b *boltDB) UpdateProject(p models.Project) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+		if bucket == nil {
+			return fmt.Errorf("Bucket %q not found.", projectBucket)
+		}
+
+		v, err := json.Marshal(p)
+		if err != nil {
+			return err
+		}
+
+		err = bucket.Put(itob(p.ID), v)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 // UpdateTask will update a specfic task in a project

@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 const devApiBase = 'http://localhost:8800/api/v1';
 // const prodApiBase = '/api/v1';
 
-const AddProject = (p) => {
+export const AddProject = (p) => {
   return fetch(devApiBase + '/projects', {
     method: 'POST',
     headers: {
@@ -13,26 +13,26 @@ const AddProject = (p) => {
   });
 };
 
-const GetProject = (id) => {
+export const GetProject = (id) => {
   let url = devApiBase + '/project?id=' + id;
   return fetch(url);
 };
 
-const GetProjects = () => {
+export const GetProjects = () => {
   return fetch(devApiBase + '/projects');
 };
 
-const UpdateTask = (task) => {
-  return fetch(devApiBase + '/tasks', {
+export const UpdateProject = (project) => {
+  return fetch(devApiBase + '/projects', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(task)
+    body: JSON.stringify(project)
   });
 };
 
-const RemoveProject = (project) => {
+export const RemoveProject = (project) => {
   return fetch(devApiBase + '/projects', {
     method: 'DELETE',
     headers: {
@@ -42,9 +42,9 @@ const RemoveProject = (project) => {
   });
 };
 
-const RemoveTask = (task) => {
+export const UpdateTask = (task) => {
   return fetch(devApiBase + '/tasks', {
-    method: 'DELETE',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -52,11 +52,12 @@ const RemoveTask = (task) => {
   });
 };
 
-export default {
-  AddProject,
-  GetProject,
-  GetProjects,
-  UpdateTask,
-  RemoveProject,
-  RemoveTask
+export const RemoveTask = (task) => {
+  return fetch(devApiBase + '/tasks', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(task)
+  });
 };

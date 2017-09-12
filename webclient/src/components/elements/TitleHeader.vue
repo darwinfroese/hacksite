@@ -1,8 +1,20 @@
 <template>
   <div class='header'>
-    <h3> Hacksite </h3>
+    <h3 @click="NavHome"> Hacksite </h3>
   </div>
 </template>
+
+<script>
+import router from '@/router';
+
+export default {
+  methods: {
+    NavHome: function () {
+      router.push('/');
+    }
+  }
+};
+</script>
 
 <style scoped>
 .header {
@@ -17,5 +29,8 @@
 h3 {
   font-size: 24px;
   margin: 0;
+}
+h3:hover {
+  cursor: pointer;
 }
 </style>

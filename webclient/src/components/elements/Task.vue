@@ -9,16 +9,16 @@
 </template>
 
 <script>
-import database from '@/database';
+import { UpdateTask, RemoveTask } from '@/database';
 
 export default {
   props: ['task', 'pid'],
   methods: {
     Update: function () {
-      database.UpdateTask(this.task);
+      UpdateTask(this.task);
     },
     RemoveTask: function () {
-      database.RemoveTask(this.task)
+      RemoveTask(this.task)
         .then((response) => {
           this.$emit('GetProject');
         });
