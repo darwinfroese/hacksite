@@ -18,3 +18,9 @@ type Database interface {
 type boltDB struct {
 	dbLocation string
 }
+
+// CreateDB returns an instance of the database
+// depending on the environment
+func CreateDB() Database {
+	return createBoltDB()
+}

@@ -8,12 +8,13 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
 var projectBucket = []byte("projects")
 
 // CreateBoltDB creates a basic database struct
-func CreateBoltDB() Database {
+func createBoltDB() Database {
 	db := boltDB{
 		dbLocation: "database.db",
 	}
@@ -51,6 +52,8 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 		return models.Project{}, err
 	}
 	defer db.Close()
+
+	project.Status = utilities.UpdateProjectStatus(project)
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
@@ -156,6 +159,8 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	}
 	defer db.Close()
 
+	p.Status = utilities.UpdateProjectStatus(p)
+
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 		if bucket == nil {
@@ -204,17 +209,8 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 			}
 		}
 
-		complete := 0
-		for _, task := range project.Tasks {
-			if task.Completed {
-				complete++
-			}
-		}
-		if complete == len(project.Tasks) {
-			project.Completed = true
-		} else {
-			project.Completed = false
-		}
+		project.Status = utilities.UpdateProjectStatus(project)
+
 		v, err := json.Marshal(project)
 		if err != nil {
 			return err

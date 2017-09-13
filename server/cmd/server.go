@@ -16,7 +16,7 @@ func main() {
 	fmt.Println("Setting up the server.")
 
 	m := http.NewServeMux()
-	db := database.CreateBoltDB()
+	db := database.CreateDB()
 
 	m.Handle("/", http.FileServer(http.Dir("./webdist")))
 

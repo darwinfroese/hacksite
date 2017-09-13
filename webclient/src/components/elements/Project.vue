@@ -1,10 +1,11 @@
 <template>
   <div class='project'>
     <span class='status-icon'>
-      <i class='fa fa-check' aria-hidden='true' v-if="project.Completed"></i>
-      <i class='fa fa-clock-o' aria-hidden='true' v-if="!project.Completed"></i>
+      <i class='fa fa-check' aria-hidden='true' v-if="project.Status === 'Completed'"></i>
+      <i class='fa fa-clock-o' aria-hidden='true' v-if="project.Status === 'InProgress'"></i>
+      <i class='fa fa-exclamation-triangle' aria-hidden='true' v-if="project.Status === 'New'"></i>
     </span>
-    <span class='name' @click="ShowProject()" v-bind:class="{completed: project.Completed}">
+    <span class='name' @click="ShowProject()" v-bind:class="{completed: project.Status === 'Completed'}">
       {{ project.Name }}
     </span>
     <span class='description'> {{ project.Description }} </span>
@@ -111,5 +112,8 @@ i {
 }
 .fa-clock-o {
   color: goldenrod;
+}
+.fa-exclamation-triangle {
+  color: skyblue;
 }
 </style>
