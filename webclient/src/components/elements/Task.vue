@@ -15,7 +15,15 @@ export default {
   props: ['task', 'pid'],
   methods: {
     Update: function () {
-      UpdateTask(this.task);
+      UpdateTask(this.task)
+        .then((response) => {
+          return response.json();
+        })
+        .then((project) => {
+          if (project.Status === 'Completed') {
+            alert('Congratulations! Iteration completed.');
+          }
+        });
     },
     RemoveTask: function () {
       RemoveTask(this.task)

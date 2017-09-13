@@ -14,8 +14,8 @@
     <div class='detail-card'>
       <div class='project-header'>
         [ {{ project.ID }} ] {{ project.Name }}
-        <span class='iteration' v-if="project.Iteration.Number > 0" title='Current Iteration'>
-          ( Iteration {{ project.Iteration.Number }} )
+        <span class='iteration' v-if="project.Iteration" title='Current Iteration'>
+           ( Iteration {{ project.Iteration.Number }} )
         </span>
       </div>
       <div class='description'>
