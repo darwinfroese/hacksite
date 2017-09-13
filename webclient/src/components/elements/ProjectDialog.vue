@@ -3,7 +3,7 @@
     <h4>{{ title }}</h4>
     <div class='form'>
       <div class='input'>
-        <span class='input-label'> Project Name </span>
+        <span class='input-label'> Project Name *</span>
         <input type='text' placeholder='Project Name' v-model='project.Name'>
       </div>
       <div class='input'>
@@ -25,8 +25,11 @@
         <input id='taskInput3' type='text' placeholder='Task 3 Description' name='taskInput'>
         <input id='taskInput4' type='text' placeholder='Task 4 Description' name='taskInput'>
       </section>
+      <section id='messageSection' class='messageSection'>
+        <div class='infoMessage'> * indicates a required field </div>
+      </section>
       <div class='menu-bar'>
-        <button class='menu-button' @click="Handler"> {{ buttonText }} </button>
+        <button class='menu-button' @click="Handler" :disabled="!valid"> {{ buttonText }} </button>
         <router-link to='/'> Cancel </router-link>
       </div>
     </div>
@@ -46,10 +49,26 @@ export default {
       tasks.forEach((task, idx) => {
         document.getElementById('taskInput' + (idx + 1)).value = task.Task;
       });
+    },
+    ValidateInput: function () {
+      if (/\S/.test(this.project.Name)) {
+        this.valid = true;
+      } else {
+        this.valid = false;
+      }
     }
+  },
+  data () {
+    return {
+      valid: false
+    };
   },
   mounted () {
     this.SetTaskValues();
+    this.ValidateInput();
+  },
+  updated () {
+    this.ValidateInput();
   }
 };
 </script>
@@ -160,7 +179,20 @@ button:hover {
   color: #fff;
   margin-right: 10px;
 }
+.menu-button:disabled,
+.menu-button:disabled:hover {
+  background-color: #919191;
+  box-shadow: none;
+  cursor: not-allowed;
+}
 .menu-button:hover {
   background-color: #176548;
+}
+.messageSection {
+  margin: 25px;
+}
+.infoMessage {
+  font-style: italic;
+  font-size: 14px;
 }
 </style>

@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
@@ -126,6 +127,13 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	if !utilities.ValidateProject(project) {
+		// TODO: Make this return an error
+		fmt.Fprintf(os.Stderr, "Error: %s\n", "Project was invalid!")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
