@@ -54,6 +54,7 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 	defer db.Close()
 
 	project.Status = utilities.UpdateProjectStatus(project)
+	project.Iteration = models.Iteration{Number: 1}
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
@@ -70,6 +71,7 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 		for i, task := range project.Tasks {
 			task.ProjectID = int(id)
 			project.Tasks[i] = task
+			task.IterationNumber = project.Iteration.Number
 		}
 
 		key := itob(int(id))

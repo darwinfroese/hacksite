@@ -12,7 +12,12 @@
     </div>
     <br>
     <div class='detail-card'>
-      <div class='project-header'> [ {{ project.ID }} ] {{ project.Name }} </div>
+      <div class='project-header'>
+        [ {{ project.ID }} ] {{ project.Name }}
+        <span class='iteration' v-if="project.Iteration.Number > 0" title='Current Iteration'>
+          ( Iteration {{ project.Iteration.Number }} )
+        </span>
+      </div>
       <div class='description'>
         {{ project.Description }}
       </div>
@@ -110,6 +115,10 @@ label:hover {
 .project-header {
   font-size: 18px;
   font-weight: 500;
+}
+.iteration {
+  margin-left: 25px;
+  font-size: 14px;
 }
 </style>
 

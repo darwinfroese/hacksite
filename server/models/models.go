@@ -7,14 +7,21 @@ type Project struct {
 	Description string
 	Tasks       []Task
 	Status      string
+	Iteration   Iteration
 }
 
 // Task contains a representation of a task
 type Task struct {
-	ID        int
-	ProjectID int
-	Task      string
-	Completed bool
+	ID              int
+	ProjectID       int
+	Task            string
+	Completed       bool
+	IterationNumber int
+}
+
+// Iteration contains iteration information for a project
+type Iteration struct {
+	Number int
 }
 
 // Status constants for projects

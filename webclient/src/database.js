@@ -1,5 +1,6 @@
 import 'whatwg-fetch';
 
+// TODO: This should be a build time value
 const devApiBase = 'http://localhost:8800/api/v1';
 // const prodApiBase = '/api/v1';
 
