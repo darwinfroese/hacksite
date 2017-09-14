@@ -13,6 +13,9 @@ import (
 
 var projectBucket = []byte("projects")
 
+// TODO: Need to limit the amount of operations and logic
+// in the database code
+
 // CreateBoltDB creates a basic database struct
 func createBoltDB() Database {
 	db := boltDB{
@@ -40,6 +43,7 @@ func createBuckets(b boltDB) {
 		return nil
 	})
 
+	// TODO: This should probably crash the program? or attempt to recover?
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 	}
@@ -54,12 +58,11 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 	defer db.Close()
 
 	project.Status = utilities.UpdateProjectStatus(project)
-	project.Iteration = models.Iteration{Number: 1}
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not fonud.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectBucket)
 		}
 
 		id, err := bucket.NextSequence()
@@ -68,10 +71,13 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 		}
 
 		project.ID = int(id)
-		for i, task := range project.Tasks {
-			task.ProjectID = int(id)
-			project.Tasks[i] = task
-			task.IterationNumber = project.Iteration.Number
+		project.CurrentIteration.ProjectID = project.ID
+		project.CurrentIteration.Number = 1
+		project.Iterations = append(project.Iterations, project.CurrentIteration)
+		for i, task := range project.CurrentIteration.Tasks {
+			task.ProjectID = project.ID
+			task.IterationNumber = project.CurrentIteration.Number
+			project.CurrentIteration.Tasks[i] = task
 		}
 
 		key := itob(int(id))
@@ -204,10 +210,19 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 			return err
 		}
 
-		for i, task := range project.Tasks {
+		tasks := project.CurrentIteration.Tasks
+
+		for i, task := range tasks {
 			if task.ID == t.ID {
-				project.Tasks[i] = t
+				tasks[i] = t
 				break
+			}
+		}
+
+		project.CurrentIteration.Tasks = tasks
+		for i, iter := range project.Iterations {
+			if iter.Number == project.CurrentIteration.Number {
+				project.Iterations[i] = project.CurrentIteration
 			}
 		}
 
@@ -274,10 +289,19 @@ func (b *boltDB) RemoveTask(t models.Task) (models.Project, error) {
 			return err
 		}
 
-		for i, task := range project.Tasks {
+		tasks := project.CurrentIteration.Tasks
+
+		for i, task := range tasks {
 			if task.ID == t.ID {
-				project.Tasks = append(project.Tasks[:i], project.Tasks[i+1:]...)
+				tasks = append(tasks[:i], tasks[i+1:]...)
 				break
+			}
+		}
+
+		project.CurrentIteration.Tasks = tasks
+		for i, iter := range project.Iterations {
+			if iter.Number == project.CurrentIteration.Number {
+				project.Iterations[i] = project.CurrentIteration
 			}
 		}
 
@@ -293,6 +317,52 @@ func (b *boltDB) RemoveTask(t models.Task) (models.Project, error) {
 
 		return nil
 	})
+	if err != nil {
+		return models.Project{}, err
+	}
+
+	return project, nil
+}
+
+// AddIteration will add an iteration to the project and update it in the database
+func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return models.Project{}, err
+	}
+	defer db.Close()
+
+	var project models.Project
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+		if bucket == nil {
+			return fmt.Errorf("Bucket %q not found.", projectBucket)
+		}
+
+		val := bucket.Get(itob(iteration.ProjectID))
+
+		err := json.Unmarshal(val, &project)
+		if err != nil {
+			return err
+		}
+
+		project.CurrentIteration = iteration
+		project.Iterations = append(project.Iterations, iteration)
+		project.Status = utilities.UpdateProjectStatus(project)
+
+		p, err := json.Marshal(project)
+		if err != nil {
+			return err
+		}
+
+		err = bucket.Put(itob(iteration.ProjectID), p)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
 		return models.Project{}, err
 	}

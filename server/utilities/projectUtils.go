@@ -18,12 +18,13 @@ func UpdateProjectStatus(project models.Project) string {
 	complete := 0
 	status := models.StatusNew
 
-	for _, task := range project.Tasks {
+	tasks := project.CurrentIteration.Tasks
+	for _, task := range tasks {
 		if task.Completed {
 			complete++
 		}
 	}
-	if complete == len(project.Tasks) {
+	if complete == len(tasks) {
 		status = models.StatusCompleted
 	} else if complete > 0 {
 		status = models.StatusInProgress

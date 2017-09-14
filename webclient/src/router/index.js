@@ -9,6 +9,8 @@ import IterationList from '@/components/views/IterationList';
 
 Vue.use(Router);
 
+// TODO: Route better - use the project id inside the
+// route better (ie. :pid/details, :pid/iterations, etc.)
 export default new Router({
   routes: [
     {

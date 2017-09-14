@@ -22,15 +22,15 @@
     <div class='detail-card'>
       <div class='project-header'>
         [ {{ project.ID }} ] {{ project.Name }}
-        <span class='iteration' v-if="project.Iteration" title='Current Iteration'>
-           ( Iteration {{ project.Iteration.Number }} )
+        <span class='iteration' v-if="project.CurrentIteration" title='Current Iteration'>
+           ( Iteration {{ project.CurrentIteration.Number }} )
         </span>
       </div>
       <div class='description'>
         {{ project.Description }}
       </div>
-      <div class='tasks'>
-        <Task v-for="task in project.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
+      <div class='tasks' v-if="project.CurrentIteration">
+        <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
       </div>
     </div>
   </div>

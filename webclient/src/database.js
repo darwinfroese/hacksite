@@ -62,3 +62,13 @@ export const RemoveTask = (task) => {
     body: JSON.stringify(task)
   });
 };
+
+export const AddIteration = (iteration) => {
+  return fetch(devApiBase + '/iteration', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(iteration)
+  });
+};

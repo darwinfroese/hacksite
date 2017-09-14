@@ -13,7 +13,7 @@
         </div>
         <TaskInputs />
         <div class='menu-bar'>
-          <button class='menu-button' @click="CreateIteration"> Start Iteration </button>
+          <button class='menu-button' @click="AddIteration"> Start Iteration </button>
           <router-link to='/'> Cancel </router-link>
         </div>
       </div>
@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import { GetProject, CreateIteration } from '@/database';
+import router from '@/router';
+import { GetProject, AddIteration } from '@/database';
 import TaskInputs from '@/components/elements/TaskInputs';
 
 export default {
@@ -45,13 +46,35 @@ export default {
           this.project = json;
         });
     },
-    CreateIteration: function () {
-      CreateIteration(this.pid)
+    GetTasks: function () {
+      let inputs = document.getElementsByName('taskInput');
+      let tasks = [];
+
+      inputs.forEach((i, idx) => {
+        let contents = i.value;
+
+        if (/\S/.test(contents)) {
+          if (idx >= tasks.length) {
+            tasks.push({'task': contents, 'id': idx, 'completed': false, ProjectID: this.project.ID});
+          }
+        }
+
+        this.project.CurrentIteration.Tasks = tasks;
+      });
+
+      this.project.CurrentIteration.Tasks = tasks;
+    },
+    AddIteration: function () {
+      this.GetTasks();
+      let iteration = this.project.CurrentIteration;
+      iteration.Number++;
+
+      AddIteration(iteration)
         .then((response) => {
           return response.json();
         })
-        .then((json) => {
-          this.project = json;
+        .then((project) => {
+          router.push('/details/' + project.ID);
         });
     }
   },

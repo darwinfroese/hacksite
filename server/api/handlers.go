@@ -13,6 +13,9 @@ import (
 
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
+// TODO: move switch/case into a function that can be shared
+// TODO: move handlers into different files
+
 func project(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -66,6 +69,22 @@ func tasks(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc
 			return
 		case "DELETE":
 			removeTask(ctx, w, r)
+			return
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
+func iterations(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			addIteration(ctx, w, r)
 			return
 		case "OPTIONS":
 			corsResponse(w, r)
@@ -242,4 +261,25 @@ func corsResponse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	w.WriteHeader(http.StatusOK)
+}
+
+func addIteration(ctx context, w http.ResponseWriter, r *http.Request) {
+	var iteration models.Iteration
+	err := json.NewDecoder(r.Body).Decode(&iteration)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	project, err := ctx.db.AddIteration(iteration)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(project)
 }

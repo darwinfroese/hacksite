@@ -2,12 +2,12 @@ package models
 
 // Project contains a representation of a project
 type Project struct {
-	ID          int
-	Name        string
-	Description string
-	Tasks       []Task
-	Status      string
-	Iteration   Iteration
+	ID               int
+	Name             string
+	Description      string
+	Status           string
+	CurrentIteration Iteration
+	Iterations       []Iteration
 }
 
 // Task contains a representation of a task
@@ -21,7 +21,9 @@ type Task struct {
 
 // Iteration contains iteration information for a project
 type Iteration struct {
-	Number int
+	Number    int
+	Tasks     []Task
+	ProjectID int
 }
 
 // Status constants for projects

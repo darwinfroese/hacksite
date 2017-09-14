@@ -8,11 +8,13 @@ type Database interface {
 	GetProject(id int) (models.Project, error)
 	GetProjects() ([]models.Project, error)
 	UpdateProject(models.Project) error
-	// TODO: models.Project could probably be removed and the project passed
-	// in returned since no internal changes are happening
+	// TODO: UpdateProject - models.Project could probably be removed
+	// and the project passed in returned since no internal changes
+	// are happening
 	UpdateTask(task models.Task) (models.Project, error)
 	RemoveProject(id int) error
 	RemoveTask(task models.Task) (models.Project, error)
+	AddIteration(models.Iteration) (models.Project, error)
 }
 
 type boltDB struct {

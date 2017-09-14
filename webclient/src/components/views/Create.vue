@@ -22,7 +22,9 @@ export default {
       project: {
         Name: '',
         Description: '',
-        Tasks: [],
+        CurrentIteration: {
+          Tasks: []
+        },
         Completed: false
       },
       taskCount: 1,
@@ -37,7 +39,7 @@ export default {
         let contents = i.value;
 
         if (/\S/.test(contents)) {
-          this.project.Tasks.push({'task': contents, 'id': idx, 'completed': false});
+          this.project.CurrentIteration.Tasks.push({'task': contents, 'id': idx, 'completed': false});
         }
       });
 

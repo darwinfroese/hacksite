@@ -35,7 +35,7 @@ export default {
       this.$emit('Handle');
     },
     SetTaskValues: function () {
-      let tasks = this.project.Tasks;
+      let tasks = this.project.CurrentIteration.Tasks;
 
       tasks.forEach((task, idx) => {
         document.getElementById('taskInput' + (idx + 1)).value = task.Task;
