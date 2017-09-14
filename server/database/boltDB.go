@@ -370,6 +370,51 @@ func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error
 	return project, nil
 }
 
+// SwapCurrentIteration will set the iteration in the argument as the current iteration
+func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Project, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return models.Project{}, err
+	}
+	defer db.Close()
+
+	var project models.Project
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+		if bucket == nil {
+			return fmt.Errorf("Bucket %q not found.", projectBucket)
+		}
+
+		val := bucket.Get(itob(iteration.ProjectID))
+
+		err := json.Unmarshal(val, &project)
+		if err != nil {
+			return err
+		}
+
+		project.CurrentIteration = iteration
+		project.Status = utilities.UpdateProjectStatus(project)
+
+		p, err := json.Marshal(project)
+		if err != nil {
+			return err
+		}
+
+		err = bucket.Put(itob(iteration.ProjectID), p)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return models.Project{}, err
+	}
+
+	return project, nil
+}
+
 func itob(v int) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))

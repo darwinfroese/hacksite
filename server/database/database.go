@@ -15,6 +15,7 @@ type Database interface {
 	RemoveProject(id int) error
 	RemoveTask(task models.Task) (models.Project, error)
 	AddIteration(models.Iteration) (models.Project, error)
+	SwapCurrentIteration(models.Iteration) (models.Project, error)
 }
 
 type boltDB struct {

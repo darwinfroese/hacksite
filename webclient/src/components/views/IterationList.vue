@@ -112,6 +112,7 @@ export default {
 }
 .iteration {
   margin-left: 10px;
+  padding: 2px;
   font-size: 16px;
   line-height: 16px;
 }

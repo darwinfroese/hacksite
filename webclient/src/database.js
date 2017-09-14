@@ -72,3 +72,13 @@ export const AddIteration = (iteration) => {
     body: JSON.stringify(iteration)
   });
 };
+
+export const ChangeCurrentIteration = (iteration) => {
+  return fetch(devApiBase + '/currentiteration', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(iteration)
+  });
+};

@@ -25,6 +25,14 @@
         <span class='iteration' v-if="project.CurrentIteration" title='Current Iteration'>
            ( Iteration {{ project.CurrentIteration.Number }} )
         </span>
+        <span class='swap-link' v-if="swappable" title='Swap Iterations'>
+          Swap Iterations
+          <select @change="SwapIterations" v-model="selectedIteration">
+            <option v-for="iteration in project.Iterations" :key="iteration.Number" :value="iteration.Number">
+              {{ iteration.Number }}
+            </option>
+          </select>
+        </span>
       </div>
       <div class='description'>
         {{ project.Description }}
@@ -37,7 +45,7 @@
 </template>
 
 <script>
-import { GetProject } from '@/database';
+import { GetProject, ChangeCurrentIteration } from '@/database';
 import Task from '@/components/elements/Task';
 
 export default {
@@ -53,11 +61,17 @@ export default {
     },
     allIterations: function () {
       return '/iterations/' + this.project.ID;
+    },
+    swappable: function () {
+      return this.project.Iterations.length > 1;
     }
   },
   data () {
     return {
-      project: {}
+      project: {
+        Iterations: []
+      },
+      selectedIteration: {}
     };
   },
   props: ['pid'],
@@ -69,6 +83,20 @@ export default {
         })
         .then((json) => {
           this.project = json;
+          this.selectedIteration = this.project.CurrentIteration.Number;
+        });
+    },
+    SwapIterations: function () {
+      let selected = this.project.Iterations.filter((iter) => {
+        return iter.Number === this.selectedIteration;
+      })[0];
+      ChangeCurrentIteration(selected)
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.project = json;
+          this.selectedIteration = this.project.CurrentIteration.Number;
         });
     }
   },
@@ -131,6 +159,10 @@ label:hover {
   font-weight: 500;
 }
 .iteration {
+  margin-left: 25px;
+  font-size: 14px;
+}
+.swap-link {
   margin-left: 25px;
   font-size: 14px;
 }
