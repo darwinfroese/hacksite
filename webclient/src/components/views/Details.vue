@@ -64,12 +64,12 @@ export default {
   methods: {
     Update: function () {
       GetProject(this.pid)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.project = json;
-      });
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.project = json;
+        });
     }
   },
   mounted () {

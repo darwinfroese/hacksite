@@ -42,8 +42,11 @@ export default {
       });
 
       AddProject(this.project)
-        .then(() => {
-          router.push('/details/' + this.project.ID);
+        .then((response) => {
+          return response.json();
+        })
+        .then((project) => {
+          router.push('/details/' + project.ID);
         });
     }
   }
