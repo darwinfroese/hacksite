@@ -4,6 +4,8 @@ import Projects from '@/components/views/ProjectList';
 import Details from '@/components/views/Details';
 import Create from '@/components/views/Create';
 import Edit from '@/components/views/Edit';
+import Iteration from '@/components/views/Iteration';
+import IterationList from '@/components/views/IterationList';
 
 Vue.use(Router);
 
@@ -34,6 +36,22 @@ export default new Router({
       path: '/create',
       name: 'Create',
       component: Create
+    },
+    {
+      path: '/iteration/:pid',
+      name: 'CreateIteration',
+      component: Iteration,
+      props: (route) => {
+        return { pid: parseInt(route.params.pid) };
+      }
+    },
+    {
+      path: '/iterations/:pid',
+      name: 'AllIterations',
+      component: IterationList,
+      props: (route) => {
+        return { pid: parseInt(route.params.pid) };
+      }
     }
   ]
 });

@@ -43,7 +43,7 @@ export default {
 
       AddProject(this.project)
         .then(() => {
-          router.push('/');
+          router.push('/details/' + this.project.ID);
         });
     }
   }

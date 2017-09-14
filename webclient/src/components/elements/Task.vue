@@ -5,15 +5,42 @@
       <span v-bind:class="{ completed: task.Completed }"> {{ task.Task }} </span>
     </label>
     <span class='removeButton' @click="RemoveTask()"> <i class='fa fa-times'></i> </span>
+    <Modal 
+      :message="IterationMessage"
+      :acceptText="'Yes'"
+      :rejectText="'No'"
+      v-on:Accept="NavToIteration"
+      v-on:Reject="CloseModal"
+      v-if="renderDialog" />
   </div>
 </template>
 
 <script>
+import router from '@/router';
 import { UpdateTask, RemoveTask } from '@/database';
+import Modal from '@/components/elements/Modal';
 
 export default {
   props: ['task', 'pid'],
+  components: {
+    'Modal': Modal
+  },
+  data () {
+    return {
+      renderDialog: false,
+      IterationMessage: 'Congratulations! You completed your iteration.\n\nWould you like to start a new one?'
+    };
+  },
   methods: {
+    RenderDialog: function () {
+      this.renderDialog = true;
+    },
+    NavToIteration: function () {
+      router.push('/iteration/' + this.pid);
+    },
+    CloseModal: function () {
+      this.renderDialog = false;
+    },
     Update: function () {
       UpdateTask(this.task)
         .then((response) => {
@@ -21,7 +48,7 @@ export default {
         })
         .then((project) => {
           if (project.Status === 'Completed') {
-            alert('Congratulations! Iteration completed.');
+            this.RenderDialog();
           }
         });
     },

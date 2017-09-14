@@ -10,21 +10,7 @@
         <span class='input-label'> Project Description </span>
         <textarea placeholder='Enter your project description' v-model='project.Description'></textarea>
       </div>
-      <section id='tasks' class='tasks input'>
-        <span class='input-label'>
-          Project Tasks
-          <i class='fa fa-info-circle info'>
-            <span class='info-text'>
-              Hacksite only lets you select four tasks for your projects to keep them
-              small and achievable!
-            </span>
-          </i>
-        </span>
-        <input id='taskInput1' type='text' placeholder='Task 1 Description' name='taskInput'>
-        <input id='taskInput2' type='text' placeholder='Task 2 Description' name='taskInput'>
-        <input id='taskInput3' type='text' placeholder='Task 3 Description' name='taskInput'>
-        <input id='taskInput4' type='text' placeholder='Task 4 Description' name='taskInput'>
-      </section>
+      <TaskInputs />
       <section id='messageSection' class='messageSection'>
         <div class='infoMessage'> * indicates a required field </div>
       </section>
@@ -37,8 +23,13 @@
 </template>
 
 <script>
+import TaskInputs from '@/components/elements/TaskInputs';
+
 export default {
   props: ['title', 'project', 'buttonText'],
+  components: {
+    'TaskInputs': TaskInputs
+  },
   methods: {
     Handler: function () {
       this.$emit('Handle');
@@ -145,12 +136,6 @@ button:hover {
 }
 .info:hover .info-text{
   visibility: visible;
-}
-.tasks {
-  margin-top: 10px;
-}
-.tasks > input {
-  margin: 10px 0;
 }
 .input-label {
   font-size: 14px;

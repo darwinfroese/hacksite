@@ -9,6 +9,14 @@
         <i class='fa fa-pencil'></i>
         Edit Project
       </router-link>
+      <router-link class='menu-button' :to="iterationRoute">
+        <i class='fa fa-plus'></i>
+        Add Iteration
+      </router-link>
+      <router-link class='menu-button' :to="allIterations">
+        <i class='fa fa-history'></i>
+        View iterations
+      </router-link>
     </div>
     <br>
     <div class='detail-card'>
@@ -39,6 +47,12 @@ export default {
   computed: {
     editRoute: function () {
       return '/edit/' + this.project.ID;
+    },
+    iterationRoute: function () {
+      return '/iteration/' + this.project.ID;
+    },
+    allIterations: function () {
+      return '/iterations/' + this.project.ID;
     }
   },
   data () {

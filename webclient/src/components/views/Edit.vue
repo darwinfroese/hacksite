@@ -49,7 +49,7 @@ export default {
 
       UpdateProject(this.project)
         .then(() => {
-          router.push('/');
+          router.push('/details/' + this.project.ID);
         });
     },
     GetProject: function () {
