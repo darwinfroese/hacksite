@@ -5,13 +5,29 @@
         <h4> Create Your Account </h4>
       </section>
       <section class='form'>
-        <input placeholder='Username' v-model="user.Username">
-        <input placeholder='someone@email.com' v-model="user.Email">
-        <input placeholder='Password' v-model="user.Password">
-        <input placeholder='Confirm Password' v-model="user.ConfirmPassword">
+        <div class='input-container'>
+          <span class='label'> Username </span>
+          <input placeholder='Username' v-model="user.Username">
+        </div>
+        <div class='input-container'>
+          <span class='label'> Email </span>
+          <input placeholder='someone@email.com' v-model="user.Email">
+        </div>
+        <div class='input-container'>
+          <span class='label'> Password </span>
+          <input placeholder='Password' type='password' v-model="user.Password">
+        </div>
+        <div class='input-container'>
+          <span class='label'> Confirm your password </span>
+          <input placeholder='Confirm Password' type='password' v-model="user.ConfirmPassword">
+        </div>
+      </section>
+      <section class='message-container'>
+        <span class='message'> All fields are required. </span>
+        <span class='message'> {{ message }} </span>
       </section>
       <div class='menu-bar'>
-        <button class='menu-button' @click="Handler" :disabled="!valid"> Create </button>
+        <button class='menu-button' @click="Create" :disabled="!valid"> Create </button>
         <router-link to='/'> Cancel </router-link>
       </div>
     </div>
@@ -19,16 +35,36 @@
 </template>
 
 <script>
+import router from '@/router';
+import { CreateAccount } from '@/database';
+
 export default {
   data () {
     return {
-      user: {},
-      valid: false
+      user: {
+        Username: '',
+        Email: '',
+        Password: '',
+        ConfirmPassword: ''
+      },
+      valid: false,
+      message: undefined
     };
   },
+  updated () {
+    this.valid =
+      this.user.Name !== '' &&
+      this.user.Email !== '' &&
+      this.user.Password !== '' &&
+      this.user.ConfirmPassword !== '' &&
+      this.ConfirmPasswords();
+  },
   methods: {
-    CreateAccount: function () {
-
+    Create: function () {
+      CreateAccount(this.user)
+        .then((response) => {
+          router.push('/');
+        });
     },
     ConfirmPasswords: function () {
       return this.user.Password === this.user.ConfirmPassword;
@@ -58,6 +94,14 @@ input {
   border-bottom: 1px solid #eee;
   margin-top: 10px;
   transition: all 0.5s linear;
+}
+.input-container {
+  margin-top: 25px;
+}
+.label {
+  font-size: 14px;
+  margin-left: 5px;
+  font-weight: 500;
 }
 input:focus {
   border-bottom: 1px solid #325778;
@@ -98,5 +142,14 @@ button:hover {
 }
 .menu-button:hover {
   background-color: #176548;
+}
+.message-container {
+  margin-top: 25px;
+  margin-left: 25px;
+}
+.message {
+  display: inline-block;
+  font-style: italic;
+  font-size: 14px;
 }
 </style>

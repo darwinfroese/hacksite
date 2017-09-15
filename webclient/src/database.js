@@ -82,3 +82,7 @@ export const ChangeCurrentIteration = (iteration) => {
     body: JSON.stringify(iteration)
   });
 };
+
+export const CreateAccount = (user) => {
+  console.log('Create Account Not Implemented');
+};
