@@ -11,7 +11,8 @@ import (
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-var projectBucket = []byte("projects")
+var projectsBucket = []byte("projects")
+var usersBucket = []byte("users")
 
 // TODO: Need to limit the amount of operations and logic
 // in the database code
@@ -35,7 +36,12 @@ func createBuckets(b boltDB) {
 	defer db.Close()
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists(projectBucket)
+		_, err := tx.CreateBucketIfNotExists(projectsBucket)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.CreateBucketIfNotExists(usersBucket)
 		if err != nil {
 			return err
 		}
@@ -60,9 +66,9 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 	project.Status = utilities.UpdateProjectStatus(project)
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		id, err := bucket.NextSequence()
@@ -103,9 +109,9 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 
 	var project models.Project
 	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		v := bucket.Get(itob(id))
@@ -133,9 +139,9 @@ func (b *boltDB) GetProjects() ([]models.Project, error) {
 
 	var projects []models.Project
 	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		c := bucket.Cursor()
@@ -170,9 +176,9 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	p.Status = utilities.UpdateProjectStatus(p)
 
 	return db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		v, err := json.Marshal(p)
@@ -199,9 +205,9 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 
 	var project models.Project
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		val := bucket.Get(itob(t.ProjectID))
@@ -253,9 +259,9 @@ func (b *boltDB) RemoveProject(id int) error {
 	defer db.Close()
 
 	return db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		err := bucket.Delete(itob(id))
@@ -277,9 +283,9 @@ func (b *boltDB) RemoveTask(t models.Task) (models.Project, error) {
 
 	var project models.Project
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		val := bucket.Get(itob(t.ProjectID))
@@ -334,9 +340,9 @@ func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error
 
 	var project models.Project
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		val := bucket.Get(itob(iteration.ProjectID))
@@ -380,9 +386,9 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 
 	var project models.Project
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
+		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectBucket)
+			return fmt.Errorf("Bucket %q not found.", projectsBucket)
 		}
 
 		val := bucket.Get(itob(iteration.ProjectID))
