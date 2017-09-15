@@ -6,6 +6,7 @@ import Create from '@/components/views/Create';
 import Edit from '@/components/views/Edit';
 import Iteration from '@/components/views/Iteration';
 import IterationList from '@/components/views/IterationList';
+import CreateAccount from '@/components/views/CreateAccount';
 
 Vue.use(Router);
 
@@ -54,6 +55,11 @@ export default new Router({
       props: (route) => {
         return { pid: parseInt(route.params.pid) };
       }
+    },
+    {
+      path: '/createaccount',
+      name: 'CreateAccount',
+      component: CreateAccount
     }
   ]
 });
