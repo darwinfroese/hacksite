@@ -26,6 +26,13 @@ type Iteration struct {
 	ProjectID int
 }
 
+// User contains the information for each user
+type User struct {
+	Name, Password, Email string
+	confirmPassword, salt string
+	ProjectIds            []int
+}
+
 // Status constants for projects
 const (
 	StatusCompleted  = "Completed"
