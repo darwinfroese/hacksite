@@ -28,6 +28,7 @@ type Iteration struct {
 
 // User contains the information for each user
 type User struct {
+	ID                    int
 	Name, Password, Email string
 	confirmPassword, salt string
 	ProjectIds            []int

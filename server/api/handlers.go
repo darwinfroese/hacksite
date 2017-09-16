@@ -113,6 +113,35 @@ func currentIteration(ctx context, w http.ResponseWriter, r *http.Request) http.
 	}
 }
 
+func users(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			createUser(ctx, w, r)
+			return
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
+func login(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
 func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
 	args := r.URL.Query()
 	str := args.Get("id")
@@ -320,4 +349,26 @@ func switchIteration(ctx context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(project)
+}
+
+func createUser(ctx context, w http.ResponseWriter, r *http.Request) {
+	var user models.User
+	err := json.NewDecoder(r.Body).Decode(&user)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	err = ctx.db.CreateUser(user)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	// TODO: Make a helper function for this
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }

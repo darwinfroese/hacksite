@@ -16,6 +16,8 @@ var usersBucket = []byte("users")
 
 // TODO: Need to limit the amount of operations and logic
 // in the database code
+// TODO: Inserts shouldn't return the object, just an error
+// TODO: Iterations should probably be in their own bucket
 
 // CreateBoltDB creates a basic database struct
 func createBoltDB() Database {
@@ -68,7 +70,7 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		id, err := bucket.NextSequence()
@@ -111,7 +113,7 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		v := bucket.Get(itob(id))
@@ -141,7 +143,7 @@ func (b *boltDB) GetProjects() ([]models.Project, error) {
 	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		c := bucket.Cursor()
@@ -178,7 +180,7 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		v, err := json.Marshal(p)
@@ -207,7 +209,7 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		val := bucket.Get(itob(t.ProjectID))
@@ -261,7 +263,7 @@ func (b *boltDB) RemoveProject(id int) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		err := bucket.Delete(itob(id))
@@ -285,7 +287,7 @@ func (b *boltDB) RemoveTask(t models.Task) (models.Project, error) {
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		val := bucket.Get(itob(t.ProjectID))
@@ -342,7 +344,7 @@ func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		val := bucket.Get(itob(iteration.ProjectID))
@@ -388,7 +390,7 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
-			return fmt.Errorf("Bucket %q not found.", projectsBucket)
+			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
 		val := bucket.Get(itob(iteration.ProjectID))
@@ -421,6 +423,41 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 	return project, nil
 }
 
+// Create User creates a user in the database
+func (b *boltDB) CreateUser(user models.User) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(usersBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", usersBucket)
+		}
+
+		id, err := bucket.NextSequence()
+		if err != nil {
+			return err
+		}
+
+		user.ID = int(id)
+		userBytes, err := json.Marshal(user)
+		if err != nil {
+			return err
+		}
+
+		err = bucket.Put(itob(user.ID), userBytes)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+// Helper Functions
 func itob(v int) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))
