@@ -12,11 +12,12 @@ import (
 )
 
 var projectsBucket = []byte("projects")
-var usersBucket = []byte("users")
+var accountsBucket = []byte("accounts")
+var sessionsBucket = []byte("sessions")
 
-// TODO: Need to limit the amount of operations and logic
-// in the database code
-// TODO: Inserts shouldn't return the object, just an error
+// TODO: Need to limit the amount of operations and logic in the database code
+// TODO: Make sure the objects passed aren't being passed by copy so that we can just update
+// fields and they're returned instead of having to explicitly return the object
 // TODO: Iterations should probably be in their own bucket
 
 // CreateBoltDB creates a basic database struct
@@ -43,7 +44,12 @@ func createBuckets(b boltDB) {
 			return err
 		}
 
-		_, err = tx.CreateBucketIfNotExists(usersBucket)
+		_, err = tx.CreateBucketIfNotExists(accountsBucket)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.CreateBucketIfNotExists(sessionsBucket)
 		if err != nil {
 			return err
 		}
@@ -423,18 +429,18 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 	return project, nil
 }
 
-// Create User creates a user in the database
-func (b *boltDB) CreateUser(user models.User) error {
+// CreateAccount creates a user in the database
+func (b *boltDB) CreateAccount(account models.Account) (models.Account, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
-		return err
+		return models.Account{}, err
 	}
 	defer db.Close()
 
-	return db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(usersBucket)
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
 		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", usersBucket)
+			return fmt.Errorf("bucket %q not found", accountsBucket)
 		}
 
 		id, err := bucket.NextSequence()
@@ -442,19 +448,21 @@ func (b *boltDB) CreateUser(user models.User) error {
 			return err
 		}
 
-		user.ID = int(id)
-		userBytes, err := json.Marshal(user)
+		account.ID = int(id)
+		a, err := json.Marshal(account)
 		if err != nil {
 			return err
 		}
 
-		err = bucket.Put(itob(user.ID), userBytes)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		key := itob(int(id))
+		return bucket.Put(key, a)
 	})
+
+	if err != nil {
+		return models.Account{}, err
+	}
+
+	return account, nil
 }
 
 // Helper Functions

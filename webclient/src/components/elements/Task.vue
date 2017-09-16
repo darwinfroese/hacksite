@@ -1,7 +1,7 @@
 <template>
   <div class='task'>
     <label class='taskItem'>
-      <input type='checkbox' class='checkbox' v-model="task.Completed" @click="Update()">
+      <input type='checkbox' class='checkbox' @click="Update()" :checked="task.Completed">
       <span v-bind:class="{ completed: task.Completed }"> {{ task.Task }} </span>
     </label>
     <span class='removeButton' @click="RemoveTask()"> <i class='fa fa-times'></i> </span>
@@ -42,6 +42,8 @@ export default {
       this.renderDialog = false;
     },
     Update: function () {
+      this.task.Completed = !this.task.Completed;
+
       UpdateTask(this.task)
         .then((response) => {
           return response.json();

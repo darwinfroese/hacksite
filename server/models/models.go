@@ -26,12 +26,12 @@ type Iteration struct {
 	ProjectID int
 }
 
-// User contains the information for each user
-type User struct {
-	ID                    int
-	Name, Password, Email string
-	confirmPassword, salt string
-	ProjectIds            []int
+// Account contains the information for each user
+type Account struct {
+	ID                        int
+	Username, Password, Email string
+	salt                      string
+	ProjectIds                []int
 }
 
 // Status constants for projects

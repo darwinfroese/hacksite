@@ -83,6 +83,12 @@ export const ChangeCurrentIteration = (iteration) => {
   });
 };
 
-export const CreateAccount = (user) => {
-  console.log('Create Account Not Implemented');
+export const CreateAccount = (account) => {
+  return fetch(devApiBase + '/accounts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(account)
+  });
 };

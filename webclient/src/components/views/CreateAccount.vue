@@ -7,19 +7,19 @@
       <section class='form'>
         <div class='input-container'>
           <span class='label'> Username </span>
-          <input placeholder='Username' v-model="user.Username">
+          <input placeholder='Username' v-model="account.Username">
         </div>
         <div class='input-container'>
           <span class='label'> Email </span>
-          <input placeholder='someone@email.com' v-model="user.Email">
+          <input placeholder='someone@email.com' v-model="account.Email">
         </div>
         <div class='input-container'>
           <span class='label'> Password </span>
-          <input placeholder='Password' type='password' v-model="user.Password">
+          <input placeholder='Password' type='password' v-model="account.Password">
         </div>
         <div class='input-container'>
           <span class='label'> Confirm your password </span>
-          <input placeholder='Confirm Password' type='password' v-model="user.ConfirmPassword">
+          <input placeholder='Confirm Password' type='password' v-model="account.ConfirmPassword">
         </div>
       </section>
       <section class='message-container'>
@@ -41,7 +41,7 @@ import { CreateAccount } from '@/database';
 export default {
   data () {
     return {
-      user: {
+      account: {
         Username: '',
         Email: '',
         Password: '',
@@ -52,22 +52,29 @@ export default {
     };
   },
   updated () {
+    // TODO: Username validation (no spaces)
+    // TODO: Password validation (length, characters)
+    // TODO: Shouldn't send "ConfirmPassword" to the API since it isn't needed
     this.valid =
-      this.user.Name !== '' &&
-      this.user.Email !== '' &&
-      this.user.Password !== '' &&
-      this.user.ConfirmPassword !== '' &&
+      this.account.Username !== '' &&
+      this.account.Email !== '' &&
+      this.account.Password !== '' &&
+      this.account.ConfirmPassword !== '' &&
       this.ConfirmPasswords();
   },
   methods: {
     Create: function () {
-      CreateAccount(this.user)
+      CreateAccount(this.account)
         .then((response) => {
+          return response.json();
+        })
+        .then((account) => {
+          console.log(account);
           router.push('/');
         });
     },
     ConfirmPasswords: function () {
-      return this.user.Password === this.user.ConfirmPassword;
+      return this.account.Password === this.account.ConfirmPassword;
     }
   }
 };

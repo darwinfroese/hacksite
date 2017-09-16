@@ -113,11 +113,11 @@ func currentIteration(ctx context, w http.ResponseWriter, r *http.Request) http.
 	}
 }
 
-func users(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func accounts(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "POST":
-			createUser(ctx, w, r)
+			createAccount(ctx, w, r)
 			return
 		case "OPTIONS":
 			corsResponse(w, r)
@@ -351,16 +351,16 @@ func switchIteration(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func createUser(ctx context, w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
+	var account models.Account
+	err := json.NewDecoder(r.Body).Decode(&account)
 
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	err = ctx.db.CreateUser(user)
+	account, err = ctx.db.CreateAccount(account)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -370,5 +370,5 @@ func createUser(ctx context, w http.ResponseWriter, r *http.Request) {
 	// TODO: Make a helper function for this
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(account)
 }
