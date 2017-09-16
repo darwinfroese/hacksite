@@ -54,6 +54,7 @@ ul {
 }
 a {
   display: inline-block;
+  color: #fff;
 }
 .list {
   margin: 50px;
