@@ -23,7 +23,7 @@ type Database interface {
 	SwapCurrentIteration(models.Iteration) (models.Project, error)
 
 	// Accounts
-	CreateAccount(models.Account) (models.Account, error)
+	CreateAccount(models.Account) (int, error)
 }
 
 type boltDB struct {

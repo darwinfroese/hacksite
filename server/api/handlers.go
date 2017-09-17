@@ -16,6 +16,7 @@ type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 // TODO: move switch/case into a function that can be shared
 // TODO: move handlers into different files
 // TODO: A lot of these handlers are very similar
+// TODO: Make sure correct status codes are being returned
 
 func project(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -360,7 +361,16 @@ func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	account, err = ctx.db.CreateAccount(account)
+	salt, password, err := utilities.SaltPassword(account.Password)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	account.Password = password
+	account.Salt = salt
+
+	id, err := ctx.db.CreateAccount(account)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -370,5 +380,6 @@ func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
 	// TODO: Make a helper function for this
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(account)
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(struct{ ID int }{ID: id})
 }

@@ -1,6 +1,10 @@
 package utilities
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
@@ -33,4 +37,28 @@ func UpdateProjectStatus(project models.Project) string {
 	}
 
 	return status
+}
+
+// SaltPassword generates a salt, puts it into the password and returns
+// the salt and the new password or an error
+func SaltPassword(password string) (string, string, error) {
+	salt := make([]byte, sha256.Size)
+
+	n, err := rand.Read(salt)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	if n != sha256.Size {
+		return "", "", err
+	}
+
+	saltedVal := append([]byte(password), salt...)
+	encrypted := sha256.Sum256(saltedVal)
+
+	hashStr := base64.StdEncoding.EncodeToString(encrypted[:sha256.Size])
+	saltStr := base64.StdEncoding.EncodeToString(salt)
+
+	return saltStr, hashStr, nil
 }

@@ -1,5 +1,9 @@
 import 'whatwg-fetch';
 
+// TODO: Handle responses using status codes
+// TODO: Display errors to the user
+// TODO: Spinners/progress indicators on requests
+
 // TODO: This should be a build time value
 const devApiBase = 'http://localhost:8800/api/v1';
 // const prodApiBase = '/api/v1';

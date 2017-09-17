@@ -430,10 +430,10 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 }
 
 // CreateAccount creates a user in the database
-func (b *boltDB) CreateAccount(account models.Account) (models.Account, error) {
+func (b *boltDB) CreateAccount(account models.Account) (int, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
-		return models.Account{}, err
+		return -1, err
 	}
 	defer db.Close()
 
@@ -459,10 +459,10 @@ func (b *boltDB) CreateAccount(account models.Account) (models.Account, error) {
 	})
 
 	if err != nil {
-		return models.Account{}, err
+		return -1, err
 	}
 
-	return account, nil
+	return account.ID, nil
 }
 
 // Helper Functions
