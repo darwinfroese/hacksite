@@ -15,7 +15,7 @@
       </div>
       <div class='menu-bar'>
         <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
-        <router-link to='/'> Cancel </router-link>
+        <router-link to='/projects'> Cancel </router-link>
       </div>
     </div>
   </div>

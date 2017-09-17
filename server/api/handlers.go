@@ -13,6 +13,8 @@ import (
 
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
+const cookieMaxAge = 900
+
 // TODO: move switch/case into a function that can be shared
 // TODO: move handlers into different files
 // TODO: A lot of these handlers are very similar
@@ -133,6 +135,9 @@ func accounts(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 func login(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
+		case "POST":
+			loginHandler(ctx, w, r)
+			return
 		case "OPTIONS":
 			corsResponse(w, r)
 			return
@@ -382,4 +387,50 @@ func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(struct{ ID int }{ID: id})
+}
+
+func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+	var incAccount models.LoginAccount
+	err := json.NewDecoder(r.Body).Decode(&incAccount)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	account, err := ctx.db.GetAccount(incAccount.Username)
+	if err != nil {
+		if err.Error() == "no matching account found" {
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		} else {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	password, err := utilities.GetSaltedPassword(account.Password, account.Salt)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	if password != account.Password {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	session := utilities.CreateSession(account.ID)
+	// store session in database
+
+	// TODO: Implement remember me functionality (MaxAge: 0)
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "HacksiteSession",
+		Value:  session.Token,
+		MaxAge: cookieMaxAge,
+		// TODO: set secure when supporting HTTPS
+	})
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
 }

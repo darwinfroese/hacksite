@@ -24,6 +24,7 @@ type Database interface {
 
 	// Accounts
 	CreateAccount(models.Account) (int, error)
+	GetAccount(username string) (models.Account, error)
 }
 
 type boltDB struct {

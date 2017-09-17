@@ -8,6 +8,8 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
+const sessionTokenSize = 64
+
 // ValidateProject checks if the model is valid
 func ValidateProject(project models.Project) bool {
 	// TODO: Find a cleaner validation system
@@ -61,4 +63,41 @@ func SaltPassword(password string) (string, string, error) {
 	saltStr := base64.StdEncoding.EncodeToString(salt)
 
 	return saltStr, hashStr, nil
+}
+
+// GetSaltedPassword returns the salted version of the password using the
+// account's salt
+func GetSaltedPassword(password string, salt string) (string, error) {
+	s, err := base64.StdEncoding.DecodeString(salt)
+
+	if err != nil {
+		return "", err
+	}
+
+	saltedVal := append([]byte(password), s...)
+
+	encrypted := sha256.Sum256(saltedVal)
+
+	hashStr := base64.StdEncoding.EncodeToString(encrypted[:sha256.Size])
+
+	return hashStr, nil
+}
+
+// CreateSession returns the session token to store in the cookie
+func CreateSession(id int) models.Session {
+	session := CreateSessionToken()
+
+	return models.Session{
+		Token:  session,
+		UserID: id,
+	}
+}
+
+// CreateSessionToken generates a random session token
+func CreateSessionToken() string {
+	sesh := make([]byte, sessionTokenSize)
+
+	_, _ = rand.Read(sesh)
+
+	return base64.StdEncoding.EncodeToString(sesh)
 }

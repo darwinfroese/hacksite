@@ -33,6 +33,17 @@ type Account struct {
 	ProjectIds                      []int
 }
 
+// LoginAccount is a simplified account object for login requests
+type LoginAccount struct {
+	Username, Password string
+}
+
+// Session represents the contents of the cookie for the browser
+type Session struct {
+	Token  string
+	UserID int
+}
+
 // Status constants for projects
 const (
 	StatusCompleted  = "Completed"
