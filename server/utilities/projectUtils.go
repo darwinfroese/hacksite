@@ -4,11 +4,13 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
 const sessionTokenSize = 64
+const SessionMaxAge = 900 // seconds
 
 // ValidateProject checks if the model is valid
 func ValidateProject(project models.Project) bool {
@@ -75,7 +77,6 @@ func GetSaltedPassword(password string, salt string) (string, error) {
 	}
 
 	saltedVal := append([]byte(password), s...)
-
 	encrypted := sha256.Sum256(saltedVal)
 
 	hashStr := base64.StdEncoding.EncodeToString(encrypted[:sha256.Size])
@@ -88,8 +89,9 @@ func CreateSession(id int) models.Session {
 	session := CreateSessionToken()
 
 	return models.Session{
-		Token:  session,
-		UserID: id,
+		Token:      session,
+		UserID:     id,
+		Expiration: time.Now().Add(time.Second * time.Duration(SessionMaxAge)),
 	}
 }
 

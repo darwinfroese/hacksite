@@ -1,10 +1,12 @@
 package database
 
 import (
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
@@ -19,6 +21,7 @@ var sessionsBucket = []byte("sessions")
 // TODO: Make sure the objects passed aren't being passed by copy so that we can just update
 // fields and they're returned instead of having to explicitly return the object
 // TODO: Iterations should probably be in their own bucket
+// TODO: Wrap db calls better - take function as argument, call after opening db and getting bucket
 
 // CreateBoltDB creates a basic database struct
 func createBoltDB() Database {
@@ -138,12 +141,23 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 }
 
 // GetProjects will return all the projects in the database
-func (b *boltDB) GetProjects() ([]models.Project, error) {
+func (b *boltDB) GetProjects(userID int) ([]models.Project, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
+
+	var account models.Account
+	err = db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", accountsBucket)
+		}
+
+		acc := bucket.Get(itob(userID))
+		return json.Unmarshal(acc, &account)
+	})
 
 	var projects []models.Project
 	err = db.View(func(tx *bolt.Tx) error {
@@ -152,14 +166,16 @@ func (b *boltDB) GetProjects() ([]models.Project, error) {
 			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
-		c := bucket.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
+		for _, pid := range account.ProjectIds {
 			var project models.Project
-			err = json.Unmarshal(v, &project)
 
+			p := bucket.Get(itob(pid))
+
+			err := json.Unmarshal(p, &project)
 			if err != nil {
 				return err
 			}
+
 			projects = append(projects, project)
 		}
 
@@ -499,6 +515,125 @@ func (b *boltDB) GetAccount(username string) (models.Account, error) {
 	})
 
 	return account, err
+}
+
+// UpdateAccount inserts a new account into the accounts location in the bucket
+func (b *boltDB) UpdateAccount(account models.Account) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", accountsBucket)
+		}
+
+		key := itob(account.ID)
+		value, err := json.Marshal(account)
+		if err != nil {
+			return err
+		}
+
+		return bucket.Put(key, value)
+	})
+}
+
+// StoreSession inserts a session into the sessions bucket
+func (b *boltDB) StoreSession(session models.Session) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(sessionsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", sessionsBucket)
+		}
+
+		key, err := base64.StdEncoding.DecodeString(session.Token)
+		if err != nil {
+			return err
+		}
+		val, err := json.Marshal(session)
+		if err != nil {
+			return err
+		}
+
+		return bucket.Put(key, val)
+	})
+}
+
+// GetSession looks up a session in the database
+func (b *boltDB) GetSession(sessionToken string) (models.Session, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return models.Session{}, err
+	}
+	defer db.Close()
+
+	var session models.Session
+	err = db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(sessionsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", sessionsBucket)
+		}
+
+		key, err := base64.StdEncoding.DecodeString(sessionToken)
+		if err != nil {
+			return err
+		}
+
+		val := bucket.Get(key)
+		return json.Unmarshal(val, &session)
+	})
+
+	return session, err
+}
+
+// CleanSessions removes all sessions that are expired from the database and returns the
+// number of sessions removed
+func (b *boltDB) CleanSessions() (int, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return -1, err
+	}
+	defer db.Close()
+
+	count := 0
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(sessionsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", sessionsBucket)
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var sesh models.Session
+			err = json.Unmarshal(v, &sesh)
+
+			if err != nil {
+				return err
+			}
+
+			if time.Now().After(sesh.Expiration) {
+				err := c.Delete()
+				if err != nil {
+					return err
+				}
+
+				count++
+			}
+		}
+
+		return nil
+	})
+
+	return count, err
 }
 
 // Helper Functions

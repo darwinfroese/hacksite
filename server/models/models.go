@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 // Project contains a representation of a project
 type Project struct {
 	ID               int
@@ -40,8 +44,9 @@ type LoginAccount struct {
 
 // Session represents the contents of the cookie for the browser
 type Session struct {
-	Token  string
-	UserID int
+	Token      string
+	UserID     int
+	Expiration time.Time
 }
 
 // Status constants for projects

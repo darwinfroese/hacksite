@@ -14,17 +14,19 @@ export const AddProject = (p) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    mode: 'cors',
+    credentials: 'include',
     body: JSON.stringify(p)
   });
 };
 
 export const GetProject = (id) => {
   let url = devApiBase + '/project?id=' + id;
-  return fetch(url);
+  return fetch(url, { credentials: 'include', mode: 'cors' });
 };
 
 export const GetProjects = () => {
-  return fetch(devApiBase + '/projects');
+  return fetch(devApiBase + '/projects', { credentials: 'include', mode: 'cors' });
 };
 
 export const UpdateProject = (project) => {
@@ -33,6 +35,8 @@ export const UpdateProject = (project) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(project)
   });
 };
@@ -43,6 +47,8 @@ export const RemoveProject = (project) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(project)
   });
 };
@@ -53,6 +59,8 @@ export const UpdateTask = (task) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(task)
   });
 };
@@ -63,6 +71,8 @@ export const RemoveTask = (task) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(task)
   });
 };
@@ -73,6 +83,8 @@ export const AddIteration = (iteration) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(iteration)
   });
 };
@@ -83,6 +95,8 @@ export const ChangeCurrentIteration = (iteration) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(iteration)
   });
 };
@@ -93,10 +107,27 @@ export const CreateAccount = (account) => {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
+    mode: 'cors',
     body: JSON.stringify(account)
   });
 };
 
 export const Login = (account) => {
-  console.log('Login not implemented.');
+  return fetch(devApiBase + '/login', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Basic ' + btoa(account.Username + ':' + account.Password)
+    },
+    mode: 'cors',
+    credentials: 'include'
+  });
+};
+
+export const Authenticate = () => {
+  return fetch(devApiBase + '/session', {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include'
+  });
 };

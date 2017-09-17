@@ -15,13 +15,14 @@
       </div>
       <div class='menu-bar'>
         <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
-        <router-link to='/projects'> Cancel </router-link>
+        <router-link to='/'> Cancel </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import router from '@/router';
 import { Login } from '@/database';
 
 export default {
@@ -41,20 +42,25 @@ export default {
       Login(this.account)
         .then((response) => {
           if (response.status === 200) {
-            this.message = 'Successfully logged in';
+            this.message = 'Successfully logged in. Redirecting...';
             this.success = true;
+            this.Redirect();
           } else if (response.status === 401) {
             this.message = 'Incorrect username or password';
           } else {
             this.message = 'Something went wrong, please try again';
           }
+        }, (error) => {
+          console.log('Error: ', error);
         });
     },
     Validate: function () {
       this.valid = this.account.Username !== '' && this.account.Password !== '';
     },
     Redirect: function () {
-
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
     }
   },
   updated () {

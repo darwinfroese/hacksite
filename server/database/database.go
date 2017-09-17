@@ -7,11 +7,11 @@ type Database interface {
 	// Projects
 	AddProject(project models.Project) (models.Project, error)
 	GetProject(id int) (models.Project, error)
-	GetProjects() ([]models.Project, error)
+	GetProjects(userID int) ([]models.Project, error)
 	// TODO: UpdateProject - models.Project could probably be removed
 	// and the project passed in returned since no internal changes
 	// are happening
-	UpdateProject(models.Project) error
+	UpdateProject(project models.Project) error
 	RemoveProject(id int) error
 
 	// Tasks
@@ -19,12 +19,18 @@ type Database interface {
 	RemoveTask(task models.Task) (models.Project, error)
 
 	// Iterations
-	AddIteration(models.Iteration) (models.Project, error)
-	SwapCurrentIteration(models.Iteration) (models.Project, error)
+	AddIteration(iteration models.Iteration) (models.Project, error)
+	SwapCurrentIteration(iteration models.Iteration) (models.Project, error)
 
 	// Accounts
-	CreateAccount(models.Account) (int, error)
+	CreateAccount(account models.Account) (int, error)
 	GetAccount(username string) (models.Account, error)
+	UpdateAccount(account models.Account) error
+
+	// Sessions
+	StoreSession(session models.Session) error
+	GetSession(sessionToken string) (models.Session, error)
+	CleanSessions() (int, error)
 }
 
 type boltDB struct {

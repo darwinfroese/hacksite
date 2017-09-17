@@ -6,19 +6,22 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
+const sessionCookieName = "HacksiteSession"
 
-const cookieMaxAge = 900
+// TODO: Access-Control-Allow-Origin needs to restrict to production web port
+type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
 // TODO: move switch/case into a function that can be shared
 // TODO: move handlers into different files
 // TODO: A lot of these handlers are very similar
 // TODO: Make sure correct status codes are being returned
+// TODO: Set CORS earlier since it "errors" if http.Error happens
 
 func project(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +44,7 @@ func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
-			getAllProjects(ctx, w)
+			getAllProjects(ctx, w, r)
 			return
 		case "POST":
 			createProject(ctx, w, r)
@@ -135,8 +138,24 @@ func accounts(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerF
 func login(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
-		case "POST":
+		case "GET":
 			loginHandler(ctx, w, r)
+			return
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
+func session(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			sessionHandler(ctx, w, r)
 			return
 		case "OPTIONS":
 			corsResponse(w, r)
@@ -172,14 +191,32 @@ func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(project)
 }
 
 // Handlers for specific methods on /projects
-func getAllProjects(ctx context, w http.ResponseWriter) {
-	projects, err := ctx.db.GetProjects()
+func getAllProjects(ctx context, w http.ResponseWriter, r *http.Request) {
+	sessionToken, err := r.Cookie(sessionCookieName)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	session, err := ctx.db.GetSession(sessionToken.Value)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	if time.Now().After(session.Expiration) {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	projects, err := ctx.db.GetProjects(session.UserID)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -187,7 +224,8 @@ func getAllProjects(ctx context, w http.ResponseWriter) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(projects)
 }
@@ -216,7 +254,8 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
@@ -239,7 +278,8 @@ func updateProject(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
@@ -261,7 +301,8 @@ func deleteProject(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 // Handlers for specific methods on /tasks
@@ -281,8 +322,9 @@ func updateTask(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
@@ -302,15 +344,17 @@ func removeTask(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
 // Variety handlers
 func corsResponse(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	w.WriteHeader(http.StatusOK)
 }
@@ -331,8 +375,9 @@ func addIteration(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
@@ -352,8 +397,9 @@ func switchIteration(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
@@ -375,7 +421,7 @@ func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
 	account.Password = password
 	account.Salt = salt
 
-	id, err := ctx.db.CreateAccount(account)
+	_, err = ctx.db.CreateAccount(account)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -383,22 +429,24 @@ func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Make a helper function for this
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(struct{ ID int }{ID: id})
 }
 
+// TODO: Extend session length everytime the user interacts with the API
 func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
-	var incAccount models.LoginAccount
-	err := json.NewDecoder(r.Body).Decode(&incAccount)
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	username, password, ok := r.BasicAuth()
 
-	if err != nil {
+	if !ok {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	account, err := ctx.db.GetAccount(incAccount.Username)
+	account, err := ctx.db.GetAccount(username)
 	if err != nil {
 		if err.Error() == "no matching account found" {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -408,7 +456,7 @@ func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	password, err := utilities.GetSaltedPassword(account.Password, account.Salt)
+	password, err = utilities.GetSaltedPassword(password, account.Salt)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -420,17 +468,46 @@ func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := utilities.CreateSession(account.ID)
-	// store session in database
+	err = ctx.db.StoreSession(session)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
 	// TODO: Implement remember me functionality (MaxAge: 0)
-
 	http.SetCookie(w, &http.Cookie{
-		Name:   "HacksiteSession",
+		Name:   sessionCookieName,
 		Value:  session.Token,
-		MaxAge: cookieMaxAge,
+		MaxAge: utilities.SessionMaxAge,
 		// TODO: set secure when supporting HTTPS
 	})
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
+}
+
+func sessionHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	sessionCookie, err := r.Cookie(sessionCookieName)
+	if err != nil {
+		fmt.Println("Error getting cookie: ", err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	session, err := ctx.db.GetSession(sessionCookie.Value)
+	if time.Now().After(session.Expiration) {
+		fmt.Println("Session expired.")
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+	if err != nil {
+		fmt.Println("Error getting session: ", err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }

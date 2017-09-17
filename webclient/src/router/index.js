@@ -8,15 +8,16 @@ import Iteration from '@/components/views/Iteration';
 import IterationList from '@/components/views/IterationList';
 import CreateAccount from '@/components/views/CreateAccount';
 import Login from '@/components/views/Login';
+import { Authenticate } from '@/database';
 
 Vue.use(Router);
 
 // TODO: Route better - use the project id inside the
 // route better (ie. :pid/details, :pid/iterations, etc.)
-export default new Router({
+const router = new Router({
   routes: [
     {
-      path: '/projects',
+      path: '/',
       name: 'Projects',
       component: Projects
     },
@@ -69,3 +70,22 @@ export default new Router({
     }
   ]
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    next();
+    return;
+  }
+
+  Authenticate()
+    .then((response) => {
+      if (response.status === 401) {
+        next('/login');
+      }
+      if (response.status === 200) {
+        next();
+      }
+    });
+});
+
+export default router;

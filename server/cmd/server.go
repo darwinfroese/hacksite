@@ -6,11 +6,16 @@ import (
 
 	"github.com/darwinfroese/hacksite/server/api"
 	"github.com/darwinfroese/hacksite/server/database"
+	"github.com/darwinfroese/hacksite/server/scheduler"
 )
 
+// Constants
 const (
 	version = "1.0.0"
 )
+
+// TODO: Receive arguments to perform actions on the server while it's running
+// TODO: Receive arguments to gracefully shutdown the server
 
 func main() {
 	fmt.Println("Setting up the server.")
@@ -21,6 +26,9 @@ func main() {
 	m.Handle("/", http.FileServer(http.Dir("./webdist")))
 
 	api.RegisterRoutes(m, db)
+
+	fmt.Println("Starting server scheduler.")
+	scheduler.Start(db)
 
 	fmt.Println("Starting the server.")
 	http.ListenAndServe(":8800", m)
