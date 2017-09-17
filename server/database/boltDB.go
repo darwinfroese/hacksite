@@ -517,6 +517,29 @@ func (b *boltDB) GetAccount(username string) (models.Account, error) {
 	return account, err
 }
 
+// GetAccountByID looksup an account by using the userID key
+func (b *boltDB) GetAccountByID(userID int) (models.Account, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return models.Account{}, err
+	}
+	defer db.Close()
+
+	var account models.Account
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", accountsBucket)
+		}
+
+		a := bucket.Get(itob(userID))
+
+		return json.Unmarshal(a, &account)
+	})
+
+	return account, err
+}
+
 // UpdateAccount inserts a new account into the accounts location in the bucket
 func (b *boltDB) UpdateAccount(account models.Account) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)

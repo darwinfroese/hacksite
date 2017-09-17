@@ -25,6 +25,7 @@ type Database interface {
 	// Accounts
 	CreateAccount(account models.Account) (int, error)
 	GetAccount(username string) (models.Account, error)
+	GetAccountByID(userID int) (models.Account, error)
 	UpdateAccount(account models.Account) error
 
 	// Sessions

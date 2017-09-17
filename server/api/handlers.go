@@ -247,7 +247,27 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 
 	project, err = ctx.db.AddProject(project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	// TODO: this should probably be pushed into a helper function
+	sessionCookie, err := r.Cookie(utilities.SessionCookieName)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	session, err := ctx.db.GetSession(sessionCookie.Value)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+	account, err := ctx.db.GetAccountByID(session.UserID)
+	account.ProjectIds = append(account.ProjectIds, project.ID)
+
+	err = ctx.db.UpdateAccount(account)
+	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
