@@ -7,6 +7,7 @@ import Edit from '@/components/views/Edit';
 import Iteration from '@/components/views/Iteration';
 import IterationList from '@/components/views/IterationList';
 import CreateAccount from '@/components/views/CreateAccount';
+import Login from '@/components/views/Login';
 
 Vue.use(Router);
 
@@ -15,7 +16,7 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/projects',
       name: 'Projects',
       component: Projects
     },
@@ -60,6 +61,11 @@ export default new Router({
       path: '/createaccount',
       name: 'CreateAccount',
       component: CreateAccount
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 });

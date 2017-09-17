@@ -92,3 +92,7 @@ export const CreateAccount = (account) => {
     body: JSON.stringify(account)
   });
 };
+
+export const Login = (account) => {
+  console.log('Login not implemented.');
+};
