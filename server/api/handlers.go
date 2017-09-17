@@ -12,8 +12,6 @@ import (
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-const sessionCookieName = "HacksiteSession"
-
 // TODO: Access-Control-Allow-Origin needs to restrict to production web port
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
@@ -199,7 +197,7 @@ func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
 
 // Handlers for specific methods on /projects
 func getAllProjects(ctx context, w http.ResponseWriter, r *http.Request) {
-	sessionToken, err := r.Cookie(sessionCookieName)
+	sessionToken, err := r.Cookie(utilities.SessionCookieName)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
@@ -475,14 +473,7 @@ func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Implement remember me functionality (MaxAge: 0)
-	http.SetCookie(w, &http.Cookie{
-		Name:   sessionCookieName,
-		Value:  session.Token,
-		MaxAge: utilities.SessionMaxAge,
-		// TODO: set secure when supporting HTTPS
-	})
-
+	utilities.SetCookie(w, utilities.SessionCookieName, session.Token)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -490,24 +481,31 @@ func sessionHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
-	sessionCookie, err := r.Cookie(sessionCookieName)
+	sessionCookie, err := r.Cookie(utilities.SessionCookieName)
 	if err != nil {
-		fmt.Println("Error getting cookie: ", err.Error())
+		fmt.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
 	session, err := ctx.db.GetSession(sessionCookie.Value)
 	if time.Now().After(session.Expiration) {
-		fmt.Println("Session expired.")
+		fmt.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 	if err != nil {
-		fmt.Println("Error getting session: ", err.Error())
+		fmt.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
+
+	session.Expiration = time.Now().Add(time.Second * utilities.SessionMaxAge)
+	err = ctx.db.StoreSession(session)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
+	utilities.SetCookie(w, utilities.SessionCookieName, session.Token)
 
 	w.WriteHeader(http.StatusOK)
 }

@@ -4,13 +4,19 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"net/http"
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
 const sessionTokenSize = 64
-const SessionMaxAge = 900 // seconds
+
+// SessionMaxAge is the cookie length in seconds
+const SessionMaxAge = 900
+
+// SessionCookieName is the name of the cookie
+const SessionCookieName = "HacksiteSession"
 
 // ValidateProject checks if the model is valid
 func ValidateProject(project models.Project) bool {
@@ -102,4 +108,15 @@ func CreateSessionToken() string {
 	_, _ = rand.Read(sesh)
 
 	return base64.StdEncoding.EncodeToString(sesh)
+}
+
+// SetCookie creates an http cookie and sets it in the response
+func SetCookie(w http.ResponseWriter, name, token string) {
+	// TODO: Implement remember me functionality (MaxAge: 0)
+	http.SetCookie(w, &http.Cookie{
+		Name:   name,
+		Value:  token,
+		MaxAge: SessionMaxAge,
+		// TODO: set secure when supporting HTTPS
+	})
 }
