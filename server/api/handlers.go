@@ -149,6 +149,22 @@ func login(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc
 	}
 }
 
+func logout(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			logoutHandler(ctx, w, r)
+			return
+		case "OPTIONS":
+			corsResponse(w, r)
+			return
+		default:
+			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+			return
+		}
+	}
+}
+
 func session(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -524,8 +540,30 @@ func sessionHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 	err = ctx.db.StoreSession(session)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	utilities.SetCookie(w, utilities.SessionCookieName, session.Token)
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func logoutHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	sessionCookie, err := r.Cookie(utilities.SessionCookieName)
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	err = ctx.db.RemoveSession(sessionCookie.Value)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 }

@@ -32,6 +32,7 @@ type Database interface {
 	StoreSession(session models.Session) error
 	GetSession(sessionToken string) (models.Session, error)
 	CleanSessions() (int, error)
+	RemoveSession(sessionToken string) error
 }
 
 type boltDB struct {

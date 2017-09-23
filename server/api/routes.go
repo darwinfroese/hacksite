@@ -21,5 +21,6 @@ func RegisterRoutes(mux *http.ServeMux, db database.Database) {
 	mux.Handle(apiPrefix+"/currentiteration", context{db: db, handler: currentIteration})
 	mux.Handle(apiPrefix+"/accounts", context{db: db, handler: accounts})
 	mux.Handle(apiPrefix+"/login", context{db: db, handler: login})
+	mux.Handle(apiPrefix+"/logout", context{db: db, handler: logout})
 	mux.Handle(apiPrefix+"/session", context{db: db, handler: session})
 }

@@ -659,6 +659,29 @@ func (b *boltDB) CleanSessions() (int, error) {
 	return count, err
 }
 
+// RemoveSession removes the token from the database, typically for loguout
+func (b *boltDB) RemoveSession(sessionToken string) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(sessionsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", sessionsBucket)
+		}
+
+		key, err := base64.StdEncoding.DecodeString(sessionToken)
+		if err != nil {
+			return err
+		}
+
+		return bucket.Delete(key)
+	})
+}
+
 // Helper Functions
 func itob(v int) []byte {
 	b := make([]byte, 8)
