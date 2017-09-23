@@ -1,16 +1,28 @@
 <template>
   <div class='header'>
-    <h3 @click="NavHome"> Hacksite </h3>
+    <div class='bar'>
+      <h3 @click="NavHome"> Hacksite </h3>
+      <span>
+        <p v-if="loggedIn"> Logout </p>
+        <p v-if="!loggedIn"> Login / Create Account </p>
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
+import { GetLoggedIn } from '@/database';
 import router from '@/router';
 
 export default {
   methods: {
     NavHome: function () {
       router.push('/');
+    }
+  },
+  computed: {
+    loggedIn: function () {
+      return GetLoggedIn();
     }
   }
 };
