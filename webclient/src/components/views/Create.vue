@@ -1,10 +1,13 @@
 <template>
-  <div class='create-container'>
-    <ProjectDialog
-      :title="'Create A New Project'"
-      :buttonText="'Add Project'"
-      :project="project"
-      v-on:Handle="SaveProject" />
+  <div>
+    <LoggedInHeader />
+    <div class='create-container'>
+      <ProjectDialog
+        :title="'Create A New Project'"
+        :buttonText="'Add Project'"
+        :project="project"
+        v-on:Handle="SaveProject" />
+    </div>
   </div>
 </template>
 
@@ -12,10 +15,12 @@
 import { AddProject } from '@/database';
 import router from '@/router';
 import ProjectDialog from '@/components/elements/ProjectDialog';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'ProjectDialog': ProjectDialog
+    'ProjectDialog': ProjectDialog,
+    'LoggedInHeader': LoggedInHeader
   },
   data () {
     return {

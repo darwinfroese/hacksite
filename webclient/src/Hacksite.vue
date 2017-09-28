@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <TitleHeader />
     <router-view></router-view>
     <InfoFooter />
   </div>
@@ -8,13 +7,11 @@
 
 <script>
 import InfoFooter from '@/components/elements/InfoFooter';
-import TitleHeader from '@/components/elements/TitleHeader';
 
 export default {
   name: 'app',
   components: {
-    'InfoFooter': InfoFooter,
-    'TitleHeader': TitleHeader
+    'InfoFooter': InfoFooter
   }
 };
 </script>

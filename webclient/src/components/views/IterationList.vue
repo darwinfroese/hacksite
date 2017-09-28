@@ -1,26 +1,29 @@
 <template>
-  <div class='container'>
-    <div class='menu-bar'>
-      <router-link class='menu-button' :to="detailsRoute">
-        <i class='fa fa-chevron-left'></i>
-        Back to Project
-      </router-link>
-    </div>
-    <br>
-    <div class='card'>
-      <div class='content'>
-        <div class='field'>
-          <span class='label'> Project Name </span>
-          <span class='value'> {{ project.Name }} </span>
-        </div>
+  <div>
+    <LoggedInHeader />
+    <div class='container'>
+      <div class='menu-bar'>
+        <router-link class='menu-button' :to="detailsRoute">
+          <i class='fa fa-chevron-left'></i>
+          Back to Project
+        </router-link>
       </div>
-      <div class='iteration-container' v-if="project.Iterations">
-        <section v-for="iteration in project.Iterations" :key="iteration.Number">
-          <div class='iteration-label'> Iteration {{ iteration.Number }} </div>
-          <div v-for="task in iteration.Tasks" :key="task.ID" class='iteration' v-bind:class="{ completed: task.Completed }">
-            {{ task.Task }}
+      <br>
+      <div class='card'>
+        <div class='content'>
+          <div class='field'>
+            <span class='label'> Project Name </span>
+            <span class='value'> {{ project.Name }} </span>
           </div>
-        </section>
+        </div>
+        <div class='iteration-container' v-if="project.Iterations">
+          <section v-for="iteration in project.Iterations" :key="iteration.Number">
+            <div class='iteration-label'> Iteration {{ iteration.Number }} </div>
+            <div v-for="task in iteration.Tasks" :key="task.ID" class='iteration' v-bind:class="{ completed: task.Completed }">
+              {{ task.Task }}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   </div>
@@ -28,8 +31,12 @@
 
 <script>
 import { GetProject } from '@/database';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
+  components: {
+    'LoggedInHeader': LoggedInHeader
+  },
   data () {
     return {
       project: {}

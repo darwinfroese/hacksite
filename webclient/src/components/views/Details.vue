@@ -1,44 +1,47 @@
 <template>
-  <div class='details-container'>
-    <div class='menu-bar'>
-      <router-link class='menu-button' to='/'>
-        <i class='fa fa-chevron-left'></i>
-        Back to Projects
-      </router-link>
-      <router-link class='menu-button' :to="editRoute">
-        <i class='fa fa-pencil'></i>
-        Edit Project
-      </router-link>
-      <router-link class='menu-button' :to="iterationRoute">
-        <i class='fa fa-plus'></i>
-        Add Iteration
-      </router-link>
-      <router-link class='menu-button' :to="allIterations">
-        <i class='fa fa-history'></i>
-        View iterations
-      </router-link>
-    </div>
-    <br>
-    <div class='detail-card'>
-      <div class='project-header'>
-        [ {{ project.ID }} ] {{ project.Name }}
-        <span class='iteration' v-if="project.CurrentIteration" title='Current Iteration'>
-           ( Iteration {{ project.CurrentIteration.Number }} )
-        </span>
-        <span class='swap-link' v-if="swappable" title='Swap Iterations'>
-          Swap Iterations
-          <select @change="SwapIterations" v-model="selectedIteration">
-            <option v-for="iteration in project.Iterations" :key="iteration.Number" :value="iteration.Number">
-              {{ iteration.Number }}
-            </option>
-          </select>
-        </span>
+  <div>
+    <LoggedInHeader />
+    <div class='details-container'>
+      <div class='menu-bar'>
+        <router-link class='menu-button' to='/'>
+          <i class='fa fa-chevron-left'></i>
+          Back to Projects
+        </router-link>
+        <router-link class='menu-button' :to="editRoute">
+          <i class='fa fa-pencil'></i>
+          Edit Project
+        </router-link>
+        <router-link class='menu-button' :to="iterationRoute">
+          <i class='fa fa-plus'></i>
+          Add Iteration
+        </router-link>
+        <router-link class='menu-button' :to="allIterations">
+          <i class='fa fa-history'></i>
+          View iterations
+        </router-link>
       </div>
-      <div class='description'>
-        {{ project.Description }}
-      </div>
-      <div class='tasks' v-if="project.CurrentIteration">
-        <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
+      <br>
+      <div class='detail-card'>
+        <div class='project-header'>
+          [ {{ project.ID }} ] {{ project.Name }}
+          <span class='iteration' v-if="project.CurrentIteration" title='Current Iteration'>
+            ( Iteration {{ project.CurrentIteration.Number }} )
+          </span>
+          <span class='swap-link' v-if="swappable" title='Swap Iterations'>
+            Swap Iterations
+            <select @change="SwapIterations" v-model="selectedIteration">
+              <option v-for="iteration in project.Iterations" :key="iteration.Number" :value="iteration.Number">
+                {{ iteration.Number }}
+              </option>
+            </select>
+          </span>
+        </div>
+        <div class='description'>
+          {{ project.Description }}
+        </div>
+        <div class='tasks' v-if="project.CurrentIteration">
+          <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
+        </div>
       </div>
     </div>
   </div>
@@ -47,10 +50,12 @@
 <script>
 import { GetProject, ChangeCurrentIteration } from '@/database';
 import Task from '@/components/elements/Task';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'Task': Task
+    'Task': Task,
+    'LoggedInHeader': LoggedInHeader
   },
   computed: {
     editRoute: function () {

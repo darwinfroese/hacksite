@@ -1,34 +1,37 @@
 <template>
-  <div class='container'>
-    <div class='card'>
-      <section class='header'>
-        <h4> Create Your Account </h4>
-      </section>
-      <section class='form'>
-        <div class='input-container'>
-          <span class='label'> Username </span>
-          <input placeholder='Username' v-model="account.Username">
+  <div>
+    <LoginHeader />
+    <div class='container'>
+      <div class='card'>
+        <section class='header'>
+          <h4> Create Your Account </h4>
+        </section>
+        <section class='form'>
+          <div class='input-container'>
+            <span class='label'> Username </span>
+            <input placeholder='Username' v-model="account.Username">
+          </div>
+          <div class='input-container'>
+            <span class='label'> Email </span>
+            <input placeholder='someone@email.com' v-model="account.Email">
+          </div>
+          <div class='input-container'>
+            <span class='label'> Password </span>
+            <input placeholder='Password' type='password' v-model="account.Password">
+          </div>
+          <div class='input-container'>
+            <span class='label'> Confirm your password </span>
+            <input placeholder='Confirm Password' type='password' v-model="account.ConfirmPassword">
+          </div>
+        </section>
+        <section class='message-container'>
+          <span class='message'> All fields are required. </span>
+          <span class='message'> {{ message }} </span>
+        </section>
+        <div class='menu-bar'>
+          <button class='menu-button' @click="Create" :disabled="!valid"> Create </button>
+          <router-link to='/'> Cancel </router-link>
         </div>
-        <div class='input-container'>
-          <span class='label'> Email </span>
-          <input placeholder='someone@email.com' v-model="account.Email">
-        </div>
-        <div class='input-container'>
-          <span class='label'> Password </span>
-          <input placeholder='Password' type='password' v-model="account.Password">
-        </div>
-        <div class='input-container'>
-          <span class='label'> Confirm your password </span>
-          <input placeholder='Confirm Password' type='password' v-model="account.ConfirmPassword">
-        </div>
-      </section>
-      <section class='message-container'>
-        <span class='message'> All fields are required. </span>
-        <span class='message'> {{ message }} </span>
-      </section>
-      <div class='menu-bar'>
-        <button class='menu-button' @click="Create" :disabled="!valid"> Create </button>
-        <router-link to='/'> Cancel </router-link>
       </div>
     </div>
   </div>
@@ -37,8 +40,12 @@
 <script>
 import router from '@/router';
 import { CreateAccount } from '@/database';
+import LoginHeader from '@/components/elements/LoginHeader';
 
 export default {
+  components: {
+    'LoginHeader': LoginHeader
+  },
   data () {
     return {
       account: {

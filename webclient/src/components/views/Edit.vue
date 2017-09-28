@@ -1,11 +1,14 @@
 <template>
-  <div class='edit-container'>
-    <ProjectDialog
-      v-if="hasProject"
-      :title="editTitle"
-      :buttonText="'Update'"
-      :project="project"
-      v-on:Handle="Update" />
+  <div>
+    <LoggedInHeader />
+    <div class='edit-container'>
+      <ProjectDialog
+        v-if="hasProject"
+        :title="editTitle"
+        :buttonText="'Update'"
+        :project="project"
+        v-on:Handle="Update" />
+    </div>
   </div>
 </template>
 
@@ -13,10 +16,12 @@
 import { GetProject, UpdateProject } from '@/database';
 import router from '@/router';
 import ProjectDialog from '@/components/elements/ProjectDialog';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'ProjectDialog': ProjectDialog
+    'ProjectDialog': ProjectDialog,
+    'LoggedInHeader': LoggedInHeader
   },
   props: ['pid'],
   data () {

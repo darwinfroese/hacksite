@@ -8,8 +8,6 @@ import 'whatwg-fetch';
 const devApiBase = 'http://localhost:8800/api/v1';
 // const prodApiBase = '/api/v1';
 
-var loggedIn = false;
-
 export const AddProject = (p) => {
   return fetch(devApiBase + '/projects', {
     method: 'POST',
@@ -134,10 +132,10 @@ export const Authenticate = () => {
   });
 };
 
-export const GetLoggedIn = (val) => {
-  loggedIn = val;
-};
-
-export const SetLoggedIn = () => {
-  return loggedIn;
+export const Logout = () => {
+  return fetch(devApiBase + '/logout', {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include'
+  });
 };

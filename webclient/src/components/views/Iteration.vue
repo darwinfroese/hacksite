@@ -1,20 +1,23 @@
 <template>
-  <div class='container'>
-    <div class='card'>
-      <h4> Enter Iteration Information </h4>
-      <div class='form'>
-        <div class='field'>
-          <span class='label'> Project Name </span>
-          <span class='value'> {{ this.project.Name }} </span>
-        </div>
-        <div class='field'>
-          <span class='label'> Project Description </span>
-          <span class='value'> {{ this.project.Description }} </span>
-        </div>
-        <TaskInputs />
-        <div class='menu-bar'>
-          <button class='menu-button' @click="AddIteration"> Start Iteration </button>
-          <router-link to='/'> Cancel </router-link>
+  <div>
+    <LoggedInHeader />
+    <div class='container'>
+      <div class='card'>
+        <h4> Enter Iteration Information </h4>
+        <div class='form'>
+          <div class='field'>
+            <span class='label'> Project Name </span>
+            <span class='value'> {{ this.project.Name }} </span>
+          </div>
+          <div class='field'>
+            <span class='label'> Project Description </span>
+            <span class='value'> {{ this.project.Description }} </span>
+          </div>
+          <TaskInputs />
+          <div class='menu-bar'>
+            <button class='menu-button' @click="AddIteration"> Start Iteration </button>
+            <router-link to='/'> Cancel </router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -25,10 +28,12 @@
 import router from '@/router';
 import { GetProject, AddIteration } from '@/database';
 import TaskInputs from '@/components/elements/TaskInputs';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'TaskInputs': TaskInputs
+    'TaskInputs': TaskInputs,
+    'LoggedInHeader': LoggedInHeader
   },
   data () {
     return {

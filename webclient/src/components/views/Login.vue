@@ -1,21 +1,28 @@
 <template>
-  <!-- TODO: All of these inputs should accept 'enter' as the default action -->
-  <div class='container'>
-    <div class='card'>
-      <div class='input-container'>
-        <span class='input-label'> Username </span>
-        <input type='text' v-model="account.Username" placeholder='Username'>
-      </div>
-      <div class='input-container'>
-        <span class='input-label'> Password </span>
-        <input type='password' v-model="account.Password" placeholder='Password'>
-      </div>
-      <div class='message-container'>
-        <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
-      </div>
-      <div class='menu-bar'>
-        <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
-        <router-link to='/'> Cancel </router-link>
+  <div>
+    <LoginHeader />
+    <!-- TODO: All of these inputs should accept 'enter' as the default action -->
+    <div class='container'>
+      <div class='card'>
+        <div class='input-container'>
+          <span class='input-label'> Username </span>
+          <input type='text' v-model="account.Username" placeholder='Username'>
+        </div>
+        <div class='input-container'>
+          <span class='input-label'> Password </span>
+          <input type='password' v-model="account.Password" placeholder='Password'>
+        </div>
+        <div class='message-container'>
+          <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
+        </div>
+        <div class='create-account'>
+          <span class='helper-text'> Don't have an account? </span>
+          <router-link to='/createaccount'> Create one now. </router-link>
+        </div>
+        <div class='menu-bar'>
+          <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
+          <router-link to='/'> Cancel </router-link>          
+        </div>
       </div>
     </div>
   </div>
@@ -24,8 +31,12 @@
 <script>
 import router from '@/router';
 import { Login } from '@/database';
+import LoginHeader from '@/components/elements/LoginHeader.vue';
 
 export default {
+  components: {
+    'LoginHeader': LoginHeader
+  },
   data () {
     return {
       account: {
@@ -152,5 +163,13 @@ button:hover {
 }
 .success {
   color: #4e9155;
+}
+.create-account {
+  padding: 10px;
+  font-size: 14px;
+  font-style: italic;
+}
+.helper-text {
+  font-style: normal;
 }
 </style>

@@ -1,14 +1,18 @@
 <template>
-  <div class='list'>
-    <div class='menu-bar'>
-        <router-link class='menu-button' to='/create'>
-          <i class='fa fa-plus'></i>
-          Add a project
-        </router-link>
-      </span>
-    </div>
-    <div class='list-container'>
-      <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
+  <div>
+    <!-- Log in should be one "page" and logged in should be another -->
+    <LoggedInHeader />
+    <div class='list'>
+      <div class='menu-bar'>
+          <router-link class='menu-button' to='/create'>
+            <i class='fa fa-plus'></i>
+            Add a project
+          </router-link>
+        </span>
+      </div>
+      <div class='list-container'>
+        <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
+      </div>
     </div>
   </div>
 </template>
@@ -16,10 +20,12 @@
 <script>
 import { GetProjects } from '@/database';
 import Project from '@/components/elements/Project';
+import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'Project': Project
+    'Project': Project,
+    'LoggedInHeader': LoggedInHeader
   },
   data () {
     return {
