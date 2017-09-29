@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/darwinfroese/hacksite/server/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 const (
@@ -19,7 +19,7 @@ var writeMethods = []string{"POST", "OPTIONS"}
 
 // RegisterRoutes registers all the routes into the mux
 func RegisterRoutes(mux *http.ServeMux, db database.Database) {
-	mux.Handle(apiPrefix+"/projects", apiContext{db: db, apiHandler: projects, supportedMethods: readWriteUpdateMethods})
+	mux.Handle(apiPrefix+"/projects", apiContext{db: db, apiHandler: projectsRoute, supportedMethods: readWriteUpdateMethods})
 	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: project, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasks, supportedMethods: readWriteUpdateMethods})
 	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterations, supportedMethods: writeMethods})

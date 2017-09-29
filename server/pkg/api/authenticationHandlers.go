@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/darwinfroese/hacksite/server/utilities"
+	"github.com/darwinfroese/hacksite/server/pkg/auth"
 )
 
 var loginHandlersMap = map[string]handler{
@@ -45,7 +45,7 @@ func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	password, err = utilities.GetSaltedPassword(password, account.Salt)
+	password, err = auth.GetSaltedPassword(password, account.Salt)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -56,7 +56,7 @@ func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session := utilities.CreateSession(account.ID)
+	session := auth.CreateSession(account.ID)
 	err = ctx.db.StoreSession(session)
 
 	if err != nil {
@@ -64,7 +64,7 @@ func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utilities.SetCookie(w, utilities.SessionCookieName, session.Token)
+	auth.SetCookie(w, auth.SessionCookieName, session.Token)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -72,7 +72,7 @@ func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
-	sessionCookie, err := r.Cookie(utilities.SessionCookieName)
+	sessionCookie, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)

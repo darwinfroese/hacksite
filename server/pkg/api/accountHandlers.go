@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/utilities"
+	"github.com/darwinfroese/hacksite/server/pkg/auth"
 )
 
 var accountHandlerMap = map[string]handler{
@@ -28,7 +28,7 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	salt, password, err := utilities.SaltPassword(account.Password)
+	salt, password, err := auth.SaltPassword(account.Password)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/darwinfroese/hacksite/server/api"
-	"github.com/darwinfroese/hacksite/server/database"
-	"github.com/darwinfroese/hacksite/server/scheduler"
+	"github.com/darwinfroese/hacksite/server/pkg/api"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
 
 // Constants

@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/darwinfroese/hacksite/server/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 type apiHandler func(apiContext, http.ResponseWriter, *http.Request) http.HandlerFunc

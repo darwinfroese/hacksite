@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/darwinfroese/hacksite/server/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 // Start executes the scheduler that will run tasks periodically in the background

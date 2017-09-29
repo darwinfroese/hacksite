@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/utilities"
+	"github.com/darwinfroese/hacksite/server/pkg/auth"
+	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
 // TODO: Access-Control-Allow-Origin needs to restrict to production web port
@@ -36,7 +37,7 @@ func project(ctx apiContext, w http.ResponseWriter, r *http.Request) http.Handle
 	return callHandler(ctx, w, r, projectHandlersMap)
 }
 
-func projects(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func projectsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, projectsHandlersMap)
 }
 
@@ -72,7 +73,7 @@ func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 
 // Handlers for specific methods on /projects
 func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
-	sessionToken, err := r.Cookie(utilities.SessionCookieName)
+	sessionToken, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
@@ -113,7 +114,7 @@ func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !utilities.ValidateProject(project) {
+	if !projects.ValidateProject(project) {
 		// TODO: Make this return an error
 		fmt.Fprintf(os.Stderr, "Error: %s\n", "Project was invalid!")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -127,7 +128,7 @@ func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: this should probably be pushed into a helper function
-	sessionCookie, err := r.Cookie(utilities.SessionCookieName)
+	sessionCookie, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return

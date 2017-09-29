@@ -10,7 +10,7 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/utilities"
+	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
 var projectsBucket = []byte("projects")
@@ -74,7 +74,7 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 	}
 	defer db.Close()
 
-	project.Status = utilities.UpdateProjectStatus(project)
+	project.Status = projects.UpdateProjectStatus(project)
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
@@ -197,7 +197,7 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	}
 	defer db.Close()
 
-	p.Status = utilities.UpdateProjectStatus(p)
+	p.Status = projects.UpdateProjectStatus(p)
 
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
@@ -256,7 +256,7 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 			}
 		}
 
-		project.Status = utilities.UpdateProjectStatus(project)
+		project.Status = projects.UpdateProjectStatus(project)
 
 		v, err := json.Marshal(project)
 		if err != nil {
@@ -378,7 +378,7 @@ func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error
 
 		project.CurrentIteration = iteration
 		project.Iterations = append(project.Iterations, iteration)
-		project.Status = utilities.UpdateProjectStatus(project)
+		project.Status = projects.UpdateProjectStatus(project)
 
 		p, err := json.Marshal(project)
 		if err != nil {
@@ -423,7 +423,7 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 		}
 
 		project.CurrentIteration = iteration
-		project.Status = utilities.UpdateProjectStatus(project)
+		project.Status = projects.UpdateProjectStatus(project)
 
 		p, err := json.Marshal(project)
 		if err != nil {
