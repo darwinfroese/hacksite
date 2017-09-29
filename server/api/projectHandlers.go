@@ -16,7 +16,6 @@ import (
 type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
 
 // TODO: move switch/case into a function that can be shared
-// TODO: move handlers into different files
 // TODO: A lot of these handlers are very similar
 // TODO: Make sure correct status codes are being returned
 // TODO: Set CORS earlier since it "errors" if http.Error happens
