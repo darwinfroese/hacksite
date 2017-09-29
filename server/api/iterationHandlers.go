@@ -9,39 +9,25 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
-func iterations(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "POST":
-			addIteration(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var iterHandlersMap = map[string]handler{
+	"POST":    addIteration,
+	"OPTIONS": optionsHandler,
 }
 
-func currentIteration(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "POST":
-			switchIteration(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var currIterHandlersMap = map[string]handler{
+	"POST":    switchIteration,
+	"OPTOINS": optionsHandler,
 }
 
-func addIteration(ctx context, w http.ResponseWriter, r *http.Request) {
+func iterations(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, iterHandlersMap)
+}
+
+func currentIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, iterHandlersMap)
+}
+
+func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
@@ -63,7 +49,7 @@ func addIteration(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func switchIteration(ctx context, w http.ResponseWriter, r *http.Request) {
+func switchIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 

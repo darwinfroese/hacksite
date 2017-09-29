@@ -10,23 +10,16 @@ import (
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-func accounts(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "POST":
-			createAccount(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var accountHandlerMap = map[string]handler{
+	"POST":    createAccount,
+	"OPTIONS": optionsHandler,
 }
 
-func createAccount(ctx context, w http.ResponseWriter, r *http.Request) {
+func accounts(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, accountHandlerMap)
+}
+
+func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var account models.Account
 	err := json.NewDecoder(r.Body).Decode(&account)
 

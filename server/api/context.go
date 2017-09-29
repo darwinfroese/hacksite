@@ -6,12 +6,16 @@ import (
 	"github.com/darwinfroese/hacksite/server/database"
 )
 
-type context struct {
-	db database.Database
+type apiHandler func(apiContext, http.ResponseWriter, *http.Request) http.HandlerFunc
+type handler func(apiContext, http.ResponseWriter, *http.Request)
 
-	handler
+type apiContext struct {
+	db               database.Database
+	supportedMethods []string
+
+	apiHandler
 }
 
-func (ctx context) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx.handler(ctx, w, r)(w, r)
+func (ctx apiContext) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx.apiHandler(ctx, w, r)(w, r)
 }

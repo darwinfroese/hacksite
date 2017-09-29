@@ -7,40 +7,25 @@ import (
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-func login(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			loginHandler(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var loginHandlersMap = map[string]handler{
+	"GET":     loginHandler,
+	"OPTIONS": optionsHandler,
 }
 
-func logout(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			logoutHandler(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var logoutHandlersMap = map[string]handler{
+	"GET":     logoutHandler,
+	"OPTIONS": optionsHandler,
 }
 
-// TODO: Extend session length everytime the user interacts with the API
-func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+func login(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, loginHandlersMap)
+}
+
+func logout(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, logoutHandlersMap)
+}
+
+func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	username, password, ok := r.BasicAuth()
@@ -83,7 +68,7 @@ func loginHandler(ctx context, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func logoutHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 

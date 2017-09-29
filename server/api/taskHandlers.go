@@ -9,30 +9,19 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 )
 
-func tasks(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "PUT":
-			updateTask(ctx, w, r)
-			return
-		case "PATCH":
-			updateTask(ctx, w, r)
-			return
-		case "DELETE":
-			removeTask(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var taskHandlersMap = map[string]handler{
+	"PUT":     updateTask,
+	"PATCH":   updateTask,
+	"DELETE":  removeTask,
+	"OPTIONS": optionsHandler,
+}
+
+func tasks(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, taskHandlersMap)
 }
 
 // Handlers for specific methods on /tasks
-func updateTask(ctx context, w http.ResponseWriter, r *http.Request) {
+func updateTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var task models.Task
 	err := json.NewDecoder(r.Body).Decode(&task)
 
@@ -54,7 +43,7 @@ func updateTask(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func removeTask(ctx context, w http.ResponseWriter, r *http.Request) {
+func removeTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var task models.Task
 	err := json.NewDecoder(r.Body).Decode(&task)
 

@@ -10,17 +10,22 @@ const (
 	apiPrefix = "/api/v1"
 )
 
+var readWriteUpdateMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+var readWriteMethods = []string{"GET", "POST", "OPTIONS"}
+var readMethods = []string{"GET", "OPTIONS"}
+var writeMethods = []string{"POST", "OPTIONS"}
+
 // TODO: Implement logging
 
 // RegisterRoutes registers all the routes into the mux
 func RegisterRoutes(mux *http.ServeMux, db database.Database) {
-	mux.Handle(apiPrefix+"/projects", context{db: db, handler: projects})
-	mux.Handle(apiPrefix+"/project", context{db: db, handler: project})
-	mux.Handle(apiPrefix+"/tasks", context{db: db, handler: tasks})
-	mux.Handle(apiPrefix+"/iteration", context{db: db, handler: iterations})
-	mux.Handle(apiPrefix+"/currentiteration", context{db: db, handler: currentIteration})
-	mux.Handle(apiPrefix+"/accounts", context{db: db, handler: accounts})
-	mux.Handle(apiPrefix+"/login", context{db: db, handler: login})
-	mux.Handle(apiPrefix+"/logout", context{db: db, handler: logout})
-	mux.Handle(apiPrefix+"/session", context{db: db, handler: session})
+	mux.Handle(apiPrefix+"/projects", apiContext{db: db, apiHandler: projects, supportedMethods: readWriteUpdateMethods})
+	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: project, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasks, supportedMethods: readWriteUpdateMethods})
+	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterations, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/currentiteration", apiContext{db: db, apiHandler: currentIteration, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/accounts", apiContext{db: db, apiHandler: accounts, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: login, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logout, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: session, supportedMethods: readMethods})
 }

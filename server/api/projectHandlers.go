@@ -13,56 +13,34 @@ import (
 )
 
 // TODO: Access-Control-Allow-Origin needs to restrict to production web port
-type handler func(context, http.ResponseWriter, *http.Request) http.HandlerFunc
-
 // TODO: move switch/case into a function that can be shared
 // TODO: A lot of these handlers are very similar
 // TODO: Make sure correct status codes are being returned
 // TODO: Set CORS earlier since it "errors" if http.Error happens
 
-func project(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			getProject(ctx, w, r)
-			return
-		case "OPTIONS":
-			// TODO: This one should only support GET
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var projectHandlersMap = map[string]handler{
+	"GET":     getProject,
+	"OPTIONS": optionsHandler,
 }
 
-func projects(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			getAllProjects(ctx, w, r)
-			return
-		case "POST":
-			createProject(ctx, w, r)
-			return
-		case "PUT":
-			updateProject(ctx, w, r)
-			return
-		case "DELETE":
-			deleteProject(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var projectsHandlersMap = map[string]handler{
+	"GET":     getAllProjects,
+	"POST":    createProject,
+	"PUT":     updateProject,
+	"PATCH":   updateProject,
+	"DELETE":  deleteProject,
+	"OPTIONS": optionsHandler,
 }
 
-func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
+func project(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, projectHandlersMap)
+}
+
+func projects(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, projectsHandlersMap)
+}
+
+func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	args := r.URL.Query()
 	str := args.Get("id")
 
@@ -93,7 +71,7 @@ func getProject(ctx context, w http.ResponseWriter, r *http.Request) {
 }
 
 // Handlers for specific methods on /projects
-func getAllProjects(ctx context, w http.ResponseWriter, r *http.Request) {
+func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := r.Cookie(utilities.SessionCookieName)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -125,7 +103,7 @@ func getAllProjects(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(projects)
 }
 
-func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
+func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
@@ -176,7 +154,7 @@ func createProject(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func updateProject(ctx context, w http.ResponseWriter, r *http.Request) {
+func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	// TODO: this can be refactored
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
@@ -200,7 +178,7 @@ func updateProject(ctx context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func deleteProject(ctx context, w http.ResponseWriter, r *http.Request) {
+func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 

@@ -8,23 +8,16 @@ import (
 	"github.com/darwinfroese/hacksite/server/utilities"
 )
 
-func session(ctx context, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			sessionHandler(ctx, w, r)
-			return
-		case "OPTIONS":
-			corsResponse(w, r)
-			return
-		default:
-			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-			return
-		}
-	}
+var sessionHandlersMap = map[string]handler{
+	"GET":     sessionHandler,
+	"OPTIONS": optionsHandler,
 }
 
-func sessionHandler(ctx context, w http.ResponseWriter, r *http.Request) {
+func session(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return callHandler(ctx, w, r, sessionHandlersMap)
+}
+
+func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
