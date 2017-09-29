@@ -23,7 +23,8 @@ func main() {
 	m := http.NewServeMux()
 	db := database.CreateDB()
 
-	m.Handle("/", http.FileServer(http.Dir("./webdist")))
+	//m.Handle("/", http.FileServer(http.Dir("./webdist")))
+	m.Handle("/", http.FileServer(http.Dir("/var/www/hacksite")))
 
 	api.RegisterRoutes(m, db)
 
@@ -31,5 +32,5 @@ func main() {
 	scheduler.Start(db)
 
 	fmt.Println("Starting the server.")
-	http.ListenAndServe(":8800", m)
+	http.ListenAndServe(":80", m)
 }
