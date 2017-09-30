@@ -16,12 +16,16 @@ var taskHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func tasks(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func tasksRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, taskHandlersMap)
 }
 
 // Handlers for specific methods on /tasks
 func updateTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var task models.Task
 	err := json.NewDecoder(r.Body).Decode(&task)
 
@@ -37,13 +41,14 @@ func updateTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
 func removeTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var task models.Task
 	err := json.NewDecoder(r.Body).Decode(&task)
 
@@ -59,8 +64,5 @@ func removeTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }

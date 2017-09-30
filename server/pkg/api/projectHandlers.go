@@ -33,7 +33,7 @@ var projectsHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func project(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func projectRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, projectHandlersMap)
 }
 
@@ -42,6 +42,10 @@ func projectsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.
 }
 
 func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
 	args := r.URL.Query()
 	str := args.Get("id")
 
@@ -65,14 +69,16 @@ func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(project)
 }
 
 // Handlers for specific methods on /projects
 func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
+	// TODO: This should be a handler of sorts
 	sessionToken, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -98,13 +104,14 @@ func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(projects)
 }
 
 func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
@@ -148,14 +155,15 @@ func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
 }
 
 func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
 	// TODO: this can be refactored
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
@@ -172,14 +180,14 @@ func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
 }
 
 func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
@@ -194,7 +202,4 @@ func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }

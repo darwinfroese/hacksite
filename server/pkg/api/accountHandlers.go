@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/auth"
+	"github.com/darwinfroese/hacksite/server/pkg/accounts"
 )
 
 var accountHandlerMap = map[string]handler{
@@ -15,38 +15,32 @@ var accountHandlerMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func accounts(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func accountsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, accountHandlerMap)
 }
 
 func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	// TODO: Make a helper function for this
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var account models.Account
 	err := json.NewDecoder(r.Body).Decode(&account)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	salt, password, err := auth.SaltPassword(account.Password)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
+	err = accounts.CreateAccount(ctx.db, account)
 
-	account.Password = password
-	account.Salt = salt
-
-	_, err = ctx.db.CreateAccount(account)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	// TODO: Make a helper function for this
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.WriteHeader(http.StatusCreated)
 }

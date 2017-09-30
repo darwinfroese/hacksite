@@ -20,12 +20,12 @@ var writeMethods = []string{"POST", "OPTIONS"}
 // RegisterRoutes registers all the routes into the mux
 func RegisterRoutes(mux *http.ServeMux, db database.Database) {
 	mux.Handle(apiPrefix+"/projects", apiContext{db: db, apiHandler: projectsRoute, supportedMethods: readWriteUpdateMethods})
-	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: project, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasks, supportedMethods: readWriteUpdateMethods})
-	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterations, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/currentiteration", apiContext{db: db, apiHandler: currentIteration, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/accounts", apiContext{db: db, apiHandler: accounts, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: login, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logout, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: session, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: projectRoute, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasksRoute, supportedMethods: readWriteUpdateMethods})
+	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterationsRoute, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/currentiteration", apiContext{db: db, apiHandler: currentIterationRoute, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/accounts", apiContext{db: db, apiHandler: accountsRoute, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: loginRoute, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logoutRoute, supportedMethods: readMethods})
+	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: sessionRoute, supportedMethods: readMethods})
 }

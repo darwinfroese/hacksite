@@ -2,6 +2,9 @@ package database
 
 import "github.com/darwinfroese/hacksite/server/models"
 
+// TODO: Database needs to be a singleton that if it's already
+// been created, it should be returned instead of re-created
+
 // Database is an interface to our database needs
 type Database interface {
 	// Projects

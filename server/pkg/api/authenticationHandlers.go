@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
 )
@@ -17,49 +19,33 @@ var logoutHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func login(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func loginRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, loginHandlersMap)
 }
 
-func logout(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func logoutRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, logoutHandlersMap)
 }
 
 func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	username, password, ok := r.BasicAuth()
 
 	if !ok {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	account, err := ctx.db.GetAccount(username)
-	if err != nil {
-		if err.Error() == "no matching account found" {
-			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		} else {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	password, err = auth.GetSaltedPassword(password, account.Salt)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	if password != account.Password {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	session := auth.CreateSession(account.ID)
-	err = ctx.db.StoreSession(session)
+	session, err := auth.Login(ctx.db, username, password)
 
 	if err != nil {
+		if strings.Contains(err.Error(), auth.UnathorizedErrorMessage) {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -74,7 +60,7 @@ func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 
 	sessionCookie, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
@@ -82,6 +68,7 @@ func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	err = ctx.db.RemoveSession(sessionCookie.Value)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

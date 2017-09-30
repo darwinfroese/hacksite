@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/iterations"
 )
 
 var iterHandlersMap = map[string]handler{
@@ -19,54 +20,59 @@ var currIterHandlersMap = map[string]handler{
 	"OPTOINS": optionsHandler,
 }
 
-func iterations(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func iterationsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, iterHandlersMap)
 }
 
-func currentIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func currentIterationRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, iterHandlersMap)
 }
 
 func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	project, err := ctx.db.AddIteration(iteration)
+	project, err := iterations.CreateIteration(ctx.db, iteration)
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }
 
 func switchIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	project, err := ctx.db.SwapCurrentIteration(iteration)
+	project, err := iterations.SwapCurrentIteration(ctx.db, iteration)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(project)
 }

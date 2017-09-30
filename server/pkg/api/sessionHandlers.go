@@ -13,7 +13,7 @@ var sessionHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func session(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+func sessionRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
 	return callHandler(ctx, w, r, sessionHandlersMap)
 }
 
