@@ -1,6 +1,7 @@
 <template>
   <div class='bottom'>
-    <p> <b> Hacksite </b> -- v0.2.1 </p>
+    <p> <b> Hacksite </b> -- v0.3.0 </p>
+    <p> Have an problem? <a href="https://github.com/darwinfroese/hacksite/issues"> Submit an issue </a> </p>
   </div>
 </template>
 
@@ -14,5 +15,15 @@ p {
   text-align: center;
   width: auto;
   display: block;
+}
+a, a:visited {
+  color: #325778;
+}
+a:hover {
+  color: #1B3F60;
+}
+button, a {
+  border-radius: 0;
+  border: none;
 }
 </style>
