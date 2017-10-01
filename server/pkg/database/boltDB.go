@@ -119,55 +119,6 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 	return project, nil
 }
 
-// GetProjects will return all the projects in the database
-func (b *boltDB) GetProjects(userID int) ([]models.Project, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
-	var account models.Account
-	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(accountsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", accountsBucket)
-		}
-
-		acc := bucket.Get(itob(userID))
-		return json.Unmarshal(acc, &account)
-	})
-
-	var projects []models.Project
-	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", projectsBucket)
-		}
-
-		for _, pid := range account.ProjectIds {
-			var project models.Project
-
-			p := bucket.Get(itob(pid))
-
-			err := json.Unmarshal(p, &project)
-			if err != nil {
-				return err
-			}
-
-			projects = append(projects, project)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return projects, nil
-}
-
 // GetNextProjectID returns the next sequence ID for the ProjectsBucket
 func (b *boltDB) GetNextProjectID() (int, error) {
 	return getNextID(b, projectsBucket)
@@ -180,8 +131,6 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 		return err
 	}
 	defer db.Close()
-
-	// p.Status = projects.UpdateProjectStatus(p)
 
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)

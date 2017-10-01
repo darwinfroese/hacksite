@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -14,10 +13,10 @@ import (
 )
 
 // TODO: Access-Control-Allow-Origin needs to restrict to production web port
-// TODO: move switch/case into a function that can be shared
 // TODO: A lot of these handlers are very similar
 // TODO: Make sure correct status codes are being returned
 // TODO: Set CORS earlier since it "errors" if http.Error happens
+// TODO: Web-client handles auth right now, should be implemented into middleware
 
 var projectHandlersMap = map[string]handler{
 	"GET":     getProject,
@@ -55,7 +54,6 @@ func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, err := strconv.Atoi(str)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -78,26 +76,13 @@ func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 
-	// TODO: This should be a handler of sorts
-	sessionToken, err := r.Cookie(auth.SessionCookieName)
+	session, err := auth.GetCurrentSession(r, ctx.db)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	session, err := ctx.db.GetSession(sessionToken.Value)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	if time.Now().After(session.Expiration) {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	projects, err := ctx.db.GetProjects(session.UserID)
-
+	projects, err := projects.GetUserProjects(ctx.db, session)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -158,7 +143,7 @@ func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ctx.db.UpdateProject(project)
+	err = projects.UpdateProject(ctx.db, project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

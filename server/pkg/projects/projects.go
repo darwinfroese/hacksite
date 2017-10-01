@@ -9,33 +9,32 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
-// UpdateProjectStatus returns the string representation of the project's status
-func UpdateProjectStatus(project models.Project) string {
-	complete := 0
-	status := models.StatusNew
+// GetUserProjects grabs the project from database
+func GetUserProjects(db database.Database, session models.Session) ([]models.Project, error) {
+	account, err := auth.GetCurrentUser(db, session)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return nil, err
+	}
 
-	tasks := project.CurrentIteration.Tasks
-	for _, task := range tasks {
-		if task.Completed {
-			complete++
+	var projects []models.Project
+	for _, id := range account.ProjectIds {
+		p, err := db.GetProject(id)
+		if err != nil {
+			return nil, err
 		}
-	}
-	if complete == len(tasks) {
-		status = models.StatusCompleted
-	} else if complete > 0 {
-		status = models.StatusInProgress
-	} else {
-		status = models.StatusNew
+
+		projects = append(projects, p)
 	}
 
-	return status
+	return projects, nil
 }
 
 // CreateProject grabs the next sequence in the database, sets up the project
 // and inserts it into the database
 func CreateProject(db database.Database, project *models.Project, session models.Session) error {
 	// This is actually just setting the project status
-	project.Status = UpdateProjectStatus(*project)
+	project.Status = updateProjectStatus(*project)
 
 	id, err := db.GetNextProjectID()
 	if err != nil {
@@ -100,6 +99,13 @@ func DeleteProject(projectID int, db database.Database, session models.Session) 
 	return nil
 }
 
+// UpdateProject will update the status and make the change in the database as well
+func UpdateProject(db database.Database, project *models.Project) error {
+	project.Status = updateProjectStatus(*project)
+
+	return db.UpdateProject(*project)
+}
+
 // HelperFunctions
 func removeIDFromList(idToRemove int, idList []int) []int {
 	for id, i := range idList {
@@ -110,4 +116,25 @@ func removeIDFromList(idToRemove int, idList []int) []int {
 	}
 
 	return idList
+}
+
+func updateProjectStatus(project models.Project) string {
+	complete := 0
+	status := models.StatusNew
+
+	tasks := project.CurrentIteration.Tasks
+	for _, task := range tasks {
+		if task.Completed {
+			complete++
+		}
+	}
+	if complete == len(tasks) {
+		status = models.StatusCompleted
+	} else if complete > 0 {
+		status = models.StatusInProgress
+	} else {
+		status = models.StatusNew
+	}
+
+	return status
 }

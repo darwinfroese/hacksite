@@ -10,7 +10,6 @@ type Database interface {
 	// Projects
 	AddProject(project models.Project) error
 	GetProject(id int) (models.Project, error)
-	GetProjects(userID int) ([]models.Project, error)
 	GetNextProjectID() (int, error)
 	// TODO: UpdateProject - models.Project could probably be removed
 	// and the project passed in returned since no internal changes
