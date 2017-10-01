@@ -177,14 +177,24 @@ func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&project)
 
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	err = ctx.db.RemoveProject(project.ID)
+	session, err := auth.GetCurrentSession(r, ctx.db)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	err = projects.DeleteProject(project.ID, ctx.db, session)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }

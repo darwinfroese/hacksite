@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -21,20 +22,13 @@ func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
-	sessionCookie, err := r.Cookie(auth.SessionCookieName)
+	session, err := auth.GetCurrentSession(r, ctx.db)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
-
-	session, err := ctx.db.GetSession(sessionCookie.Value)
 	if time.Now().After(session.Expiration) {
-		fmt.Println(err.Error())
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return

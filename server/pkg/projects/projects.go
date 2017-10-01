@@ -80,3 +80,34 @@ func AddProjectToUser(db database.Database, session models.Session, projectID in
 
 	return nil
 }
+
+// DeleteProject will remove the project from the database as well as the users list of projects
+func DeleteProject(projectID int, db database.Database, session models.Session) error {
+	err := db.RemoveProject(projectID)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
+
+	account, err := auth.GetCurrentUser(db, session)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
+
+	account.ProjectIds = removeIDFromList(projectID, account.ProjectIds)
+
+	return nil
+}
+
+// HelperFunctions
+func removeIDFromList(idToRemove int, idList []int) []int {
+	for id, i := range idList {
+		if id == idToRemove {
+			list := append(idList[:i], idList[i+1:]...)
+			return list
+		}
+	}
+
+	return idList
+}
