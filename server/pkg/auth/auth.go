@@ -4,10 +4,13 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 const sessionTokenSize = 64
@@ -88,4 +91,21 @@ func SetCookie(w http.ResponseWriter, name, token string) {
 		MaxAge: SessionMaxAge,
 		// TODO: set secure when supporting HTTPS
 	})
+}
+
+// GetCurrentSession reads the session cookie and grabs the session associated
+func GetCurrentSession(r *http.Request, db database.Database) (models.Session, error) {
+	cookie, err := r.Cookie(SessionCookieName)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return models.Session{}, err
+	}
+
+	return db.GetSession(cookie.Value)
+}
+
+// GetCurrentUser will use the session model passed in to find the signed in users value
+func GetCurrentUser(db database.Database, session models.Session) (models.Account, error) {
+	return db.GetAccountByID(session.UserID)
 }

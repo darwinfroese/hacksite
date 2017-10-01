@@ -122,34 +122,19 @@ func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !projects.ValidateProject(project) {
-		// TODO: Make this return an error
+		// TODO: Make this return an error (validate)
 		fmt.Fprintf(os.Stderr, "Error: %s\n", "Project was invalid!")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	project, err = ctx.db.AddProject(project)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	// TODO: this should probably be pushed into a helper function
-	sessionCookie, err := r.Cookie(auth.SessionCookieName)
+	session, err := auth.GetCurrentSession(r, ctx.db)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	session, err := ctx.db.GetSession(sessionCookie.Value)
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-	account, err := ctx.db.GetAccountByID(session.UserID)
-	account.ProjectIds = append(account.ProjectIds, project.ID)
-
-	err = ctx.db.UpdateAccount(account)
+	err = projects.CreateProject(ctx.db, &project, session)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

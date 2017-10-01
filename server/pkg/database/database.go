@@ -8,7 +8,7 @@ import "github.com/darwinfroese/hacksite/server/models"
 // Database is an interface to our database needs
 type Database interface {
 	// Projects
-	AddProject(project models.Project) (models.Project, error)
+	AddProject(project models.Project) error
 	GetProject(id int) (models.Project, error)
 	GetProjects(userID int) ([]models.Project, error)
 	GetNextProjectID() (int, error)

@@ -10,7 +10,6 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
 var projectsBucket = []byte("projects")
@@ -66,37 +65,20 @@ func createBuckets(b boltDB) {
 }
 
 // AddProject will add a project to the database
-func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
+func (b *boltDB) AddProject(project models.Project) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
-		return models.Project{}, err
+		return err
 	}
 	defer db.Close()
 
-	project.Status = projects.UpdateProjectStatus(project)
-
-	err = db.Update(func(tx *bolt.Tx) error {
+	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
 		if bucket == nil {
 			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
-		id, err := bucket.NextSequence()
-		if err != nil {
-			return err
-		}
-
-		project.ID = int(id)
-		project.CurrentIteration.ProjectID = project.ID
-		project.CurrentIteration.Number = 1
-		project.Iterations = append(project.Iterations, project.CurrentIteration)
-		for i, task := range project.CurrentIteration.Tasks {
-			task.ProjectID = project.ID
-			task.IterationNumber = project.CurrentIteration.Number
-			project.CurrentIteration.Tasks[i] = task
-		}
-
-		key := itob(int(id))
+		key := itob(int(project.ID))
 		value, err := json.Marshal(project)
 
 		if err != nil {
@@ -105,8 +87,6 @@ func (b *boltDB) AddProject(project models.Project) (models.Project, error) {
 
 		return bucket.Put(key, value)
 	})
-
-	return project, nil
 }
 
 // GetProject will lookup a project by id
@@ -201,7 +181,7 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	}
 	defer db.Close()
 
-	p.Status = projects.UpdateProjectStatus(p)
+	// p.Status = projects.UpdateProjectStatus(p)
 
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectsBucket)
@@ -260,7 +240,7 @@ func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
 			}
 		}
 
-		project.Status = projects.UpdateProjectStatus(project)
+		// project.Status = projects.UpdateProjectStatus(project)
 
 		v, err := json.Marshal(project)
 		if err != nil {
@@ -382,7 +362,7 @@ func (b *boltDB) AddIteration(iteration models.Iteration) (models.Project, error
 
 		project.CurrentIteration = iteration
 		project.Iterations = append(project.Iterations, iteration)
-		project.Status = projects.UpdateProjectStatus(project)
+		// project.Status = projects.UpdateProjectStatus(project)
 
 		p, err := json.Marshal(project)
 		if err != nil {
@@ -427,7 +407,7 @@ func (b *boltDB) SwapCurrentIteration(iteration models.Iteration) (models.Projec
 		}
 
 		project.CurrentIteration = iteration
-		project.Status = projects.UpdateProjectStatus(project)
+		// project.Status = projects.UpdateProjectStatus(project)
 
 		p, err := json.Marshal(project)
 		if err != nil {
