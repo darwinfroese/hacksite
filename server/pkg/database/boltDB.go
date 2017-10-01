@@ -17,10 +17,9 @@ var projectsBucket = []byte("projects")
 var accountsBucket = []byte("accounts")
 var sessionsBucket = []byte("sessions")
 
-// TODO: Need to limit the amount of operations and logic in the database code
 // TODO: Make sure the objects passed aren't being passed by copy so that we can just update
 // fields and they're returned instead of having to explicitly return the object
-// TODO: Iterations should probably be in their own bucket
+// TODO: Iterations and tasks should be in their own buckets
 // TODO: Wrap db calls better - take function as argument, call after opening db and getting bucket
 
 // CreateBoltDB creates a basic database struct
@@ -187,6 +186,11 @@ func (b *boltDB) GetProjects(userID int) ([]models.Project, error) {
 	}
 
 	return projects, nil
+}
+
+// GetNextProjectID returns the next sequence ID for the ProjectsBucket
+func (b *boltDB) GetNextProjectID() (int, error) {
+	return getNextID(b, projectsBucket)
 }
 
 // UpdateProject will store the new project in the database
@@ -540,6 +544,11 @@ func (b *boltDB) GetAccountByID(userID int) (models.Account, error) {
 	return account, err
 }
 
+// GetNextAccountID returns the next sequence for the AccountsBucket
+func (b *boltDB) GetNextAccountID() (int, error) {
+	return getNextID(b, accountsBucket)
+}
+
 // UpdateAccount inserts a new account into the accounts location in the bucket
 func (b *boltDB) UpdateAccount(account models.Account) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
@@ -618,6 +627,44 @@ func (b *boltDB) GetSession(sessionToken string) (models.Session, error) {
 	return session, err
 }
 
+// GetAllSessions returns all the sessions currently in the database
+func (b *boltDB) GetAllSessions() ([]models.Session, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	var sessions []models.Session
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(sessionsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", sessionsBucket)
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var sesh models.Session
+			err = json.Unmarshal(v, &sesh)
+
+			if err != nil {
+				return err
+			}
+
+			sessions = append(sessions, sesh)
+		}
+
+		return nil
+	})
+
+	return sessions, err
+}
+
+// GetNextSessionID returns the next sequence for the sessionBucket
+func (b *boltDB) GetNextSessionID() (int, error) {
+	return getNextID(b, sessionsBucket)
+}
+
 // CleanSessions removes all sessions that are expired from the database and returns the
 // number of sessions removed
 func (b *boltDB) CleanSessions() (int, error) {
@@ -687,4 +734,30 @@ func itob(v int) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, uint64(v))
 	return b
+}
+
+func getNextID(b *boltDB, bucketName []byte) (int, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return -1, err
+	}
+	defer db.Close()
+
+	id := -1
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketName)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", bucketName)
+		}
+
+		i, err := bucket.NextSequence()
+		if err != nil {
+			return err
+		}
+
+		id = int(i)
+		return nil
+	})
+
+	return id, err
 }

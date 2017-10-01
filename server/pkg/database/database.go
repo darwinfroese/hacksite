@@ -11,6 +11,7 @@ type Database interface {
 	AddProject(project models.Project) (models.Project, error)
 	GetProject(id int) (models.Project, error)
 	GetProjects(userID int) ([]models.Project, error)
+	GetNextProjectID() (int, error)
 	// TODO: UpdateProject - models.Project could probably be removed
 	// and the project passed in returned since no internal changes
 	// are happening
@@ -29,11 +30,14 @@ type Database interface {
 	CreateAccount(account models.Account) (int, error)
 	GetAccount(username string) (models.Account, error)
 	GetAccountByID(userID int) (models.Account, error)
+	GetNextAccountID() (int, error)
 	UpdateAccount(account models.Account) error
 
 	// Sessions
 	StoreSession(session models.Session) error
 	GetSession(sessionToken string) (models.Session, error)
+	GetAllSessions() ([]models.Session, error)
+	GetNextSessionID() (int, error)
 	CleanSessions() (int, error)
 	RemoveSession(sessionToken string) error
 }
