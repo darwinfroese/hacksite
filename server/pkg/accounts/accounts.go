@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -17,9 +18,14 @@ func CreateAccount(db database.Database, account models.Account) error {
 
 	account.Password = password
 	account.Salt = salt
+	id, err := db.GetNextAccountID()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
 
+	account.ID = id
 	_, err = db.CreateAccount(account)
-
 	if err != nil {
 		return fmt.Errorf("An error occured inserting the account into the database: %s", err.Error())
 	}

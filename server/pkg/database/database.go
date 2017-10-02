@@ -29,7 +29,6 @@ type Database interface {
 	GetSession(sessionToken string) (models.Session, error)
 	GetAllSessions() ([]models.Session, error)
 	GetNextSessionID() (int, error)
-	CleanSessions() (int, error)
 	RemoveSession(sessionToken string) error
 }
 

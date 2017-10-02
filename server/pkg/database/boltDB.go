@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
@@ -189,18 +188,12 @@ func (b *boltDB) CreateAccount(account models.Account) (int, error) {
 			return fmt.Errorf("bucket %q not found", accountsBucket)
 		}
 
-		id, err := bucket.NextSequence()
-		if err != nil {
-			return err
-		}
-
-		account.ID = int(id)
 		a, err := json.Marshal(account)
 		if err != nil {
 			return err
 		}
 
-		key := itob(int(id))
+		key := itob(account.ID)
 		return bucket.Put(key, a)
 	})
 
@@ -389,47 +382,6 @@ func (b *boltDB) GetAllSessions() ([]models.Session, error) {
 // GetNextSessionID returns the next sequence for the sessionBucket
 func (b *boltDB) GetNextSessionID() (int, error) {
 	return getNextID(b, sessionsBucket)
-}
-
-// CleanSessions removes all sessions that are expired from the database and returns the
-// number of sessions removed
-func (b *boltDB) CleanSessions() (int, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return -1, err
-	}
-	defer db.Close()
-
-	count := 0
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(sessionsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", sessionsBucket)
-		}
-
-		c := bucket.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			var sesh models.Session
-			err = json.Unmarshal(v, &sesh)
-
-			if err != nil {
-				return err
-			}
-
-			if time.Now().After(sesh.Expiration) {
-				err := c.Delete()
-				if err != nil {
-					return err
-				}
-
-				count++
-			}
-		}
-
-		return nil
-	})
-
-	return count, err
 }
 
 // RemoveSession removes the token from the database, typically for loguout
