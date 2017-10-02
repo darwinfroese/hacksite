@@ -17,10 +17,6 @@ type Database interface {
 	UpdateProject(project models.Project) error
 	RemoveProject(id int) error
 
-	// Iterations
-	AddIteration(iteration models.Iteration) (models.Project, error)
-	SwapCurrentIteration(iteration models.Iteration) (models.Project, error)
-
 	// Accounts
 	CreateAccount(account models.Account) (int, error)
 	GetAccount(username string) (models.Account, error)
