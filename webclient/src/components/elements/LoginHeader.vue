@@ -1,10 +1,22 @@
 <template>
   <div class='header'>
     <div class='bar'>
-      <h3> Hacksite </h3>
+      <h3 @click="navHome"> Hacksite </h3>
     </div>
   </div>
 </template>
+
+<script>
+import router from '@/router';
+
+export default {
+  methods: {
+    navHome: function () {
+      router.push('/');
+    }
+  }
+};
+</script>
 
 <style scoped>
 .header {

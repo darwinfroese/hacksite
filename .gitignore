@@ -11,3 +11,6 @@ selenium-debug.log
 # Golang
 Hacksite
 database.db
+
+# extras
+hacksite.zip

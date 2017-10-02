@@ -34,7 +34,7 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = accounts.CreateAccount(ctx.db, account)
+	err = accounts.CreateAccount(ctx.db, &account)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -43,4 +43,5 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(account)
 }

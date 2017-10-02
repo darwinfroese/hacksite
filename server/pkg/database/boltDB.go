@@ -111,11 +111,8 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 
 		return nil
 	})
-	if err != nil {
-		return models.Project{}, err
-	}
 
-	return project, nil
+	return project, err
 }
 
 // GetNextProjectID returns the next sequence ID for the ProjectsBucket

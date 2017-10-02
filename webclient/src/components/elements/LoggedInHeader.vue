@@ -3,7 +3,7 @@
     <div class='bar'>
       <span class='spacer'> &nbsp; </span>
       <span class='title'>
-        <span> Hacksite </span>
+        <span @click="navHome"> Hacksite </span>
       </span>
       <span class='account'>
         <span @click="logout" class='logout-button'>
@@ -26,6 +26,9 @@ export default {
         .then((resp) => {
           router.push('/login');
         });
+    },
+    navHome: function () {
+      router.push('/');
     }
   }
 };

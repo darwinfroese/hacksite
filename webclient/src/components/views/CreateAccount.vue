@@ -26,7 +26,8 @@
         </section>
         <section class='message-container'>
           <span class='message'> All fields are required. </span>
-          <span class='message'> {{ message }} </span>
+          <br>
+          <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
         </section>
         <div class='menu-bar'>
           <button class='menu-button' @click="Create" :disabled="!valid"> Create </button>
@@ -55,7 +56,8 @@ export default {
         ConfirmPassword: ''
       },
       valid: false,
-      message: undefined
+      message: undefined,
+      success: false
     };
   },
   updated () {
@@ -73,15 +75,24 @@ export default {
     Create: function () {
       CreateAccount(this.account)
         .then((response) => {
-          return response.json();
-        })
-        .then((account) => {
-          console.log(account);
-          router.push('/');
+          if (response.status === 201) {
+            this.message = 'Account successfully created. Redirecting to login page...';
+            this.success = true;
+            this.Redirect();
+          } else {
+            this.message = 'Something went wrong, please try again';
+          }
+        }, (error) => {
+          console.log('Error: ', error);
         });
     },
     ConfirmPasswords: function () {
       return this.account.Password === this.account.ConfirmPassword;
+    },
+    Redirect: function () {
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
     }
   }
 };
@@ -165,5 +176,9 @@ button:hover {
   display: inline-block;
   font-style: italic;
   font-size: 14px;
+  color: #ff4949;
+}
+.success {
+  color: #4e9155;
 }
 </style>

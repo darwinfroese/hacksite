@@ -143,7 +143,7 @@ func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.UpdateProject(ctx.db, project)
+	err = projects.UpdateProject(ctx.db, &project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

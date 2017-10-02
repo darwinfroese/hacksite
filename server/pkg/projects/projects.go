@@ -21,10 +21,10 @@ func GetUserProjects(db database.Database, session models.Session) ([]models.Pro
 	for _, id := range account.ProjectIds {
 		p, err := db.GetProject(id)
 		if err != nil {
-			return nil, err
+			fmt.Fprintf(os.Stderr, "Error Geting project from DB: %s\n", err.Error())
+		} else {
+			projects = append(projects, p)
 		}
-
-		projects = append(projects, p)
 	}
 
 	return projects, nil
@@ -52,6 +52,7 @@ func CreateProject(db database.Database, project *models.Project, session models
 		project.CurrentIteration.Tasks[i] = task
 	}
 
+	AddProjectToUser(db, session, id)
 	err = db.AddProject(*project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

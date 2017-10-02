@@ -10,7 +10,7 @@ import (
 )
 
 // CreateAccount will create an account and insert it into the database
-func CreateAccount(db database.Database, account models.Account) error {
+func CreateAccount(db database.Database, account *models.Account) error {
 	salt, password, err := auth.SaltPassword(account.Password)
 	if err != nil {
 		return fmt.Errorf("An error occured salting the account password: %s", err.Error())
@@ -25,7 +25,7 @@ func CreateAccount(db database.Database, account models.Account) error {
 	}
 
 	account.ID = id
-	_, err = db.CreateAccount(account)
+	_, err = db.CreateAccount(*account)
 	if err != nil {
 		return fmt.Errorf("An error occured inserting the account into the database: %s", err.Error())
 	}

@@ -25,7 +25,7 @@ func iterationsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) htt
 }
 
 func currentIterationRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, iterHandlersMap)
+	return callHandler(ctx, w, r, currIterHandlersMap)
 }
 
 func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
