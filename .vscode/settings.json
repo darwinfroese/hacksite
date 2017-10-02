@@ -1,4 +1,7 @@
 {
 	"eslint.enable": true,
-	"editor.insertSpaces": true
+	"editor.insertSpaces": true,
+	"todohighlight.include": [
+		"**/*.go"
+	]
 }
