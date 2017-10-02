@@ -4,7 +4,7 @@ Hacksite is my take on the typical TODO list. Focusing in simple and achievable 
 
 Hacksite is currently in ALPHA stage and has a few major features to be built in before it is ready for BETA.
 
-The major features that need to be in place can be found in the **Hacksite Beta** project under the projects tab.
+The major features that need to be in place can be found in the [Hacksite Beta](https://github.com/darwinfroese/hacksite/projects/1) project under the projects tab.
 
 
 ## Server
