@@ -152,61 +152,6 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 	})
 }
 
-// UpdateTask will update a specfic task in a project
-func (b *boltDB) UpdateTask(t models.Task) (models.Project, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return models.Project{}, err
-	}
-	defer db.Close()
-
-	var project models.Project
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", projectsBucket)
-		}
-
-		val := bucket.Get(itob(t.ProjectID))
-		err := json.Unmarshal(val, &project)
-		if err != nil {
-			return err
-		}
-
-		tasks := project.CurrentIteration.Tasks
-
-		for i, task := range tasks {
-			if task.ID == t.ID {
-				tasks[i] = t
-				break
-			}
-		}
-
-		project.CurrentIteration.Tasks = tasks
-		for i, iter := range project.Iterations {
-			if iter.Number == project.CurrentIteration.Number {
-				project.Iterations[i] = project.CurrentIteration
-			}
-		}
-
-		// project.Status = projects.UpdateProjectStatus(project)
-
-		v, err := json.Marshal(project)
-		if err != nil {
-			return err
-		}
-
-		err = bucket.Put(itob(t.ProjectID), v)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	return project, nil
-}
-
 // RemoveProject will remove a project from the database
 func (b *boltDB) RemoveProject(id int) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
@@ -228,63 +173,6 @@ func (b *boltDB) RemoveProject(id int) error {
 
 		return nil
 	})
-}
-
-// RemoveTask will remove a task from a project
-func (b *boltDB) RemoveTask(t models.Task) (models.Project, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return models.Project{}, err
-	}
-	defer db.Close()
-
-	var project models.Project
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", projectsBucket)
-		}
-
-		val := bucket.Get(itob(t.ProjectID))
-
-		err := json.Unmarshal(val, &project)
-		if err != nil {
-			return err
-		}
-
-		tasks := project.CurrentIteration.Tasks
-
-		for i, task := range tasks {
-			if task.ID == t.ID {
-				tasks = append(tasks[:i], tasks[i+1:]...)
-				break
-			}
-		}
-
-		project.CurrentIteration.Tasks = tasks
-		for i, iter := range project.Iterations {
-			if iter.Number == project.CurrentIteration.Number {
-				project.Iterations[i] = project.CurrentIteration
-			}
-		}
-
-		p, err := json.Marshal(project)
-		if err != nil {
-			return err
-		}
-
-		err = bucket.Put(itob(t.ProjectID), p)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return models.Project{}, err
-	}
-
-	return project, nil
 }
 
 // AddIteration will add an iteration to the project and update it in the database

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/tasks"
 )
 
 var taskHandlersMap = map[string]handler{
@@ -28,13 +29,12 @@ func updateTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 
 	var task models.Task
 	err := json.NewDecoder(r.Body).Decode(&task)
-
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	project, err := ctx.db.UpdateTask(task)
+	project, err := tasks.UpdateTask(ctx.db, task)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -57,7 +57,7 @@ func removeTask(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := ctx.db.RemoveTask(task)
+	project, err := tasks.RemoveTask(ctx.db, task)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

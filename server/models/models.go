@@ -4,6 +4,9 @@ import (
 	"time"
 )
 
+// TODO: ID values should be scaled up to UINT64 values so that they
+// don't roll over at a "low" number
+
 // Project contains a representation of a project
 type Project struct {
 	ID               int

@@ -17,10 +17,6 @@ type Database interface {
 	UpdateProject(project models.Project) error
 	RemoveProject(id int) error
 
-	// Tasks
-	UpdateTask(task models.Task) (models.Project, error)
-	RemoveTask(task models.Task) (models.Project, error)
-
 	// Iterations
 	AddIteration(iteration models.Iteration) (models.Project, error)
 	SwapCurrentIteration(iteration models.Iteration) (models.Project, error)
