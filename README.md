@@ -25,4 +25,6 @@ To build the current (alpha) version of hacksite, you need to do the following o
 3. Run the server as admin (it binds to *:80)
 4. Access the site via `localhost:80`
 
+More information on building Hacksite can be found [here](https://github.com/darwinfroese/hacksite/wiki/Building).
+
 *Note: In the future there will be more done during the build scripts to make it run on different platforms, not require sudo, and not require copying files manually*
