@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/darwinfroese/hacksite/server
+    steps:
+      - checkout
+      - run: make server
+  build-web:
+    docker:
+      - image: circleci/node:6.11
+    working_directory: ~/hacksite/webclient
+    steps:
+      - checkout
+      - run: make web
+
+workflows:
+  version: 2
+  build_full:
+    jobs:
+      - build
+      - build-web
