@@ -11,9 +11,10 @@ jobs:
   build-web:
     docker:
       - image: circleci/node:6.11
-    working_directory: ~/hacksite/webclient
+    working_directory: ~/hacksite
     steps:
       - checkout
+      - run: make setup-web
       - run: make web
 
 workflows:
