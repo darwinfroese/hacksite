@@ -6,7 +6,8 @@ jobs:
     working_directory: /go/src/github.com/darwinfroese/hacksite/server
     steps:
       - checkout
-      - run: make server
+      - run: make setup-go
+      - run: make server PROD_ENVIRONMENT_FILE=$ProdFileLoc
   build-web:
     docker:
       - image: circleci/node:6.11

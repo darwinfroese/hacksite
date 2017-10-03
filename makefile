@@ -9,10 +9,27 @@ PROD_BUILD_FLAGS=-ldflags "-X main.envFile=${PROD_ENVIRONMENT_FILE}"
 .DEFAULT_GOAL: all
 
 .PHONY: all
-all: server web
+all: setup server web
 
 .PHONY: local
-local: buildLocal web 
+local: setup buildLocal web 
+
+.PHONY: setup
+setup: setup-go setup-web
+
+.PHONY: setup-go
+setup-go:
+	@echo "> Getting go dependencies"
+	cd server
+	go get -t -v -d ./...
+	cd ..
+
+.PHONY: setup-web
+setup-web:
+	@echo "> Getting web dependencies"
+	cd webclient
+	yarn
+	cd ..
 
 .PHONY: buildLocal
 buildLocal: buildLocalServer
