@@ -8,6 +8,9 @@ jobs:
       - checkout
       - run: make setup-go
       - run: make server PROD_ENVIRONMENT_FILE=$ProdFileLoc
+      - store_artifacts:
+        path: ./hacksite
+        destination: hacksite
   build-web:
     docker:
       - image: circleci/node:6.11
@@ -16,6 +19,8 @@ jobs:
       - checkout
       - run: make setup-web
       - run: make web
+      - store_artifacts:
+        path: ./webdist
 
 workflows:
   version: 2
