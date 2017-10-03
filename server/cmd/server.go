@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/darwinfroese/hacksite/server/pkg/api"
 	"github.com/darwinfroese/hacksite/server/pkg/config"
@@ -13,7 +14,8 @@ import (
 // These are vars so they can be set at compile time
 var (
 	version = "1.0.0"
-	envFile = "dev.env.json"
+	// give this a fallback
+	envFile = "environments/dev.env.json"
 )
 
 // TODO: Receive arguments to perform actions on the server while it's running
@@ -35,11 +37,18 @@ func main() {
 	fmt.Println("Starting server scheduler.")
 	scheduler.Start(db)
 
+	if _, err := os.Stat(c.CertLocation); os.IsNotExist(err) {
+		fmt.Println("Couldn't find: ", c.CertLocation)
+	}
+
+	if _, err := os.Stat(c.KeyLocation); os.IsNotExist(err) {
+		fmt.Println("Couldn't find: ", c.KeyLocation)
+	}
+
 	fmt.Println("Starting the server.")
-	http.ListenAndServeTLS(
+	fmt.Println("Server failed with: ", http.ListenAndServeTLS(
 		c.Port,
 		c.CertLocation,
 		c.KeyLocation,
-		m,
-	)
+		m))
 }

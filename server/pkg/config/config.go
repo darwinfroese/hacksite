@@ -16,7 +16,12 @@ func ParseConfig(environmentFile string) models.ServerConfig {
 
 	fmt.Fprintf(os.Stdout, "Using config file: %s\n", environmentFile)
 
-	file, err := ioutil.ReadFile("environments/" + environmentFile)
+	if _, err := os.Stat(environmentFile); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Couldn't find the file: %s\n", environmentFile)
+		return config
+	}
+
+	file, err := ioutil.ReadFile(environmentFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		return config
@@ -28,5 +33,6 @@ func ParseConfig(environmentFile string) models.ServerConfig {
 		return config
 	}
 
+	fmt.Printf("Config: %q\n", config)
 	return config
 }
