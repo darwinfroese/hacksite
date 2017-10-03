@@ -28,4 +28,6 @@ func RegisterRoutes(mux *http.ServeMux, db database.Database) {
 	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: loginRoute, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logoutRoute, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: sessionRoute, supportedMethods: readMethods})
+	// TODO: Non-API routes should register somewhere else
+	mux.Handle("/health", http.HandlerFunc(healthCheckHandler))
 }

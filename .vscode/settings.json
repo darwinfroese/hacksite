@@ -3,5 +3,14 @@
 	"editor.insertSpaces": true,
 	"todohighlight.include": [
 		"**/*.go"
-	]
+	],
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"database.db": true,
+		"Hacksite": true
+	}
 }
