@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:latest
-    working_directory: /go/src/github.com/darwinfroese/hacksite/server
+    working_directory: /go/src/github.com/darwinfroese/hacksite/
     steps:
       - checkout
       - run: make setup-go
