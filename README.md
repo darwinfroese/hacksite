@@ -19,11 +19,18 @@ The web client is written in Vue.js 2 and serves as an interface to the backend 
 
 To build the current (alpha) version of hacksite, you need to do the following on a unix system:
 
+Install go resources
+``` 
+    go get github.com/darwinfroese/hacksite/server/pkg/api
+    go get github.com/darwinfroese/hacksite/server/pkg/database
+    go get github.com/darwinfroese/hacksite/server/pkg/scheduler 
+```
+    
 1. run `make`
     * individually: `make server` and `make web`
-2. Copy the web files to `/var/www/hacksite`
-3. Run the server as admin (it binds to *:80)
-4. Access the site via `localhost:80`
+3. Copy the web files to `/var/www/hacksite`
+4. Run the server as admin (it binds to *:80)
+5. Access the site via `localhost:80`
 
 More information on building Hacksite can be found [here](https://github.com/darwinfroese/hacksite/wiki/Building).
 
