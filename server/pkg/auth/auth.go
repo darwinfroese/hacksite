@@ -89,7 +89,7 @@ func SetCookie(w http.ResponseWriter, name, token string) {
 		Name:   name,
 		Value:  token,
 		MaxAge: SessionMaxAge,
-		// TODO: set secure when supporting HTTPS
+		Secure: true,
 	})
 }
 
