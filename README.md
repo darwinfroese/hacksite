@@ -28,9 +28,9 @@ Install go resources
     
 1. run `make`
     * individually: `make server` and `make web`
-3. Copy the web files to `/var/www/hacksite`
-4. Run the server as admin (it binds to *:80)
-5. Access the site via `localhost:80`
+2. Copy the web files to `/var/www/hacksite`
+3. Run the server as admin (it binds to *:80)
+4. Access the site via `localhost:80`
 
 More information on building Hacksite can be found [here](https://github.com/darwinfroese/hacksite/wiki/Building).
 
