@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/darwinfroese/hacksite/server/pkg/api"
+	"github.com/darwinfroese/hacksite/server/pkg/config"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
@@ -12,6 +13,7 @@ import (
 // Constants
 const (
 	version = "1.0.0"
+	envFile = "dev.env.json"
 )
 
 // TODO: Receive arguments to perform actions on the server while it's running
@@ -20,11 +22,13 @@ const (
 func main() {
 	fmt.Println("Setting up the server.")
 
+	// Redirect *:80 to *:443
+	go http.ListenAndServe(":80", http.HandlerFunc(api.RedirectToHTTPS))
+
 	m := http.NewServeMux()
 	db := database.CreateDB()
-
-	//m.Handle("/", http.FileServer(http.Dir("./webdist")))
-	m.Handle("/", http.FileServer(http.Dir("/var/www/hacksite")))
+	c := config.ParseConfig(envFile)
+	m.Handle("/", http.FileServer(http.Dir(c.WebFileLocation)))
 
 	api.RegisterRoutes(m, db)
 
@@ -32,5 +36,10 @@ func main() {
 	scheduler.Start(db)
 
 	fmt.Println("Starting the server.")
-	http.ListenAndServe(":80", m)
+	http.ListenAndServeTLS(
+		c.Port,
+		c.CertLocation,
+		c.KeyLocation,
+		m,
+	)
 }

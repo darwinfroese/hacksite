@@ -52,6 +52,11 @@ type Session struct {
 	Expiration time.Time
 }
 
+// ServerConfig contains server configuration settings
+type ServerConfig struct {
+	Port, KeyLocation, CertLocation, WebFileLocation string
+}
+
 // Status constants for projects
 const (
 	StatusCompleted  = "Completed"
