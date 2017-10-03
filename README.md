@@ -17,12 +17,4 @@ The web client is written in Vue.js 2 and serves as an interface to the backend 
 
 ### Building Hacksite
 
-To build the current (alpha) version of hacksite, you need to do the following on a unix system:
-
-1. run `make`
-    * individually: `make server` and `make web`
-2. Copy the web files to `/var/www/hacksite`
-3. Run the server as admin (it binds to *:80)
-4. Access the site via `localhost:80`
-
-*Note: In the future there will be more done during the build scripts to make it run on different platforms, not require sudo, and not require copying files manually*
+Checkout [the wiki page](https://github.com/darwinfroese/hacksite/wiki/building) for instructions on building and deploying your own version of Hacksite.
