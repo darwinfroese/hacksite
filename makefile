@@ -1,10 +1,10 @@
 BINARY = Hacksite
 
-LOCAL_ENVIRONMENT_FILE=environments/dev.env.json
-PROD_ENVIRONMENT_FILE=environments/prod.env.json
+LOCAL_ENVIRONMENT_FILE=dev.env.json
+PROD_ENVIRONMENT_FILE=prod.env.json
 
-LOCAL_BUILD_FLAGS=-ldflags "-X server/cmd/server.envFile=${LOCAL_ENVIRONMENT_FILE}"
-PROD_BUILD_FLAGS=-ldflags "-X server/cmd/server.envFile=${PROD_ENVIRONMENT_FILE}"
+LOCAL_BUILD_FLAGS=-ldflags "-X main.envFile=${LOCAL_ENVIRONMENT_FILE}"
+PROD_BUILD_FLAGS=-ldflags "-X main.envFile=${PROD_ENVIRONMENT_FILE}"
 
 .DEFAULT_GOAL: all
 

@@ -14,6 +14,8 @@ import (
 func ParseConfig(environmentFile string) models.ServerConfig {
 	var config models.ServerConfig
 
+	fmt.Fprintf(os.Stdout, "Using config file: %s\n", environmentFile)
+
 	file, err := ioutil.ReadFile("environments/" + environmentFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

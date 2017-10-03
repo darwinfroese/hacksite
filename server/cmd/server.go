@@ -10,8 +10,8 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
 
-// Constants
-const (
+// These are vars so they can be set at compile time
+var (
 	version = "1.0.0"
 	envFile = "dev.env.json"
 )
