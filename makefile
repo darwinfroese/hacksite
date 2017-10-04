@@ -36,7 +36,7 @@ buildLocal: buildLocalServer
 buildLocalServer:
 	@echo "> Building local server"
 	@echo "> Injecting prod file: ${LOCAL_ENVIRONMENT_FILE}"
-	@go build ${LOCAL_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go 
+	go build ${LOCAL_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go 
 
 .PHONY: server
 server:
