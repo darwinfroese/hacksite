@@ -34,9 +34,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup Test Env
-          command: yarn global add cross-env
-      - run:
           name: Test web client
           command: cd webclient && yarn run test
 workflows:
