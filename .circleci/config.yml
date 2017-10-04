@@ -17,13 +17,13 @@ jobs:
           command: go test -v ./...
   build-web:
     docker:
-      - image: circleci/node:6.11
+      - image: circleci/node:4.8.2
     working_directory: ~/hacksite
     steps:
       - checkout
-      # - run:
-      #     name: Update NPM
-      #     command: 'sudo npm install -g npm@latest'
+      - run:
+          name: Update NPM
+          command: 'sudo npm install -g npm@latest'
       # - run:
       #     name: Setup global dependencies
       #     command: 'sudo sh scripts/setup-global-deps.sh'
@@ -35,16 +35,16 @@ jobs:
           command: make web      
   test-web:
     docker:
-      - image: circleci/node:6.11-browsers
+      - image: circleci/node:4.8.2-browsers
     working_directory: ~/hacksite
     steps:
       - checkout
       - run:
           name: Update NPM
           command: 'sudo npm install -g npm@latest'
-      - run:
-          name: Installing Dependencies
-          command: 'sudo npm install -g cross-env'
+      # - run:
+      #     name: Installing Dependencies
+      #     command: 'sudo npm install -g cross-env'
       - run:
           name: Test web client
           command: cd webclient && yarn run test
