@@ -7,7 +7,9 @@ jobs:
     steps:
       - checkout
       - run: make setup-go
-      - run: make server PROD_ENVIRONMENT_FILE=$ProdFileLoc
+      - run: make server PROD_ENVIRONMENT_FILE=${ProdFileLoc}
+      - run: echo ${TestVar}
+      - run: echo $TestVar
       - store_artifacts:
           path: ./Hacksite
           destination: hacksite

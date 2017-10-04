@@ -20,36 +20,32 @@ setup: setup-go setup-web
 .PHONY: setup-go
 setup-go:
 	@echo "> Getting go dependencies"
-	cd server
-	go get -t -v -d ./...
-	cd ..
+	@./scripts/setup-go.sh
 
 .PHONY: setup-web
 setup-web:
 	@echo "> Getting web dependencies"
-	cd webclient
-	yarn install --production
-	cd ..
+	@./scripts/setup-web.sh
 
 .PHONY: buildLocal
 buildLocal: buildLocalServer
 	@echo "> Generating local certificates"
-	./scripts/generateCerts.sh
+	@./scripts/generateCerts.sh
 
 .PHONY: buildLocalServer
 buildLocalServer:
 	@echo "> Building local server"
 	@echo "> Injecting prod file: ${LOCAL_ENVIRONMENT_FILE}"
-	go build ${LOCAL_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go 
+	@go build ${LOCAL_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go 
 
 .PHONY: server
 server:
 	@echo "> Building Server"
-	go build ${PROD_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go
+	@go build ${PROD_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go
 
 .PHONY: web
 web:
-	./scripts/buildWeb.sh
+	@./scripts/buildWeb.sh
 
 .PHONY: help
 help:
