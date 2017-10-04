@@ -21,6 +21,9 @@ jobs:
     working_directory: ~/hacksite
     steps:
       - checkout
+      - run:
+          name: Update NPM
+          command: 'sudo npm install -g npm@latest'
       - run: 
           name: Setup build environment
           command: make setup-web
