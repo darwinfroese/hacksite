@@ -18,14 +18,22 @@ jobs:
     steps:
       - checkout
       - run: make setup-web
-      - run: make web
+      - run: make web      
+  test-web:
+    docker:
+      - image: circleci/node:6.11-browsers
+    working_directory: ~/hacksite/webclient
+    steps:
+      - checkout
       - run:
           name: Test web client
           command: yarn run test
-
 workflows:
   version: 2
   build_full:
     jobs:
       - build
       - build-web
+      - test-web:
+          requires:
+            - build-web
