@@ -8,6 +8,9 @@ jobs:
       - checkout
       - run: make setup-go
       - run: make server ENVIRONMENT_FILE=environments/test.env.json
+      - run:
+          name: Test backend server
+          command: go test -v ./...
   build-web:
     docker:
       - image: circleci/node:6.11
@@ -16,32 +19,13 @@ jobs:
       - checkout
       - run: make setup-web
       - run: make web
-  test-server:
-    docker:
-      - image: circleci/golang:latest
-    working_directory: /go/src/github.com/darwinfroese/hacksite/server
-    steps:
-      - checkout
-      - run:
-          name: Test backend server
-          command: go test -v ./...
-  test-web:
-    docker:
-      - image: circleci/node:6.11-browsers
-    working_directory: ~/hacksite/webclient
-    steps:
       - run:
           name: Test web client
           command: yarn run test
+
 workflows:
   version: 2
   build_full:
     jobs:
       - build
       - build-web
-      - test-server:
-          requires:
-            - build
-      - test-web:
-          requires:
-            - build-web
