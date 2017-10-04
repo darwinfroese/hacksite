@@ -17,7 +17,7 @@ jobs:
           command: go test -v ./...
   build-web:
     docker:
-      - image: circleci/node:6.11-browsers
+      - image: circleci/node:6.11
     working_directory: ~/hacksite
     steps:
       - checkout
