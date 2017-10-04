@@ -33,6 +33,5 @@ func ParseConfig(environmentFile string) models.ServerConfig {
 		return config
 	}
 
-	fmt.Printf("Config: %q\n", config)
 	return config
 }
