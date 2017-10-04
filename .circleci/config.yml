@@ -24,6 +24,9 @@ jobs:
       - run:
           name: Update NPM
           command: 'sudo npm install -g npm@latest'
+      - run:
+          name: Setup global dependencies
+          command: 'sudo npm install -g readable-stream'
       - run: 
           name: Setup build environment
           command: make setup-web
