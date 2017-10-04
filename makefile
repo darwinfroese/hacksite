@@ -28,7 +28,7 @@ setup-go:
 setup-web:
 	@echo "> Getting web dependencies"
 	cd webclient
-	yarn
+	yarn install --production
 	cd ..
 
 .PHONY: buildLocal

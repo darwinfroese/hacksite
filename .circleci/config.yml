@@ -9,7 +9,7 @@ jobs:
       - run: make setup-go
       - run: make server PROD_ENVIRONMENT_FILE=$ProdFileLoc
       - store_artifacts:
-          path: ./hacksite
+          path: ./Hacksite
           destination: hacksite
   build-web:
     docker:
