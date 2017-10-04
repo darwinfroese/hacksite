@@ -24,6 +24,9 @@ jobs:
       - run:
           name: Update NPM
           command: 'sudo npm install -g npm@latest'
+      - run:
+          name: Fix Dependencies
+          command: 'sudo yarn global add process-nextick-args'
       - run: 
           name: Setup build environment
           command: make setup-web
