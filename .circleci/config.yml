@@ -17,7 +17,7 @@ jobs:
           command: go test -v ./...
   build-web:
     docker:
-      - image: circleci/node:4.8.2
+      - image: circleci/node:4.8.2-browsers
     working_directory: ~/hacksite
     steps:
       - checkout
@@ -32,19 +32,7 @@ jobs:
           command: make setup-web
       - run:
           name: Build web client
-          command: make web      
-  test-web:
-    docker:
-      - image: circleci/node:4.8.2-browsers
-    working_directory: ~/hacksite
-    steps:
-      - checkout
-      - run:
-          name: Update NPM
-          command: 'sudo npm install -g npm@latest'
-      - run:
-          name: Installing Dependencies
-          command: 'sudo npm install -g cross-env'
+          command: make web
       - run:
           name: Test web client
           command: cd webclient && yarn run test
@@ -54,6 +42,3 @@ workflows:
     jobs:
       - build
       - build-web
-      - test-web:
-          requires:
-            - build-web
