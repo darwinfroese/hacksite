@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd webclient
-yarn install --production
+yarn
 cd ..
