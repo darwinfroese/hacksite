@@ -6,8 +6,12 @@ jobs:
     working_directory: /go/src/github.com/darwinfroese/hacksite/
     steps:
       - checkout
-      - run: make setup-go
-      - run: make server ENVIRONMENT_FILE=environments/test.env.json
+      - run: 
+          name: Setup build environment
+          command: make setup-go
+      - run: 
+          name: Build Server
+          command: make server ENVIRONMENT_FILE=environments/test.env.json
       - run:
           name: Test backend server
           command: go test -v ./...
@@ -17,14 +21,21 @@ jobs:
     working_directory: ~/hacksite
     steps:
       - checkout
-      - run: make setup-web
-      - run: make web      
+      - run: 
+          name: Setup build environment
+          command: make setup-web
+      - run:
+          name: Build web client
+          command: make web      
   test-web:
     docker:
       - image: circleci/node:6.11-browsers
     working_directory: ~/hacksite
     steps:
       - checkout
+      - run:
+          name: Setup Test Env
+          command: yarn global add cross-env
       - run:
           name: Test web client
           command: cd webclient && yarn run test
