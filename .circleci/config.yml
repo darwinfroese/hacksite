@@ -22,12 +22,12 @@ jobs:
   test-web:
     docker:
       - image: circleci/node:6.11-browsers
-    working_directory: ~/hacksite/webclient
+    working_directory: ~/hacksite
     steps:
       - checkout
       - run:
           name: Test web client
-          command: yarn run test
+          command: cd webclient && yarn run test
 workflows:
   version: 2
   build_full:
