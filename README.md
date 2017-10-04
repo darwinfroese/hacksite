@@ -1,5 +1,7 @@
 # HACKSITE
 
+Current Status: [![CircleCI](https://circleci.com/gh/darwinfroese/hacksite/tree/master.svg?style=svg)](https://circleci.com/gh/darwinfroese/hacksite/tree/master)
+
 Hacksite is my take on the typical TODO list. Focusing in simple and achievable iterations containing only four tasks at a time. Instead of seeing a possibly overwhelming amount of stuff to do you'll only see four (hopefully small) tasks.
 
 Hacksite is currently in ALPHA stage and has a few major features to be built in before it is ready for BETA. The current iteration of Hacksite can be found here [hacksite.iamdarwin.ca](http://hacksite.iamdarwin.ca) and is unstable, bug-filled, and insecure. Please note that the database will be wiped regularly and that any information entered may not be saved until the project becomes more stable.

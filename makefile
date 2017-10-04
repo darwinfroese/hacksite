@@ -1,10 +1,8 @@
 BINARY = Hacksite
 
-LOCAL_ENVIRONMENT_FILE=environments/dev.env.json
-PROD_ENVIRONMENT_FILE=environments/prod.env.json
+ENVIRONMENT_FILE=environments/dev.env.json
 
-LOCAL_BUILD_FLAGS=-ldflags "-X main.envFile=${LOCAL_ENVIRONMENT_FILE}"
-PROD_BUILD_FLAGS=-ldflags "-X main.envFile=${PROD_ENVIRONMENT_FILE}"
+BUILD_FLAGS=-ldflags "-X main.envFile=${ENVIRONMENT_FILE}"
 
 .DEFAULT_GOAL: all
 
@@ -28,15 +26,9 @@ setup-web:
 	@./scripts/setup-web.sh
 
 .PHONY: buildLocal
-buildLocal: buildLocalServer
+buildLocal: server
 	@echo "> Generating local certificates"
 	./scripts/generateCerts.sh
-
-.PHONY: buildLocalServer
-buildLocalServer:
-	@echo "> Building local server"
-	@echo "> Injecting prod file: ${LOCAL_ENVIRONMENT_FILE}"
-	go build ${LOCAL_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go 
 
 .PHONY: server
 server:
