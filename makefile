@@ -30,7 +30,7 @@ setup-web:
 .PHONY: buildLocal
 buildLocal: buildLocalServer
 	@echo "> Generating local certificates"
-	@./scripts/generateCerts.sh
+	./scripts/generateCerts.sh
 
 .PHONY: buildLocalServer
 buildLocalServer:
