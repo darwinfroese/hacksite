@@ -40,6 +40,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Installing Dependencies
+          command: 'sudo npm install -g cross-env'
+      - run:
           name: Test web client
           command: cd webclient && yarn run test
 workflows:
