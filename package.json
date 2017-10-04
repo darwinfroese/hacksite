@@ -1,6 +1,0 @@
-{
-  "devDependencies": {
-    "cross-env": "^5.0.5",
-    "process-nextick-args": "^1.0.7"
-  }
-}
