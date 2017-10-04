@@ -26,7 +26,7 @@ jobs:
           command: 'sudo npm install -g npm@latest'
       - run:
           name: Fix Dependencies
-          command: 'sudo yarn global add process-nextick-args'
+          command: 'sudo yarn global add readable-stream'
       - run: 
           name: Setup build environment
           command: make setup-web
