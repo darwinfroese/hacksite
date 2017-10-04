@@ -40,6 +40,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Update NPM
+          command: 'sudo npm install -g npm@latest'
+      - run:
           name: Installing Dependencies
           command: 'sudo npm install -g cross-env'
       - run:
