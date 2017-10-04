@@ -42,9 +42,9 @@ jobs:
       - run:
           name: Update NPM
           command: 'sudo npm install -g npm@latest'
-      # - run:
-      #     name: Installing Dependencies
-      #     command: 'sudo npm install -g cross-env'
+      - run:
+          name: Installing Dependencies
+          command: 'sudo npm install -g cross-env'
       - run:
           name: Test web client
           command: cd webclient && yarn run test
