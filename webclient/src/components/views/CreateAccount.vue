@@ -10,7 +10,7 @@
           <div class='input-container'>
             <label class="label" for="username">Username</label>
             <p :class="{ 'control': true }">
-              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'alpha_num|min:3'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
+              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'required|alpha_num|min:3'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
               <span v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
             </p>
           </div>
@@ -27,20 +27,16 @@
               <input id="password" placeholder='Password' v-model="account.Password" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('password') }" name="password" type="password">
               <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
             </p>
-
           </div>
           <div class='input-container'>
-            <label class="label" for="passwordCon">Confirm your password</label>
+            <label class="label" for="ConfirmPassword">Confirm your password</label>
             <p :class="{ 'control': true }">
-              <input id="passwordCon" placeholder='Confirm Password' v-model="account.ConfirmPassword" v-validate="'required|confirmed:password'" :class="{'input': true, 'is-danger': errors.has('passwordCon') }" name="passwordCon" type="password">
-              <span v-show="errors.has('passwordCon')" class="help is-danger">{{ errors.first('passwordCon') }}</span>
+              <input id="ConfirmPassword" placeholder='Confirm Password' v-model="account.ConfirmPassword" v-validate="'required|confirmed:password'" :class="{'input': true, 'is-danger': errors.has('ConfirmPassword') }" name="ConfirmPassword" type="password">
+              <span v-show="errors.has('ConfirmPassword')" class="help is-danger">{{ errors.first('ConfirmPassword') }}</span>
             </p>
-
           </div>
         </section>
         <section class='message-container'>
-          <span class='message'> All fields are required. </span>
-          <br>
           <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
         </section>
         <div class='menu-bar'>
@@ -135,7 +131,7 @@ input {
   transition: all 0.5s linear;
 }
 .input-container {
-  margin-top: 25px;
+  margin-top: 35px;
 }
 .label {
   font-size: 14px;
@@ -194,5 +190,13 @@ button:hover {
 }
 .success {
   color: #4e9155;
+}
+
+.help.is-danger {
+  display: inline-block;
+  font-style: italic;
+  font-size: 14px;
+  color: #ff4949;
+  position: absolute;
 }
 </style>
