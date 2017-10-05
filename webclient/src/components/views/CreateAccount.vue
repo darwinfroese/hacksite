@@ -12,8 +12,11 @@
             <input placeholder='Username' v-model="account.Username">
           </div>
           <div class='input-container'>
-            <span class='label'> Email </span>
-            <input placeholder='someone@email.com' v-model="account.Email">
+            <label class="label" for="email">Email</label>
+            <p :class="{ 'control': true }">
+              <input placeholder='someone@email.com' v-model="account.Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text">
+              <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
+            </p>
           </div>
           <div class='input-container'>
             <span class='label'> Password </span>
