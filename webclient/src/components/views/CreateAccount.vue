@@ -8,23 +8,34 @@
         </section>
         <section class='form'>
           <div class='input-container'>
-            <span class='label'> Username </span>
-            <input placeholder='Username' v-model="account.Username">
+            <label class="label" for="username">Username</label>
+            <p :class="{ 'control': true }">
+              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'alpha_num|min:3'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
+              <span v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
+            </p>
           </div>
           <div class='input-container'>
             <label class="label" for="email">Email</label>
             <p :class="{ 'control': true }">
-              <input placeholder='someone@email.com' v-model="account.Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text">
+              <input id="email" placeholder='someone@email.com' v-model="account.Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text">
               <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
             </p>
           </div>
           <div class='input-container'>
-            <span class='label'> Password </span>
-            <input placeholder='Password' type='password' v-model="account.Password">
+            <label class="label" for="password">Password</label>
+            <p :class="{ 'control': true }">
+              <input id="password" placeholder='Password' v-model="account.Password" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('password') }" name="password" type="password">
+              <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
+            </p>
+
           </div>
           <div class='input-container'>
-            <span class='label'> Confirm your password </span>
-            <input placeholder='Confirm Password' type='password' v-model="account.ConfirmPassword">
+            <label class="label" for="passwordCon">Confirm your password</label>
+            <p :class="{ 'control': true }">
+              <input id="passwordCon" placeholder='Confirm Password' v-model="account.ConfirmPassword" v-validate="'required|confirmed:password'" :class="{'input': true, 'is-danger': errors.has('passwordCon') }" name="passwordCon" type="password">
+              <span v-show="errors.has('passwordCon')" class="help is-danger">{{ errors.first('passwordCon') }}</span>
+            </p>
+
           </div>
         </section>
         <section class='message-container'>
