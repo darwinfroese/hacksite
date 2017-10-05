@@ -10,8 +10,8 @@ phases:
       - apt-get update && apt-get install yarn python-pip nodejs --yes
       - apt-get install python-pip
       - pip install awscli --upgrade --user
-      - export PATH=$Installs:$PATH
-      - echo $PATH
+      - ~/.local/bin/aws --version
+      - node --version
       - echo Install completed on `date` 
   build:
     commands:
