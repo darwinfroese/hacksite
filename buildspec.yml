@@ -10,7 +10,7 @@ phases:
       - echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
       - apt-get update && apt-get install yarn --yes
       - echo Installing python and pip
-      - apt-get install python --yes
+      - easy_install pip
       - echo Installing AWS cli
       - pip install awscli --upgrade --user
       - echo Install completed on `date` 
