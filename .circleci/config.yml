@@ -24,9 +24,6 @@ jobs:
       - run:
           name: Update NPM
           command: 'sudo npm install -g npm@latest'
-      # - run:
-      #     name: Setup global dependencies
-      #     command: 'sudo sh scripts/setup-global-deps.sh'
       - run: 
           name: Setup build environment
           command: make setup-web
