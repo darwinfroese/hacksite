@@ -18,17 +18,17 @@ setup: setup-go setup-web
 .PHONY: setup-go
 setup-go:
 	@echo "> Getting go dependencies"
-	@./scripts/setup-go.sh
+	@sh scripts/setup-go.sh
 
 .PHONY: setup-web
 setup-web:
 	@echo "> Getting web dependencies"
-	@./scripts/setup-web.sh
+	@sh scripts/setup-web.sh
 
 .PHONY: buildLocal
 buildLocal: server
 	@echo "> Generating local certificates"
-	./scripts/generateCerts.sh
+	@sh scripts/generateCerts.sh
 
 .PHONY: server
 server:
@@ -37,7 +37,7 @@ server:
 
 .PHONY: web
 web:
-	@./scripts/buildWeb.sh
+	@sh scripts/buildWeb.sh
 
 .PHONY: help
 help:
