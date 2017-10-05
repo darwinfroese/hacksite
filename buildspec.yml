@@ -20,10 +20,11 @@ phases:
   post_build:
     commands:
       - echo Cleanup started on `date`
-      - ~/.local/bin/aws s3 cp $Environments . --recursive
-      - ~/.local/bin/aws s3 cp $AppSpec . --recursive
-      - ~/.local/bin/aws s3 cp $Scripts . --recursive
-      - zip hacksite_build.zip environments/ appspec.yml scripts/ webdist/ Hacksite
+      - mkdir -p prodenv, 
+      - ~/.local/bin/aws s3 cp $Environments prodenv/ --recursive
+      - ~/.local/bin/aws s3 cp $AppSpec appspec.yml --recursive
+      - ~/.local/bin/aws s3 cp $Scripts prodscripts/ --recursive
+      - zip hacksite_build.zip prodenv/ appspec.yml prodscripts/ webdist/ Hacksite
       - echo Cleanup finished on `date`
 artifacts:
   files:
