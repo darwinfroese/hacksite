@@ -10,6 +10,7 @@ phases:
       - apt-get update && apt-get install yarn python-pip --yes
       - apt-get install python-pip
       - pip install awscli --upgrade --user
+      - export PATH=$Installs:$PATH
       - echo Install completed on `date` 
   build:
     commands:
