@@ -11,7 +11,7 @@ phases:
       - apt-get install python-pip
       - pip install awscli --upgrade --user
       - ~/.local/bin/aws --version
-      - node --version
+      - nodejs --version
       - echo Install completed on `date` 
   build:
     commands:
@@ -21,9 +21,9 @@ phases:
   post_build:
     commands:
       - echo Cleanup started on `date`
-      - aws s3 cp $Environments . --recursive
-      - aws s3 cp $AppSpec . --recursive
-      - aws s3 cp $Scripts . --recursive
+      - ~/.local/bin/aws s3 cp $Environments . --recursive
+      - ~/.local/bin/aws s3 cp $AppSpec . --recursive
+      - ~/.local/bin/aws s3 cp $Scripts . --recursive
       - zip hacksite_build.zip environments/ appspec.yml scripts/ webdist/ Hacksite
       - echo Cleanup finished on `date`
 artifacts:
