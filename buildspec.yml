@@ -1,6 +1,11 @@
 # for AWS code build
 version: 0.2
 
+env:
+  param_store:
+    AWS_ACCESS_KEY_ID: "code-build-access-key"
+    AWS_SECRET_ACCESS_KEY: "code-build-secret-key"
+
 phases:
   install:
     commands:
@@ -20,7 +25,7 @@ phases:
   post_build:
     commands:
       - echo Cleanup started on `date`
-      - mkdir -p prodenv, 
+      - echo ~/.local/bin/aws s3 cp $Environments prodenv/ --recursive 
       - ~/.local/bin/aws s3 cp $Environments prodenv/ --recursive
       - ~/.local/bin/aws s3 cp $AppSpec appspec.yml --recursive
       - ~/.local/bin/aws s3 cp $Scripts prodscripts/ --recursive
