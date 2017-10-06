@@ -26,7 +26,7 @@ phases:
     commands:
       - echo Cleanup started on `date`
       - ~/.local/bin/aws s3 cp $EnvFolder prodenv/ --recursive
-      - ~/.local/bin/aws s3 cp $AppSpecFile appspec.yml --recursive
+      - ~/.local/bin/aws s3 cp $AppSpecFile appspec.yml
       - ~/.local/bin/aws s3 cp $ProdScripts prodscripts/ --recursive
       - echo Cleanup finished on `date`
 artifacts:
