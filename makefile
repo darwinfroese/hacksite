@@ -33,7 +33,7 @@ buildLocal: server
 .PHONY: server
 server:
 	@echo "> Building Server"
-	@go build ${PROD_BUILD_FLAGS} -o ${BINARY} server/cmd/server.go
+	@go build ${BUILD_FLAGS} -o ${BINARY} server/cmd/server.go
 
 .PHONY: web
 web:
