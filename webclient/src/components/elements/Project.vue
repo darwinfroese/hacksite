@@ -12,23 +12,42 @@
     <span class='control-icon'>
       <i class='fa fa-eye' title='View Project' @click="ShowProject()"></i>
       <i class='fa fa-pencil' title='Edit Project' @click="EditProject()"></i>
-      <i class='fa fa-trash-o' title='Delete Project' @click="RemoveProject()"></i>
+      <i class='fa fa-trash-o' title='Delete Project' @click="RenderDeleteDialog()"></i>
     </span>
+    <Modal 
+      :message="RemoveProjectMessage"
+      :acceptText="'Yes'"
+      :rejectText="'No'"
+      v-on:Accept="RemoveProject"
+      v-on:Reject="CloseModal"
+      v-if="renderDialog" />
   </div>
 </template>
 
 <script>
 import router from '@/router';
 import { RemoveProject } from '@/database';
+import Modal from '@/components/elements/Modal';
 
 export default {
+  components: {
+    'Modal': Modal
+  },
   data () {
     return {
-      active: false
+      active: false,
+      renderDialog: false,
+      RemoveProjectMessage: 'Are you sure you want to delete this project?'
     };
   },
   props: ['project'],
   methods: {
+    RenderDeleteDialog: function () {
+      this.renderDialog = true;
+    },
+    CloseModal: function () {
+      this.renderDialog = false;
+    },
     ToggleMenu: function () {
       this.active = !this.active;
     },
