@@ -229,6 +229,44 @@ func (b *boltDB) GetAccount(username string) (models.Account, error) {
 				account = acc
 				return nil
 			}
+
+		}
+
+		return fmt.Errorf("no matching account found")
+	})
+
+	return account, err
+}
+
+// GetAccount finds an account in the database if there is a matching username
+func (b *boltDB) GetAccountByEmail(email string) (models.Account, error) {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return models.Account{}, err
+	}
+	defer db.Close()
+
+	var account models.Account
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", accountsBucket)
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var acc models.Account
+			err = json.Unmarshal(v, &acc)
+
+			if err != nil {
+				return err
+			}
+
+			if acc.Email == email {
+				account = acc
+				return nil
+			}
+
 		}
 
 		return fmt.Errorf("no matching account found")

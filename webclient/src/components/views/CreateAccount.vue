@@ -89,8 +89,12 @@ export default {
             this.message = 'Account successfully created. Redirecting to login page...';
             this.success = true;
             this.Redirect();
-          } else {
-            this.message = 'Something went wrong, please try again';
+          }
+          return response.json();
+        }).then((data) => {
+          if (data.Error) {
+            this.message = data.Error;
+            this.success = false;
           }
         }, (error) => {
           console.log('Error: ', error);

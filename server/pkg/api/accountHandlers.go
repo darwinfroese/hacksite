@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	_ "errors"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/accounts"
 )
+
+type Profile struct {
+	Error    string
+}
 
 var accountHandlerMap = map[string]handler{
 	"POST":    createAccount,
@@ -38,8 +43,19 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
+		if err.Error() != "" {
+			profile := Profile{err.Error()}
+			js, err := json.Marshal(profile)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Write(js)
+			return
+		} else {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusCreated)
