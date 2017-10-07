@@ -19,7 +19,7 @@ const (
 func CreateAccount(db database.Database, account *models.Account) error {
 
 	//Check if the username already exists
-	validUsername, invalidUsername := db.GetAccount(account.Username)
+	_, invalidUsername := db.GetAccount(account.Username)
 	if invalidUsername != nil {
 		//Username is not in use
 	} else {
@@ -28,7 +28,7 @@ func CreateAccount(db database.Database, account *models.Account) error {
 	}
 
 	//Check if the email already exists
-	validEmail, invalidEmail := db.GetAccountByEmail(account.Email)
+	_, invalidEmail := db.GetAccountByEmail(account.Email)
 	if invalidEmail != nil {
 		//Email is not in use
 	} else {
