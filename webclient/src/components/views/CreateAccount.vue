@@ -92,12 +92,10 @@ export default {
           }
           return response.json();
         }).then((data) => {
-          if (data.Error) {
-            this.message = data.Error;
+          if (data.ErrorMessage) {
+            this.message = data.ErrorMessage;
             this.success = false;
           }
-        }, (error) => {
-          console.log('Error: ', error);
         });
     },
     ConfirmPasswords: function () {

@@ -102,7 +102,6 @@ export const ChangeCurrentIteration = (iteration) => {
 };
 
 export const CreateAccount = (account) => {
-  console.log(account);
   return fetch(apiBaseUrl + '/accounts', {
     method: 'POST',
     headers: {

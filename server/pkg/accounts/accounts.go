@@ -3,36 +3,26 @@ package accounts
 import (
 	"fmt"
 	"os"
-	"errors"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
-const (
-	// UnathorizedErrorMessage is used to determine if the error is because of unathorized account
-	UnathorizedErrorMessage = "Account is invalid"
-)
-
 // CreateAccount will create an account and insert it into the database
 func CreateAccount(db database.Database, account *models.Account) error {
 
 	//Check if the username already exists
-	_, invalidUsername := db.GetAccount(account.Username)
-	if invalidUsername != nil {
-		//Username is not in use
-	} else {
-		invalidUsername = errors.New("Username is taken")
+	_, invalidUsername := db.GetAccountByUsername(account.Username)
+	if invalidUsername == nil {
+		invalidUsername = fmt.Errorf(models.UsernameTakenErrorMessage)
 		return invalidUsername
 	}
 
 	//Check if the email already exists
 	_, invalidEmail := db.GetAccountByEmail(account.Email)
-	if invalidEmail != nil {
-		//Email is not in use
-	} else {
-		invalidEmail = errors.New("This Email is already in use")
+	if invalidEmail == nil {
+		invalidEmail = fmt.Errorf(models.EmailTakenErrorMessage)
 		return invalidEmail
 	}
 

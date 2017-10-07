@@ -57,9 +57,17 @@ type ServerConfig struct {
 	Port, KeyLocation, CertLocation, WebFileLocation string
 }
 
+type ResponseObject struct {
+	StatusCode    int
+	ErrorMessage  string
+	Message       string
+}
+
 // Status constants for projects
 const (
-	StatusCompleted  = "Completed"
-	StatusInProgress = "InProgress"
-	StatusNew        = "New"
+	StatusCompleted  		  = "Completed"
+	StatusInProgress		  = "InProgress"
+	StatusNew        		  = "New"
+	UsernameTakenErrorMessage = "Username is already taken"
+	EmailTakenErrorMessage 	  = "This email is already in use"
 )

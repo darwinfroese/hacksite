@@ -19,7 +19,7 @@ type Database interface {
 
 	// Accounts
 	CreateAccount(account models.Account) (int, error)
-	GetAccount(username string) (models.Account, error)
+	GetAccountByUsername(username string) (models.Account, error)
 	GetAccountByID(userID int) (models.Account, error)
 	GetAccountByEmail(email string) (models.Account, error)
 	GetNextAccountID() (int, error)

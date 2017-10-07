@@ -201,8 +201,8 @@ func (b *boltDB) CreateAccount(account models.Account) (int, error) {
 	return account.ID, nil
 }
 
-// GetAccount finds an account in the database if there is a matching username
-func (b *boltDB) GetAccount(username string) (models.Account, error) {
+// GetAccountByUsername finds an account in the database if there is a matching username
+func (b *boltDB) GetAccountByUsername(username string) (models.Account, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
 		return models.Account{}, err
@@ -238,7 +238,7 @@ func (b *boltDB) GetAccount(username string) (models.Account, error) {
 	return account, err
 }
 
-// GetAccount finds an account in the database if there is a matching username
+// GetAccountByUsername finds an account in the database if there is a matching username
 func (b *boltDB) GetAccountByEmail(email string) (models.Account, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
