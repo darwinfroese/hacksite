@@ -174,7 +174,7 @@ func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.DeleteProject(project.ID, ctx.db, session)
+	err = projects.DeleteProject(ctx.db, session, project.ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

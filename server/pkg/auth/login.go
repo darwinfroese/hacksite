@@ -14,7 +14,7 @@ const (
 
 // Login will attempt to login the user and return a new session
 func Login(db database.Database, username, password string) (models.Session, error) {
-	account, err := db.GetAccount(username)
+	account, err := db.GetAccountByUsername(username)
 	if err != nil {
 		if err.Error() == "no matching account found" {
 			return models.Session{}, fmt.Errorf("Error: %s", UnathorizedErrorMessage)
