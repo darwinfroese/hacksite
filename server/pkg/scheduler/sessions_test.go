@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -28,12 +27,6 @@ func TestMain(m *testing.M) {
 	db = database.CreateDB()
 	db.StoreSession(expiredSession)
 	db.StoreSession(unexpiredSession)
-
-	sessions, err := db.GetAllSessions()
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(sessions)
 
 	retCode := m.Run()
 
