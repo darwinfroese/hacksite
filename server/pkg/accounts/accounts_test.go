@@ -80,15 +80,14 @@ var createAccountTests = []struct {
 }}
 
 func TestCreateAccount(t *testing.T) {
-	fmt.Println("Starting CreateAccount Tests...")
+	t.Logf("Starting CreateAccount Tests...")
 
 	for i, tc := range createAccountTests {
-		fmt.Printf("[ %02d ] %s\n", i+1, tc.Description)
+		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 		err := CreateAccount(db, &tc.Account)
 
 		if err != nil && err.Error() != tc.ExpectedErrorMessage {
-			fmt.Printf("[ FAIL ] The test failed because of an unexpected error: %s\n", err.Error())
-			t.Fail()
+			t.Errorf("[ FAIL ] The test failed because of an unexpected error: %s\n", err.Error())
 			// go to the next test case since we want to still loop through all of them
 			break
 		}
@@ -98,9 +97,8 @@ func TestCreateAccount(t *testing.T) {
 		tc.ExpectedAccount.Salt = tc.Account.Salt
 
 		if !reflect.DeepEqual(tc.Account, tc.ExpectedAccount) {
-			fmt.Printf("[ FAIL ] CreateAccount did not return the account expected.\nExpected: %v\nbut got:  %v\n",
+			t.Errorf("[ FAIL ] CreateAccount did not return the account expected.\nExpected: %v\nbut got:  %v\n",
 				tc.Account, tc.ExpectedAccount)
-			t.Fail()
 		}
 	}
 }
