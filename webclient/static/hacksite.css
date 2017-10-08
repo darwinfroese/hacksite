@@ -1,3 +1,31 @@
 body {
   margin: 0;
 }
+.error {
+  color : red;
+  font-size : 15px;
+}
+input, textarea {
+display: block;
+font-size: 16px;
+padding: 5px 10px;
+width: 500px;
+border: none;
+font-weight: 100;
+outline: none;
+color: #325778;
+}
+input:focus {
+border-bottom: 1px solid #325778;
+}
+input {
+padding-bottom: 10px;
+border-bottom: 1px solid #eee;
+margin-top: 10px;
+transition: all 0.5s linear;
+}
+.input-label {
+font-size: 14px;
+margin-left: 5px;
+font-weight: 500;
+}

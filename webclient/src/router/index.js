@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import VeeValidate from 'vee-validate';
 import Router from 'vue-router';
 import Projects from '@/components/views/ProjectList';
 import Details from '@/components/views/Details';
@@ -12,7 +11,6 @@ import Login from '@/components/views/Login';
 import { Authenticate } from '@/database';
 
 Vue.use(Router);
-Vue.use(VeeValidate);
 
 // TODO: Route better - use the project id inside the
 // route better (ie. :pid/details, :pid/iterations, etc.)
