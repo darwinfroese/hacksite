@@ -39,6 +39,11 @@ server:
 web:
 	@sh scripts/buildWeb.sh
 
+.PHONY: serverTests
+serverTests: server
+	@sh scripts/setup-tests.sh
+	@sh scripts/run-server-tests.sh
+
 .PHONY: help
 help:
 	@echo "default	- Builds server and web client for production"
