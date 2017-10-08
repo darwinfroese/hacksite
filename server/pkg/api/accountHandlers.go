@@ -6,11 +6,9 @@ import (
 	"net/http"
 	"os"
 
-
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/accounts"
 )
-
 
 var accountHandlerMap = map[string]handler{
 	"POST":    createAccount,

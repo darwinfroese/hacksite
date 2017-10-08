@@ -58,16 +58,16 @@ type ServerConfig struct {
 }
 
 type ResponseObject struct {
-	StatusCode    int
-	ErrorMessage  string
-	Message       string
+	StatusCode   int
+	ErrorMessage string
+	Message      string
 }
 
 // Status constants for projects
 const (
-	StatusCompleted  		  = "Completed"
-	StatusInProgress		  = "InProgress"
-	StatusNew        		  = "New"
+	StatusCompleted           = "Completed"
+	StatusInProgress          = "InProgress"
+	StatusNew                 = "New"
 	UsernameTakenErrorMessage = "Username is already taken"
-	EmailTakenErrorMessage 	  = "This email is already in use"
+	EmailTakenErrorMessage    = "This email is already in use"
 )
