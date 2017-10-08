@@ -2,10 +2,11 @@
   <div class='card'>
     <h4>{{ title }}</h4>
     <div class='form'>
-      <div class='input'>
-        <span class='input-label'> Project Name *</span>
-        <input type='text' placeholder='Project Name' v-model='project.Name'>
-      </div>
+      <RequiredTextBox 
+        :fieldLabel = "'Project Name *'" 
+        :placeholder = "'Enter your project name'" 
+        :model= 'project.Name' 
+        :fieldName = "'Name'" />
       <div class='input'>
         <span class='input-label'> Project Description </span>
         <textarea placeholder='Enter your project description' v-model='project.Description'></textarea>
@@ -24,11 +25,13 @@
 
 <script>
 import TaskInputs from '@/components/elements/TaskInputs';
+import RequiredTextBox from '@/components/elements/RequiredTextBox';
 
 export default {
   props: ['title', 'project', 'buttonText'],
   components: {
-    'TaskInputs': TaskInputs
+    'TaskInputs': TaskInputs,
+    'RequiredTextBox': RequiredTextBox
   },
   methods: {
     Handler: function () {
@@ -65,16 +68,6 @@ export default {
 </script>
 
 <style scoped>
-input, textarea {
-  display: block;
-  font-size: 16px;
-  padding: 5px 10px;
-  width: 500px;
-  border: none;
-  font-weight: 100;
-  outline: none;
-  color: #325778;
-}
 textarea {
   margin: 0;
   height: 75px;
@@ -86,15 +79,6 @@ textarea {
 }
 textarea:focus {
   border: 1px solid #325778;
-}
-input {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  margin-top: 10px;
-  transition: all 0.5s linear;
-}
-input:focus {
-  border-bottom: 1px solid #325778;
 }
 h4 {
   margin-left: 15px;
@@ -136,11 +120,6 @@ button:hover {
 }
 .info:hover .info-text{
   visibility: visible;
-}
-.input-label {
-  font-size: 14px;
-  margin-left: 5px;
-  font-weight: 500;
 }
 .form {
   padding-left: 15px;
