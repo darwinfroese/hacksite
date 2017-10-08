@@ -15,6 +15,21 @@ const (
 
 // CreateAccount will create an account and insert it into the database
 func CreateAccount(db database.Database, account *models.Account) error {
+
+	//Check if the username already exists
+	_, invalidUsername := db.GetAccountByUsername(account.Username)
+	if invalidUsername == nil {
+		invalidUsername = fmt.Errorf(models.UsernameTakenErrorMessage)
+		return invalidUsername
+	}
+
+	//Check if the email already exists
+	_, invalidEmail := db.GetAccountByEmail(account.Email)
+	if invalidEmail == nil {
+		invalidEmail = fmt.Errorf(models.EmailTakenErrorMessage)
+		return invalidEmail
+	}
+
 	salt, password, err := auth.SaltPassword(account.Password)
 	if err != nil {
 		return fmt.Errorf("an error occured salting the account password: %s", err.Error())

@@ -38,8 +38,14 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
+		if err.Error() == models.EmailTakenErrorMessage || err.Error() == models.UsernameTakenErrorMessage {
+			res := models.ResponseObject{http.StatusConflict, err.Error(), ""}
+			json.NewEncoder(w).Encode(res)
+			return
+		} else {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusCreated)
