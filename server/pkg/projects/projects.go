@@ -31,7 +31,8 @@ func GetUserProjects(db database.Database, session models.Session) ([]models.Pro
 }
 
 // CreateProject grabs the next sequence in the database, sets up the project
-// and inserts it into the database
+// and inserts it into the database. CreateProject assumes the model has already
+// been validated.
 func CreateProject(db database.Database, project *models.Project, session models.Session) error {
 	// This is actually just setting the project status
 	project.Status = updateProjectStatus(*project)
@@ -43,16 +44,12 @@ func CreateProject(db database.Database, project *models.Project, session models
 	}
 
 	project.ID = id
-	project.CurrentIteration.ProjectID = project.ID
-	project.CurrentIteration.Number = 1
+	updateIteration(project.ID, 1, &project.CurrentIteration)
 	project.Iterations = append(project.Iterations, project.CurrentIteration)
-	for i, task := range project.CurrentIteration.Tasks {
-		task.ProjectID = project.ID
-		task.IterationNumber = project.CurrentIteration.Number
-		project.CurrentIteration.Tasks[i] = task
-	}
+	project.CurrentIteration.Tasks = updateTasks(
+		project.ID, project.CurrentIteration.Number, project.CurrentIteration.Tasks)
 
-	AddProjectToUser(db, session, id)
+	addProjectToUser(db, session, id)
 	err = db.AddProject(*project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -62,8 +59,55 @@ func CreateProject(db database.Database, project *models.Project, session models
 	return nil
 }
 
-// AddProjectToUser will add the project ID to the current users list
-func AddProjectToUser(db database.Database, session models.Session, projectID int) error {
+// DeleteProject will remove the project from the database as well as the users list of projects
+func DeleteProject(db database.Database, session models.Session, projectID int) error {
+	err := db.RemoveProject(projectID)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
+
+	account, err := auth.GetCurrentUser(db, session)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
+
+	account.ProjectIds = removeIDFromList(projectID, account.ProjectIds)
+	err = db.UpdateAccount(account)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+// UpdateProject will update the status and make the change in the database as well
+func UpdateProject(db database.Database, project *models.Project) error {
+	project.Status = updateProjectStatus(*project)
+
+	return db.UpdateProject(*project)
+}
+
+// HelperFunctions
+func updateIteration(id, number int, iteration *models.Iteration) {
+	iteration.ProjectID = id
+	iteration.Number = number
+}
+
+func updateTasks(id, number int, tasks []models.Task) []models.Task {
+	for _, t := range tasks {
+		t.ProjectID = id
+		t.IterationNumber = number
+	}
+
+	return tasks
+}
+
+// addProjectToUser will add the project ID to the current users list
+func addProjectToUser(db database.Database, session models.Session, projectID int) error {
 	account, err := auth.GetCurrentUser(db, session)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -81,35 +125,8 @@ func AddProjectToUser(db database.Database, session models.Session, projectID in
 	return nil
 }
 
-// DeleteProject will remove the project from the database as well as the users list of projects
-func DeleteProject(projectID int, db database.Database, session models.Session) error {
-	err := db.RemoveProject(projectID)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		return err
-	}
-
-	account, err := auth.GetCurrentUser(db, session)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		return err
-	}
-
-	account.ProjectIds = removeIDFromList(projectID, account.ProjectIds)
-
-	return nil
-}
-
-// UpdateProject will update the status and make the change in the database as well
-func UpdateProject(db database.Database, project *models.Project) error {
-	project.Status = updateProjectStatus(*project)
-
-	return db.UpdateProject(*project)
-}
-
-// HelperFunctions
 func removeIDFromList(idToRemove int, idList []int) []int {
-	for id, i := range idList {
+	for i, id := range idList {
 		if id == idToRemove {
 			list := append(idList[:i], idList[i+1:]...)
 			return list
