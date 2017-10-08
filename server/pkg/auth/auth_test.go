@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestSaltPassword(t *testing.T) {
-	t.Log("Testing SaltPassword does not return the password...")
+	t.Log("[ 01 ] Testing SaltPassword does not return the password...")
 
 	salt, hash, err := SaltPassword(password)
 
@@ -51,7 +51,7 @@ func TestSaltPassword(t *testing.T) {
 }
 
 func TestGetSaltedPassword(t *testing.T) {
-	t.Log("Testing GetSaltedPassword returns the same password that's generated...")
+	t.Log("[ 01 ] Testing GetSaltedPassword returns the same password that's generated...")
 
 	password := "secure-password"
 
@@ -68,7 +68,7 @@ func TestGetSaltedPassword(t *testing.T) {
 }
 
 func TestCreateSession(t *testing.T) {
-	t.Log("Testing CreateSession should return a session that expires in the future...")
+	t.Log("[ 01 ] Testing CreateSession should return a session that expires in the future...")
 
 	id := 10
 
