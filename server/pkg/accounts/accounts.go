@@ -1,8 +1,10 @@
 package accounts
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"reflect"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -17,17 +19,23 @@ const (
 func CreateAccount(db database.Database, account *models.Account) error {
 
 	//Check if the username already exists
-	_, invalidUsername := db.GetAccountByUsername(account.Username)
-	if invalidUsername == nil {
-		invalidUsername = fmt.Errorf(models.UsernameTakenErrorMessage)
-		return invalidUsername
+	acc, err := db.GetAccountByUsername(account.Username)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting account: %s\n", err.Error())
+		return err
+	}
+	if !reflect.DeepEqual(acc, (models.Account{})) {
+		return errors.New(models.UsernameTakenErrorMessage)
 	}
 
 	//Check if the email already exists
-	_, invalidEmail := db.GetAccountByEmail(account.Email)
-	if invalidEmail == nil {
-		invalidEmail = fmt.Errorf(models.EmailTakenErrorMessage)
-		return invalidEmail
+	acc, err = db.GetAccountByEmail(account.Email)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting account: %s\n", err.Error())
+		return err
+	}
+	if !reflect.DeepEqual(acc, (models.Account{})) {
+		return errors.New(models.EmailTakenErrorMessage)
 	}
 
 	salt, password, err := auth.SaltPassword(account.Password)

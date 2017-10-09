@@ -232,7 +232,7 @@ func (b *boltDB) GetAccountByUsername(username string) (models.Account, error) {
 
 		}
 
-		return fmt.Errorf("no matching account found")
+		return nil
 	})
 
 	return account, err
@@ -269,7 +269,7 @@ func (b *boltDB) GetAccountByEmail(email string) (models.Account, error) {
 
 		}
 
-		return fmt.Errorf("no matching account found")
+		return nil
 	})
 
 	return account, err
