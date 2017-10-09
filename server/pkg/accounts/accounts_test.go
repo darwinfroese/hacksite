@@ -77,6 +77,32 @@ var createAccountTests = []struct {
 		Email:    "test3@email.com",
 	},
 	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "username"),
+}, {
+	Description: "Attempting to create an account with an username already in use shoud fail.",
+	Account: models.Account{
+		Username: "test-account",
+		Password: "secure-password",
+		Email:    "testemail@email.com",
+	},
+	ExpectedAccount: models.Account{
+		Username: "test-account",
+		Password: "secure-password",
+		Email:    "testemail@email.com",
+	},
+	ExpectedErrorMessage: models.UsernameTakenErrorMessage,
+}, {
+	Description: "Attempting to create an account with an email already in use should fail.",
+	Account: models.Account{
+		Username: "account-test",
+		Password: "secure-password",
+		Email:    "test@email.com",
+	},
+	ExpectedAccount: models.Account{
+		Username: "account-test",
+		Password: "secure-password",
+		Email:    "test@email.com",
+	},
+	ExpectedErrorMessage: models.EmailTakenErrorMessage,
 }}
 
 func TestCreateAccount(t *testing.T) {

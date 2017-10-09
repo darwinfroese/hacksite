@@ -1,8 +1,10 @@
 package iterations
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"reflect"
 
 	"github.com/darwinfroese/hacksite/server/pkg/projects"
 
@@ -38,6 +40,12 @@ func SwapCurrentIteration(db database.Database, iteration models.Iteration) (mod
 		return project, err
 	}
 
+	valid := checkIfValidIteration(iteration, project.Iterations)
+	if !valid {
+		e := errors.New(models.InvalidIterationErrorMessage)
+		return project, e
+	}
+
 	project.CurrentIteration = iteration
 	err = projects.UpdateProject(db, &project)
 	if err != nil {
@@ -46,4 +54,14 @@ func SwapCurrentIteration(db database.Database, iteration models.Iteration) (mod
 	}
 
 	return project, nil
+}
+
+func checkIfValidIteration(iter models.Iteration, list []models.Iteration) bool {
+	for _, i := range list {
+		if reflect.DeepEqual(i, iter) {
+			return true
+		}
+	}
+
+	return false
 }

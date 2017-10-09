@@ -1,7 +1,6 @@
 package projects
 
 import (
-	"fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -191,8 +190,6 @@ func TestDeleteProject(t *testing.T) {
 
 		account, _ := db.GetAccountByID(1)
 		projectCount := len(account.ProjectIds)
-
-		fmt.Printf("%+v\n", account)
 
 		if projectCount != tc.ExpectedCount {
 			t.Error("[ FAIL ] The project was not removed from the users list.\n")

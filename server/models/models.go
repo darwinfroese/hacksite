@@ -65,9 +65,10 @@ type ResponseObject struct {
 
 // Status constants for projects
 const (
-	StatusCompleted           = "Completed"
-	StatusInProgress          = "InProgress"
-	StatusNew                 = "New"
-	UsernameTakenErrorMessage = "Username is already taken"
-	EmailTakenErrorMessage    = "This email is already in use"
+	StatusCompleted              = "Completed"
+	StatusInProgress             = "InProgress"
+	StatusNew                    = "New"
+	UsernameTakenErrorMessage    = "username is already taken"
+	EmailTakenErrorMessage       = "this email is already in use"
+	InvalidIterationErrorMessage = "iteration selected does not exist"
 )
