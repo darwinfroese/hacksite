@@ -32,8 +32,8 @@ func logRequestDuration(ctx Context, h http.HandlerFunc) http.HandlerFunc {
 		ctx.RequestID = getUUID()
 
 		start := time.Now()
-		fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s started.\n",
-			start.Format(timeFormat), ctx.RequestID, r.URL.Path)
+		fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s started (User-Agent: %s).\n",
+			start.Format(timeFormat), ctx.RequestID, r.URL.Path, r.UserAgent())
 
 		defer func() {
 			fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s finished (duration: %s).\n",
