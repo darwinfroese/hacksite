@@ -10,8 +10,7 @@ import (
 )
 
 var sessionHandlersMap = map[string]handler{
-	"GET":     sessionHandler,
-	"OPTIONS": optionsHandler,
+	"GET": sessionHandler,
 }
 
 func (ctx *Context) sessionRoute(w http.ResponseWriter, r *http.Request) {

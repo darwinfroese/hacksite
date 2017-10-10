@@ -19,17 +19,15 @@ import (
 // TODO: Web-client handles auth right now, should be implemented into middleware
 
 var projectHandlersMap = map[string]handler{
-	"GET":     getProject,
-	"OPTIONS": optionsHandler,
+	"GET": getProject,
 }
 
 var projectsHandlersMap = map[string]handler{
-	"GET":     getAllProjects,
-	"POST":    createProject,
-	"PUT":     updateProject,
-	"PATCH":   updateProject,
-	"DELETE":  deleteProject,
-	"OPTIONS": optionsHandler,
+	"GET":    getAllProjects,
+	"POST":   createProject,
+	"PUT":    updateProject,
+	"PATCH":  updateProject,
+	"DELETE": deleteProject,
 }
 
 func (ctx *Context) projectRoute(w http.ResponseWriter, r *http.Request) {

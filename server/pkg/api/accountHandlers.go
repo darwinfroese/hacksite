@@ -11,8 +11,7 @@ import (
 )
 
 var accountHandlerMap = map[string]handler{
-	"POST":    createAccount,
-	"OPTIONS": optionsHandler,
+	"POST": createAccount,
 }
 
 func (ctx *Context) accountsRoute(w http.ResponseWriter, r *http.Request) {

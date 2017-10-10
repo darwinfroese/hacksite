@@ -11,10 +11,9 @@ import (
 )
 
 var taskHandlersMap = map[string]handler{
-	"PUT":     updateTask,
-	"PATCH":   updateTask,
-	"DELETE":  removeTask,
-	"OPTIONS": optionsHandler,
+	"PUT":    updateTask,
+	"PATCH":  updateTask,
+	"DELETE": removeTask,
 }
 
 func (ctx *Context) tasksRoute(w http.ResponseWriter, r *http.Request) {

@@ -6,16 +6,6 @@ import (
 	"os"
 )
 
-// optionsHandler sets CORS headers and returns 200 -- used for OPTIONS requests
-// TODO: This should be applied in an adapter
-func optionsHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", originAddress)
-	w.Header().Set("Access-Control-Allow-Headers", supportedHeaders)
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, POST, PATCH, DELETE")
-	w.WriteHeader(http.StatusOK)
-}
-
 // RedirectToHTTPS will take the request coming in on *:80 and forward it to *:443
 func RedirectToHTTPS(w http.ResponseWriter, r *http.Request) {
 	target := "https://" + r.Host + r.URL.Path

@@ -10,13 +10,11 @@ import (
 )
 
 var loginHandlersMap = map[string]handler{
-	"GET":     loginHandler,
-	"OPTIONS": optionsHandler,
+	"GET": loginHandler,
 }
 
 var logoutHandlersMap = map[string]handler{
-	"GET":     logoutHandler,
-	"OPTIONS": optionsHandler,
+	"GET": logoutHandler,
 }
 
 func (ctx *Context) loginRoute(w http.ResponseWriter, r *http.Request) {

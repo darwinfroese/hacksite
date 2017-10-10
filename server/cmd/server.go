@@ -35,7 +35,8 @@ func main() {
 
 	m.Handle("/", http.FileServer(http.Dir(c.WebFileLocation)))
 
-	api.RegisterRoutes(ctx, m)
+	api.RegisterRoutes(m)
+	api.RegisterAPIRoutes(ctx, m)
 
 	fmt.Println("Starting server scheduler.")
 	scheduler.Start(ctx)

@@ -11,13 +11,11 @@ import (
 )
 
 var iterHandlersMap = map[string]handler{
-	"POST":    addIteration,
-	"OPTIONS": optionsHandler,
+	"POST": addIteration,
 }
 
 var currIterHandlersMap = map[string]handler{
-	"POST":    switchIteration,
-	"OPTOINS": optionsHandler,
+	"POST": switchIteration,
 }
 
 func (ctx *Context) iterationsRoute(w http.ResponseWriter, r *http.Request) {
