@@ -98,12 +98,16 @@ func updateIteration(id, number int, iteration *models.Iteration) {
 }
 
 func updateTasks(id, number int, tasks []models.Task) []models.Task {
+	var newTasks []models.Task
+
 	for _, t := range tasks {
 		t.ProjectID = id
 		t.IterationNumber = number
+
+		newTasks = append(newTasks, t)
 	}
 
-	return tasks
+	return newTasks
 }
 
 // addProjectToUser will add the project ID to the current users list
