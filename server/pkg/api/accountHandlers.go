@@ -14,11 +14,11 @@ var accountHandlerMap = map[string]handler{
 	"POST": createAccount,
 }
 
-func (ctx *Context) accountsRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) accountsRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, accountHandlerMap)
 }
 
-func createAccount(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func createAccount(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var account models.Account
 	err := json.NewDecoder(r.Body).Decode(&account)
 

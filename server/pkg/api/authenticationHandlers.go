@@ -17,15 +17,15 @@ var logoutHandlersMap = map[string]handler{
 	"GET": logoutHandler,
 }
 
-func (ctx *Context) loginRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) loginRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, loginHandlersMap)
 }
 
-func (ctx *Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, logoutHandlersMap)
 }
 
-func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func loginHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
 
 	if !ok {
@@ -49,7 +49,7 @@ func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func logoutHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func logoutHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
 	sessionCookie, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

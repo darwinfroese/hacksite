@@ -10,7 +10,7 @@ import (
 )
 
 // Start executes the scheduler that will run tasks periodically in the background
-func Start(ctx *api.Context) {
+func Start(ctx api.Context) {
 	ticker := time.NewTicker(5 * time.Minute)
 
 	go func() {

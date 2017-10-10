@@ -18,15 +18,15 @@ var currIterHandlersMap = map[string]handler{
 	"POST": switchIteration,
 }
 
-func (ctx *Context) iterationsRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) iterationsRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, iterHandlersMap)
 }
 
-func (ctx *Context) currentIterationRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) currentIterationRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, currIterHandlersMap)
 }
 
-func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func addIteration(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
@@ -47,7 +47,7 @@ func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func switchIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func switchIteration(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 

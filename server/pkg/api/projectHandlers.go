@@ -30,15 +30,15 @@ var projectsHandlersMap = map[string]handler{
 	"DELETE": deleteProject,
 }
 
-func (ctx *Context) projectRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) projectRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, projectHandlersMap)
 }
 
-func (ctx *Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, projectsHandlersMap)
 }
 
-func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func getProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	args := r.URL.Query()
 	str := args.Get("id")
 
@@ -65,7 +65,7 @@ func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 // Handlers for specific methods on /projects
-func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func getAllProjects(ctx Context, w http.ResponseWriter, r *http.Request) {
 	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -82,7 +82,7 @@ func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(projects)
 }
 
-func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func createProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
@@ -115,7 +115,7 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func updateProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	// TODO: this can be refactored
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
@@ -136,7 +136,7 @@ func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func deleteProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 

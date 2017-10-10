@@ -16,7 +16,7 @@ var writeMethods = []string{"POST", "OPTIONS"}
 // TODO: Implement logging
 
 // RegisterAPIRoutes registers all the api routes into the mux
-func RegisterAPIRoutes(ctx *Context, mux *http.ServeMux) {
+func RegisterAPIRoutes(ctx Context, mux *http.ServeMux) {
 	mux.HandleFunc(apiPrefix+"/projects", Apply(ctx, ctx.projectsRoute))
 	mux.HandleFunc(apiPrefix+"/project", Apply(ctx, ctx.projectRoute))
 	mux.HandleFunc(apiPrefix+"/tasks", Apply(ctx, ctx.tasksRoute))
@@ -30,5 +30,5 @@ func RegisterAPIRoutes(ctx *Context, mux *http.ServeMux) {
 
 // RegisterRoutes registers all non api routes into the mux
 func RegisterRoutes(mux *http.ServeMux) {
-	mux.Handle("/health", setCorsHeaders(nil, http.HandlerFunc(healthCheckHandler)))
+	mux.Handle("/health", setCorsHeaders(Context{}, http.HandlerFunc(healthCheckHandler)))
 }

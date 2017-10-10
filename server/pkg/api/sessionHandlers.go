@@ -13,11 +13,11 @@ var sessionHandlersMap = map[string]handler{
 	"GET": sessionHandler,
 }
 
-func (ctx *Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, sessionHandlersMap)
 }
 
-func sessionHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func sessionHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
 	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

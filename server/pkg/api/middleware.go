@@ -11,7 +11,7 @@ import (
 
 const timeFormat = "2006-01-02 15:04:05"
 
-type adapter func(*Context, http.HandlerFunc) http.HandlerFunc
+type adapter func(Context, http.HandlerFunc) http.HandlerFunc
 
 var adapters = []adapter{
 	logRequestDuration,
@@ -19,7 +19,7 @@ var adapters = []adapter{
 }
 
 // Apply will call all middleware functions on the incoming handler request
-func Apply(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
+func Apply(ctx Context, h http.HandlerFunc) http.HandlerFunc {
 	for _, a := range adapters {
 		h = a(ctx, h)
 	}
@@ -27,7 +27,7 @@ func Apply(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	return h
 }
 
-func logRequestDuration(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
+func logRequestDuration(ctx Context, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx.RequestID = getUUID()
 
@@ -44,7 +44,7 @@ func logRequestDuration(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func setCorsHeaders(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
+func setCorsHeaders(ctx Context, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", originAddress)
 		w.Header().Set("Access-Control-Allow-Headers", supportedHeaders)

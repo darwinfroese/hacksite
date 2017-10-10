@@ -10,13 +10,13 @@ const (
 	supportedHeaders = "Content-Type, Authorization"
 )
 
-type handler func(*Context, http.ResponseWriter, *http.Request)
+type handler func(Context, http.ResponseWriter, *http.Request)
 
 func methodsToString(methods []string) string {
 	return strings.Join(methods, ", ")
 }
 
-func callHandler(ctx *Context, w http.ResponseWriter, r *http.Request, m map[string]handler) {
+func callHandler(ctx Context, w http.ResponseWriter, r *http.Request, m map[string]handler) {
 	if h, ok := m[r.Method]; ok {
 		h(ctx, w, r)
 	} else {

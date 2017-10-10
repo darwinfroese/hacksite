@@ -31,7 +31,7 @@ func main() {
 	db := bolt.New()
 	c := config.ParseConfig(envFile)
 
-	ctx := &api.Context{DB: &db, Config: &c}
+	ctx := api.Context{DB: &db, Config: &c}
 
 	m.Handle("/", http.FileServer(http.Dir(c.WebFileLocation)))
 

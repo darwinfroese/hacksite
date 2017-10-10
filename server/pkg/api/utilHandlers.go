@@ -24,6 +24,6 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // unsupportedMethodHandler is a default handler that will send a 405 error
-func unsupportedMethodHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+func unsupportedMethodHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 }
