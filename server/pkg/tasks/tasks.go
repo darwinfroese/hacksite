@@ -13,7 +13,7 @@ import (
 func UpdateTask(db database.Database, task models.Task) (models.Project, error) {
 	project, err := db.GetProject(task.ProjectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Error Getting Project: %s\n", err.Error())
 		return project, err
 	}
 
@@ -37,7 +37,7 @@ func UpdateTask(db database.Database, task models.Task) (models.Project, error) 
 
 	err = db.UpdateProject(project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Error Updating Project: %s\n", err.Error())
 		return project, err
 	}
 
