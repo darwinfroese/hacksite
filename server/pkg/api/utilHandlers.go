@@ -4,15 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 )
-
-const (
-	originAddress    = "http://localhost:8080"
-	supportedHeaders = "Content-Type, Authorization"
-)
-
-type handler func(*Context, http.ResponseWriter, *http.Request)
 
 // optionsHandler sets CORS headers and returns 200 -- used for OPTIONS requests
 // TODO: This should be applied in an adapter
@@ -44,16 +36,4 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 // unsupportedMethodHandler is a default handler that will send a 405 error
 func unsupportedMethodHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-}
-
-func methodsToString(methods []string) string {
-	return strings.Join(methods, ", ")
-}
-
-func callHandler(ctx *Context, w http.ResponseWriter, r *http.Request, m map[string]handler) {
-	if h, ok := m[r.Method]; ok {
-		h(ctx, w, r)
-	} else {
-		unsupportedMethodHandler(ctx, w, r)
-	}
 }

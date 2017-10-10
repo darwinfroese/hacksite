@@ -1,4 +1,4 @@
-package database
+package bolt
 
 import (
 	"encoding/base64"
@@ -9,7 +9,12 @@ import (
 
 	"github.com/boltdb/bolt"
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
+
+type boltDB struct {
+	dbLocation string
+}
 
 var projectsBucket = []byte("projects")
 var accountsBucket = []byte("accounts")
@@ -20,8 +25,8 @@ var sessionsBucket = []byte("sessions")
 // TODO: Iterations and tasks should be in their own buckets
 // TODO: Wrap db calls better - take function as argument, call after opening db and getting bucket
 
-// CreateBoltDB creates a basic database struct
-func createBoltDB() Database {
+// New creates a basic database struct
+func New() database.Database {
 	db := boltDB{
 		dbLocation: "database.db",
 	}

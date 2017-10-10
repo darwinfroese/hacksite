@@ -7,7 +7,7 @@ import (
 
 	"github.com/darwinfroese/hacksite/server/pkg/api"
 	"github.com/darwinfroese/hacksite/server/pkg/config"
-	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	go http.ListenAndServe(":80", http.HandlerFunc(api.RedirectToHTTPS))
 
 	m := http.NewServeMux()
-	db := database.CreateDB()
+	db := bolt.New()
 	c := config.ParseConfig(envFile)
 
 	ctx := &api.Context{DB: &db, Config: &c}
