@@ -2,16 +2,21 @@
   <div id="app">
     <router-view></router-view>
     <InfoFooter />
+    <FormLoading />
   </div>
 </template>
 
 <script>
 import InfoFooter from '@/components/elements/InfoFooter';
+import FormLoading from '@/components/elements/FormLoading';
+import Spinner from 'vue-simple-spinner';
 
 export default {
   name: 'app',
   components: {
-    'InfoFooter': InfoFooter
+    'InfoFooter': InfoFooter,
+    'FormLoading': FormLoading,
+    'Spinner': Spinner
   }
 };
 </script>
