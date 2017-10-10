@@ -16,16 +16,16 @@ var writeMethods = []string{"POST", "OPTIONS"}
 // TODO: Implement logging
 
 // RegisterRoutes registers all the routes into the mux
-func RegisterRoutes(ctx *Context, m *http.ServeMux) {
-	mux.Handle(apiPrefix+"/projects", ctx.projectsRoute)
-	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: projectRoute, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasksRoute, supportedMethods: readWriteUpdateMethods})
-	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterationsRoute, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/currentiteration", apiContext{db: db, apiHandler: currentIterationRoute, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/accounts", ctx.accountsRoute)
-	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: loginRoute, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logoutRoute, supportedMethods: readMethods})
-	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: sessionRoute, supportedMethods: readMethods})
+func RegisterRoutes(ctx *Context, mux *http.ServeMux) {
+	mux.HandleFunc(apiPrefix+"/projects", ctx.projectsRoute)
+	mux.HandleFunc(apiPrefix+"/project", ctx.projectRoute)
+	mux.HandleFunc(apiPrefix+"/tasks", ctx.tasksRoute)
+	mux.HandleFunc(apiPrefix+"/iteration", ctx.iterationsRoute)
+	mux.HandleFunc(apiPrefix+"/currentiteration", ctx.currentIterationRoute)
+	mux.HandleFunc(apiPrefix+"/accounts", ctx.accountsRoute)
+	mux.HandleFunc(apiPrefix+"/login", ctx.loginRoute)
+	mux.HandleFunc(apiPrefix+"/logout", ctx.logoutRoute)
+	mux.HandleFunc(apiPrefix+"/session", ctx.sessionRoute)
 	// TODO: Non-API routes should register somewhere else
 	mux.Handle("/health", http.HandlerFunc(healthCheckHandler))
 }

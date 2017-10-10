@@ -34,7 +34,7 @@ func updateTask(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := tasks.UpdateTask(ctx.db, task)
+	project, err := tasks.UpdateTask(*ctx.DB, task)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -57,7 +57,7 @@ func removeTask(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := tasks.RemoveTask(ctx.db, task)
+	project, err := tasks.RemoveTask(*ctx.DB, task)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

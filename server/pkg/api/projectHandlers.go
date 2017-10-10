@@ -113,13 +113,13 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := auth.GetCurrentSession(r, ctx.db)
+	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	err = projects.CreateProject(ctx.db, &project, session)
+	err = projects.CreateProject(*ctx.DB, &project, session)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -143,7 +143,7 @@ func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.UpdateProject(ctx.db, &project)
+	err = projects.UpdateProject(*ctx.DB, &project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -167,14 +167,14 @@ func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := auth.GetCurrentSession(r, ctx.db)
+	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	err = projects.DeleteProject(ctx.db, session, project.ID)
+	err = projects.DeleteProject(*ctx.DB, session.UserID, project.ID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
