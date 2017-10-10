@@ -105,7 +105,7 @@ func createProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.CreateProject(*ctx.DB, &project, session)
+	err = projects.CreateProject(*ctx.DB, &project, session.UserID)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return

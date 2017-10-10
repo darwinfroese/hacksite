@@ -32,7 +32,7 @@ func GetUserProjects(db database.Database, userID int) ([]models.Project, error)
 // CreateProject grabs the next sequence in the database, sets up the project
 // and inserts it into the database. CreateProject assumes the model has already
 // been validated.
-func CreateProject(db database.Database, project *models.Project, session models.Session) error {
+func CreateProject(db database.Database, project *models.Project, userID int) error {
 	// This is actually just setting the project status
 	project.Status = updateProjectStatus(*project)
 
@@ -48,7 +48,7 @@ func CreateProject(db database.Database, project *models.Project, session models
 	project.CurrentIteration.Tasks = updateTasks(
 		project.ID, project.CurrentIteration.Number, project.CurrentIteration.Tasks)
 
-	addProjectToUser(db, session.UserID, id)
+	addProjectToUser(db, userID, id)
 	err = db.AddProject(*project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

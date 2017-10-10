@@ -7,6 +7,7 @@ import (
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 )
 
 var db database.Database
@@ -16,7 +17,7 @@ var password = "secure-password"
 var id = 1234
 
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
 
 	// Setup for login_test
 	salt, hash, _ := SaltPassword(password)
