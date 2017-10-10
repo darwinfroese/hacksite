@@ -19,15 +19,15 @@ var logoutHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func loginRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, loginHandlersMap)
+func (ctx *Context) loginRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, loginHandlersMap)
 }
 
-func logoutRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, logoutHandlersMap)
+func (ctx *Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, logoutHandlersMap)
 }
 
-func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
@@ -38,7 +38,7 @@ func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := auth.Login(ctx.db, username, password)
+	session, err := auth.Login(*ctx.DB, username, password)
 
 	if err != nil {
 		if strings.Contains(err.Error(), auth.UnathorizedErrorMessage) {
@@ -54,7 +54,7 @@ func loginHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func logoutHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
@@ -65,7 +65,7 @@ func logoutHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ctx.db.RemoveSession(sessionCookie.Value)
+	err = (*ctx.DB).RemoveSession(sessionCookie.Value)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

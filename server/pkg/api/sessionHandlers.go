@@ -14,11 +14,11 @@ var sessionHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func sessionRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, sessionHandlersMap)
+func (ctx *Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, sessionHandlersMap)
 }
 
-func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func sessionHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 

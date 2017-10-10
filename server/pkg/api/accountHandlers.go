@@ -15,11 +15,11 @@ var accountHandlerMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func accountsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, accountHandlerMap)
+func (ctx *Context) accountsRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, accountHandlerMap)
 }
 
-func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func createAccount(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	// TODO: Make a helper function for this
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Content-Type", "application/json")
@@ -34,18 +34,21 @@ func createAccount(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = accounts.CreateAccount(ctx.db, &account)
+	err = accounts.CreateAccount(*ctx.DB, &account)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		if err.Error() == models.EmailTakenErrorMessage || err.Error() == models.UsernameTakenErrorMessage {
-			res := models.ResponseObject{http.StatusConflict, err.Error(), ""}
+			res := models.ResponseObject{
+				StatusCode:   http.StatusConflict,
+				ErrorMessage: err.Error(),
+			}
 			json.NewEncoder(w).Encode(res)
 			return
-		} else {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
 		}
+
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusCreated)

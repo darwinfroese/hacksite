@@ -32,15 +32,15 @@ var projectsHandlersMap = map[string]handler{
 	"OPTIONS": optionsHandler,
 }
 
-func projectRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, projectHandlersMap)
+func (ctx *Context) projectRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, projectHandlersMap)
 }
 
-func projectsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, projectsHandlersMap)
+func (ctx *Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, projectsHandlersMap)
 }
 
-func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
@@ -60,7 +60,7 @@ func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := ctx.db.GetProject(id)
+	project, err := (*ctx.DB).GetProject(id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -71,18 +71,18 @@ func getProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 }
 
 // Handlers for specific methods on /projects
-func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
 
-	session, err := auth.GetCurrentSession(r, ctx.db)
+	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	projects, err := projects.GetUserProjects(ctx.db, session)
+	projects, err := projects.GetUserProjects(*ctx.DB, session.UserID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -92,7 +92,7 @@ func getAllProjects(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(projects)
 }
 
-func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
@@ -129,7 +129,7 @@ func createProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "application/json")
@@ -154,7 +154,7 @@ func updateProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func deleteProject(ctx apiContext, w http.ResponseWriter, r *http.Request) {
+func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 

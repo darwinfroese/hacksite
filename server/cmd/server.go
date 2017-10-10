@@ -30,12 +30,15 @@ func main() {
 	m := http.NewServeMux()
 	db := database.CreateDB()
 	c := config.ParseConfig(envFile)
+
+	ctx := api.Context{DB: &db, Config: &c}
+
 	m.Handle("/", http.FileServer(http.Dir(c.WebFileLocation)))
 
-	api.RegisterRoutes(m, db)
+	api.RegisterRoutes(ctx, m)
 
 	fmt.Println("Starting server scheduler.")
-	scheduler.Start(db)
+	scheduler.Start(ctx)
 
 	if _, err := os.Stat(c.CertLocation); os.IsNotExist(err) {
 		fmt.Println("Couldn't find: ", c.CertLocation)

@@ -5,17 +5,18 @@ import (
 	"os"
 	"time"
 
+	"github.com/darwinfroese/hacksite/server/pkg/api"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 // Start executes the scheduler that will run tasks periodically in the background
-func Start(db database.Database) {
+func Start(ctx *api.Context) {
 	ticker := time.NewTicker(5 * time.Minute)
 
 	go func() {
 		for range ticker.C {
 			// TODO: These should be logs
-			count, err := cleanSessions(db)
+			count, err := cleanSessions(*ctx.DB)
 
 			if err != nil {
 				fmt.Printf("[ERROR] An error occured trying to clean sessions from the database: %s\n", err.Error())

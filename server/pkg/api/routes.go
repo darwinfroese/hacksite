@@ -2,8 +2,6 @@ package api
 
 import (
 	"net/http"
-
-	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 const (
@@ -18,13 +16,13 @@ var writeMethods = []string{"POST", "OPTIONS"}
 // TODO: Implement logging
 
 // RegisterRoutes registers all the routes into the mux
-func RegisterRoutes(mux *http.ServeMux, db database.Database) {
-	mux.Handle(apiPrefix+"/projects", apiContext{db: db, apiHandler: projectsRoute, supportedMethods: readWriteUpdateMethods})
+func RegisterRoutes(ctx *Context, m *http.ServeMux) {
+	mux.Handle(apiPrefix+"/projects", ctx.projectsRoute)
 	mux.Handle(apiPrefix+"/project", apiContext{db: db, apiHandler: projectRoute, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/tasks", apiContext{db: db, apiHandler: tasksRoute, supportedMethods: readWriteUpdateMethods})
 	mux.Handle(apiPrefix+"/iteration", apiContext{db: db, apiHandler: iterationsRoute, supportedMethods: writeMethods})
 	mux.Handle(apiPrefix+"/currentiteration", apiContext{db: db, apiHandler: currentIterationRoute, supportedMethods: writeMethods})
-	mux.Handle(apiPrefix+"/accounts", apiContext{db: db, apiHandler: accountsRoute, supportedMethods: writeMethods})
+	mux.Handle(apiPrefix+"/accounts", ctx.accountsRoute)
 	mux.Handle(apiPrefix+"/login", apiContext{db: db, apiHandler: loginRoute, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/logout", apiContext{db: db, apiHandler: logoutRoute, supportedMethods: readMethods})
 	mux.Handle(apiPrefix+"/session", apiContext{db: db, apiHandler: sessionRoute, supportedMethods: readMethods})

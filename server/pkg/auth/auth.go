@@ -94,7 +94,7 @@ func SetCookie(w http.ResponseWriter, name, token string) {
 }
 
 // GetCurrentSession reads the session cookie and grabs the session associated
-func GetCurrentSession(r *http.Request, db database.Database) (models.Session, error) {
+func GetCurrentSession(db database.Database, r *http.Request) (models.Session, error) {
 	cookie, err := r.Cookie(SessionCookieName)
 
 	if err != nil {
@@ -103,9 +103,4 @@ func GetCurrentSession(r *http.Request, db database.Database) (models.Session, e
 	}
 
 	return db.GetSession(cookie.Value)
-}
-
-// GetCurrentUser will use the session model passed in to find the signed in users value
-func GetCurrentUser(db database.Database, session models.Session) (models.Account, error) {
-	return db.GetAccountByID(session.UserID)
 }
