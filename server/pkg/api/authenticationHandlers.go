@@ -26,9 +26,6 @@ func (ctx *Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	username, password, ok := r.BasicAuth()
 
 	if !ok {
@@ -53,9 +50,6 @@ func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func logoutHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	sessionCookie, err := r.Cookie(auth.SessionCookieName)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

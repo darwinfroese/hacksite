@@ -19,11 +19,6 @@ func (ctx *Context) accountsRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func createAccount(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	// TODO: Make a helper function for this
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	var account models.Account
 	err := json.NewDecoder(r.Body).Decode(&account)
 

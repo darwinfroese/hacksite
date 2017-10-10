@@ -29,15 +29,15 @@ func Apply(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 
 func logRequestDuration(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid := getUUID()
+		ctx.RequestID = getUUID()
 
 		start := time.Now()
 		fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s started.\n",
-			start.Format(timeFormat), uid, r.URL.Path)
+			start.Format(timeFormat), ctx.RequestID, r.URL.Path)
 
 		defer func() {
 			fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s finished (duration: %s).\n",
-				time.Now().Format(timeFormat), uid, r.URL.Path, time.Since(start).String())
+				time.Now().Format(timeFormat), ctx.RequestID, r.URL.Path, time.Since(start).String())
 		}()
 
 		h(w, r)

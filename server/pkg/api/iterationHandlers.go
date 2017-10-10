@@ -27,10 +27,6 @@ func (ctx *Context) currentIterationRoute(w http.ResponseWriter, r *http.Request
 }
 
 func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
@@ -52,10 +48,6 @@ func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func switchIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 

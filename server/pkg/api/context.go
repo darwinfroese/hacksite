@@ -7,6 +7,7 @@ import (
 
 // Context stores values used by all handlers
 type Context struct {
-	DB     *database.Database
-	Config *models.ServerConfig
+	DB        *database.Database
+	Config    *models.ServerConfig
+	RequestID string
 }

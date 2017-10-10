@@ -39,10 +39,6 @@ func (ctx *Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
-
 	args := r.URL.Query()
 	str := args.Get("id")
 
@@ -70,10 +66,6 @@ func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 
 // Handlers for specific methods on /projects
 func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
-
 	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -91,10 +83,6 @@ func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
-
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
@@ -128,10 +116,6 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Content-Type", "application/json")
-
 	// TODO: this can be refactored
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
@@ -153,9 +137,6 @@ func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 

@@ -18,9 +18,6 @@ func (ctx *Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func sessionHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
