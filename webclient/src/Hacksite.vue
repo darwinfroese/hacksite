@@ -8,14 +8,12 @@
 
 <script>
 import InfoFooter from '@/components/elements/InfoFooter';
-import FormLoading from '@/components/elements/FormLoading';
 import Spinner from 'vue-simple-spinner';
 
 export default {
   name: 'app',
   components: {
     'InfoFooter': InfoFooter,
-    'FormLoading': FormLoading,
     'Spinner': Spinner
   }
 };
