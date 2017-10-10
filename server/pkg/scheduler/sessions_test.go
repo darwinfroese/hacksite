@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 
 	"github.com/darwinfroese/hacksite/server/models"
 )
@@ -24,7 +25,7 @@ var unexpiredSession = models.Session{
 var db database.Database
 
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
 	db.StoreSession(expiredSession)
 	db.StoreSession(unexpiredSession)
 

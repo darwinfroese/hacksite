@@ -11,28 +11,22 @@ import (
 )
 
 var iterHandlersMap = map[string]handler{
-	"POST":    addIteration,
-	"OPTIONS": optionsHandler,
+	"POST": addIteration,
 }
 
 var currIterHandlersMap = map[string]handler{
-	"POST":    switchIteration,
-	"OPTOINS": optionsHandler,
+	"POST": switchIteration,
 }
 
-func iterationsRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, iterHandlersMap)
+func (ctx Context) iterationsRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, iterHandlersMap)
 }
 
-func currentIterationRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, currIterHandlersMap)
+func (ctx Context) currentIterationRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, currIterHandlersMap)
 }
 
-func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
+func addIteration(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
@@ -42,7 +36,7 @@ func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := iterations.CreateIteration(ctx.db, iteration)
+	project, err := iterations.CreateIteration(*ctx.DB, iteration)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -53,11 +47,7 @@ func addIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func switchIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
+func switchIteration(ctx Context, w http.ResponseWriter, r *http.Request) {
 	var iteration models.Iteration
 	err := json.NewDecoder(r.Body).Decode(&iteration)
 
@@ -67,7 +57,7 @@ func switchIteration(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := iterations.SwapCurrentIteration(ctx.db, iteration)
+	project, err := iterations.SwapCurrentIteration(*ctx.DB, iteration)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

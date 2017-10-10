@@ -8,6 +8,7 @@ import (
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 )
 
 var db database.Database
@@ -18,7 +19,7 @@ var testProject = models.Project{
 }
 
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
 	err := db.AddProject(testProject)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Couldn't add the project to setup the tests: %s\n", err.Error())

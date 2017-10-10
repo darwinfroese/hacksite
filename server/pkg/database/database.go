@@ -1,6 +1,8 @@
 package database
 
-import "github.com/darwinfroese/hacksite/server/models"
+import (
+	"github.com/darwinfroese/hacksite/server/models"
+)
 
 // TODO: Database needs to be a singleton that if it's already
 // been created, it should be returned instead of re-created
@@ -31,14 +33,4 @@ type Database interface {
 	GetAllSessions() ([]models.Session, error)
 	GetNextSessionID() (int, error)
 	RemoveSession(sessionToken string) error
-}
-
-type boltDB struct {
-	dbLocation string
-}
-
-// CreateDB returns an instance of the database
-// depending on the environment
-func CreateDB() Database {
-	return createBoltDB()
 }

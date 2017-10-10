@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 
 	"github.com/darwinfroese/hacksite/server/models"
 )
@@ -15,7 +16,7 @@ var db database.Database
 
 // TestMain lets us setup the database and then remove it when we are done
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
 
 	retCode := m.Run()
 

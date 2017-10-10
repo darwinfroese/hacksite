@@ -5,13 +5,12 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/auth"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
 
 // GetUserProjects grabs the project from database
-func GetUserProjects(db database.Database, session models.Session) ([]models.Project, error) {
-	account, err := auth.GetCurrentUser(db, session)
+func GetUserProjects(db database.Database, userID int) ([]models.Project, error) {
+	account, err := db.GetAccountByID(userID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		return nil, err
@@ -33,7 +32,7 @@ func GetUserProjects(db database.Database, session models.Session) ([]models.Pro
 // CreateProject grabs the next sequence in the database, sets up the project
 // and inserts it into the database. CreateProject assumes the model has already
 // been validated.
-func CreateProject(db database.Database, project *models.Project, session models.Session) error {
+func CreateProject(db database.Database, project *models.Project, userID int) error {
 	// This is actually just setting the project status
 	project.Status = updateProjectStatus(*project)
 
@@ -49,7 +48,7 @@ func CreateProject(db database.Database, project *models.Project, session models
 	project.CurrentIteration.Tasks = updateTasks(
 		project.ID, project.CurrentIteration.Number, project.CurrentIteration.Tasks)
 
-	addProjectToUser(db, session, id)
+	addProjectToUser(db, userID, id)
 	err = db.AddProject(*project)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -60,14 +59,14 @@ func CreateProject(db database.Database, project *models.Project, session models
 }
 
 // DeleteProject will remove the project from the database as well as the users list of projects
-func DeleteProject(db database.Database, session models.Session, projectID int) error {
+func DeleteProject(db database.Database, userID, projectID int) error {
 	err := db.RemoveProject(projectID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		return err
 	}
 
-	account, err := auth.GetCurrentUser(db, session)
+	account, err := db.GetAccountByID(userID)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -111,8 +110,8 @@ func updateTasks(id, number int, tasks []models.Task) []models.Task {
 }
 
 // addProjectToUser will add the project ID to the current users list
-func addProjectToUser(db database.Database, session models.Session, projectID int) error {
-	account, err := auth.GetCurrentUser(db, session)
+func addProjectToUser(db database.Database, userID, projectID int) error {
+	account, err := db.GetAccountByID(userID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		return err

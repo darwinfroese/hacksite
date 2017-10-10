@@ -10,19 +10,15 @@ import (
 )
 
 var sessionHandlersMap = map[string]handler{
-	"GET":     sessionHandler,
-	"OPTIONS": optionsHandler,
+	"GET": sessionHandler,
 }
 
-func sessionRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, sessionHandlersMap)
+func (ctx Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, sessionHandlersMap)
 }
 
-func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-	session, err := auth.GetCurrentSession(r, ctx.db)
+func sessionHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
+	session, err := auth.GetCurrentSession(*ctx.DB, r)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -35,7 +31,7 @@ func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Expiration = time.Now().Add(time.Second * auth.SessionMaxAge)
-	err = ctx.db.StoreSession(session)
+	err = (*ctx.DB).StoreSession(session)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
