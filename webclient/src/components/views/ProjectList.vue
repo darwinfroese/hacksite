@@ -2,19 +2,18 @@
   <div>
     <!-- Log in should be one "page" and logged in should be another -->
     <LoggedInHeader />
-    <div class='list' v-if="loading">
+    <div class='list'>
       <div class='menu-bar'>
           <router-link class='menu-button' to='/create'>
             <i class='fa fa-plus'></i>
             Add a project
           </router-link>
-        </span>
       </div>
       <div class='list-container'>
         <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
       </div>
     </div>
-    <div v-if="!loading">
+    <div>
       <vue-simple-spinner></vue-simple-spinner>
     </div>
   </div>
@@ -28,25 +27,24 @@ import VueSimpleSpinner from 'vue-simple-spinner/src/components/Spinner';
 
 export default {
   components: {
-    VueSimpleSpinner,
+    'vue-simple-spinner': VueSimpleSpinner,
     'Project': Project,
     'LoggedInHeader': LoggedInHeader
   },
   data () {
     return {
       projects: [],
-      loading: false
+      loading: true
     };
   },
   methods: {
     Update: function () {
-      let self = this;
       let promise = GetProjects();
       promise.then((response) => {
+        this.loading = false;
         return response.json();
       }).then((json) => {
         this.projects = json;
-        self.loading = true;
       });
     }
   },

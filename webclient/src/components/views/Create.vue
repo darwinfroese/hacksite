@@ -1,14 +1,14 @@
 <template>
   <div>
     <LoggedInHeader />
-    <div class='create-container' v-if="loading">
+    <div class='create-container'>
       <ProjectDialog
         :title="'Create A New Project'"
         :buttonText="'Add Project'"
         :project="project"
         v-on:Handle="SaveProject" />
     </div>
-    <div v-if="!loading">
+    <div v-if="loading">
       <vue-simple-spinner></vue-simple-spinner>
     </div>
   </div>
@@ -33,16 +33,15 @@ export default {
         CurrentIteration: {
           Tasks: []
         },
-        Completed: false,
-        loading: false
+        Completed: false
       },
+      loading: true,
       taskCount: 1,
       warningDisplayed: false
     };
   },
   methods: {
     SaveProject: function () {
-      var self = this;
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
@@ -55,11 +54,11 @@ export default {
 
       AddProject(this.project)
         .then((response) => {
+          this.loading = false;
           return response.json();
         })
         .then((project) => {
           router.push('/details/' + project.ID);
-          self.loading = true;
         });
     }
   }
