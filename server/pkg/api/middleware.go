@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	uuid "github.com/nu7hatch/gouuid"
@@ -11,7 +10,7 @@ import (
 
 const timeFormat = "2006-01-02 15:04:05"
 
-type adapter func(Context, http.HandlerFunc) http.HandlerFunc
+type adapter func(*Context, http.HandlerFunc) http.HandlerFunc
 
 var adapters = []adapter{
 	logRequestDuration,
@@ -19,7 +18,7 @@ var adapters = []adapter{
 }
 
 // Apply will call all middleware functions on the incoming handler request
-func Apply(ctx Context, h http.HandlerFunc) http.HandlerFunc {
+func Apply(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	for _, a := range adapters {
 		h = a(ctx, h)
 	}
@@ -27,24 +26,23 @@ func Apply(ctx Context, h http.HandlerFunc) http.HandlerFunc {
 	return h
 }
 
-func logRequestDuration(ctx Context, h http.HandlerFunc) http.HandlerFunc {
+func logRequestDuration(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx.RequestID = getUUID()
 
 		start := time.Now()
-		fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s started (User-Agent: %s).\n",
-			start.Format(timeFormat), ctx.RequestID, r.URL.Path, r.UserAgent())
 
+		(*ctx.Logger).InfoWithRequest(r, ctx.RequestID, "Request started")
 		defer func() {
-			fmt.Fprintf(os.Stdout, "[ INFO ] %s :: Request[ID: %s] to %s finished (duration: %s).\n",
-				time.Now().Format(timeFormat), ctx.RequestID, r.URL.Path, time.Since(start).String())
+			dur := fmt.Sprintf("Request duration: %s", time.Since(start).String())
+			(*ctx.Logger).InfoWithRequest(r, ctx.RequestID, dur)
 		}()
 
 		h(w, r)
 	}
 }
 
-func setCorsHeaders(ctx Context, h http.HandlerFunc) http.HandlerFunc {
+func setCorsHeaders(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", originAddress)
 		w.Header().Set("Access-Control-Allow-Headers", supportedHeaders)

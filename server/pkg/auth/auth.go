@@ -6,11 +6,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
 const sessionTokenSize = 64
@@ -94,11 +94,11 @@ func SetCookie(w http.ResponseWriter, name, token string) {
 }
 
 // GetCurrentSession reads the session cookie and grabs the session associated
-func GetCurrentSession(db database.Database, r *http.Request) (models.Session, error) {
+func GetCurrentSession(db database.Database, logger log.Logger, r *http.Request) (models.Session, error) {
 	cookie, err := r.Cookie(SessionCookieName)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(fmt.Sprintf("Error: %s\n", err.Error()))
 		return models.Session{}, err
 	}
 

@@ -9,9 +9,12 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/log/testLogger"
 )
 
 var db database.Database
+var logger log.Logger
 
 var testProject = models.Project{
 	Name:             "Test Project",
@@ -20,6 +23,7 @@ var testProject = models.Project{
 
 func TestMain(m *testing.M) {
 	db = bolt.New()
+	logger = testLogger.New()
 	err := db.AddProject(testProject)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Couldn't add the project to setup the tests: %s\n", err.Error())
@@ -64,7 +68,7 @@ func TestCreateIteration(t *testing.T) {
 	for i, tc := range createIterationTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		project, err := CreateIteration(db, tc.NewIteration)
+		project, err := CreateIteration(db, logger, tc.NewIteration)
 		if err != nil {
 			t.Errorf("[ FAIL ] Couldn't create the iteration: %s\n", err.Error())
 		}
@@ -115,7 +119,7 @@ func TestSwapCurrentIteration(t *testing.T) {
 	for i, tc := range swapIterationsTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		project, err := SwapCurrentIteration(db, tc.SwapIteration)
+		project, err := SwapCurrentIteration(db, logger, tc.SwapIteration)
 		if err != nil && err.Error() != models.InvalidIterationErrorMessage {
 			t.Errorf("[ FAIL ] Couldn't swap the current iteration: %s\n", err.Error())
 		}

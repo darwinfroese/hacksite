@@ -8,9 +8,12 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/log/testLogger"
 )
 
 var db database.Database
+var logger log.Logger
 var testProject = models.Project{
 	Name: "Test Project",
 	CurrentIteration: models.Iteration{
@@ -24,6 +27,7 @@ var testProject = models.Project{
 
 func TestMain(m *testing.M) {
 	db = bolt.New()
+	logger = testLogger.New()
 
 	retCode := m.Run()
 
@@ -84,7 +88,7 @@ func TestUpdateTask(t *testing.T) {
 	for i, tc := range updateTaskTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		proj, err := UpdateTask(db, tc.NewTask)
+		proj, err := UpdateTask(db, logger, tc.NewTask)
 		if err != nil {
 			t.Errorf("[ FAIL ] An error occured updating the task: %s\n", err.Error())
 		}
@@ -144,7 +148,7 @@ func TestRemoveTask(t *testing.T) {
 	for i, tc := range removeTaskTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		proj, err := RemoveTask(db, tc.TaskToRemove)
+		proj, err := RemoveTask(db, logger, tc.TaskToRemove)
 		if err != nil {
 			t.Errorf("[ FAIL ] An error occured updating the task: %s\n", err.Error())
 		}

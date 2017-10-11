@@ -8,6 +8,7 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/api"
 	"github.com/darwinfroese/hacksite/server/pkg/config"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/log/logrus"
 	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
 
@@ -22,37 +23,40 @@ var (
 // TODO: Receive arguments to gracefully shutdown the server
 
 func main() {
-	fmt.Println("Setting up the server.")
 
-	// Redirect *:80 to *:443
-	go http.ListenAndServe(":80", http.HandlerFunc(api.RedirectToHTTPS))
-
+	// Setup
 	m := http.NewServeMux()
 	db := bolt.New()
 	c := config.ParseConfig(envFile)
+	logger := logrus.New(c.Logger.LogFileLocation)
 
-	ctx := api.Context{DB: &db, Config: &c}
+	ctx := api.Context{DB: &db, Config: &c, Logger: &logger}
 
-	m.Handle("/", http.FileServer(http.Dir(c.WebFileLocation)))
+	logger.Info("Starting redirect server")
+	// Redirect *:80 to *:443
+	go http.ListenAndServe(":80", http.HandlerFunc(api.RedirectToHTTPS))
+	m.Handle("/", http.FileServer(http.Dir(c.Server.WebFileLocation)))
 
 	api.RegisterRoutes(m)
-	api.RegisterAPIRoutes(ctx, m)
+	api.RegisterAPIRoutes(&ctx, m)
 
-	fmt.Println("Starting server scheduler.")
+	logger.Info("Starting scheduler")
 	scheduler.Start(ctx)
 
-	if _, err := os.Stat(c.CertLocation); os.IsNotExist(err) {
-		fmt.Println("Couldn't find: ", c.CertLocation)
+	if _, err := os.Stat(c.Server.CertLocation); os.IsNotExist(err) {
+		logger.Error(fmt.Sprintf("Couldn't find %s", c.Server.CertLocation))
+		return
 	}
 
-	if _, err := os.Stat(c.KeyLocation); os.IsNotExist(err) {
-		fmt.Println("Couldn't find: ", c.KeyLocation)
+	if _, err := os.Stat(c.Server.KeyLocation); os.IsNotExist(err) {
+		logger.Error(fmt.Sprintf("Couldn't find %s", c.Server.KeyLocation))
+		return
 	}
 
-	fmt.Println("Starting the server.")
-	fmt.Println("Server failed with: ", http.ListenAndServeTLS(
-		c.Port,
-		c.CertLocation,
-		c.KeyLocation,
-		m))
+	logger.Info("Starting api server.")
+	logger.Error(fmt.Sprintf("Server failed with %s", http.ListenAndServeTLS(
+		c.Server.Port,
+		c.Server.CertLocation,
+		c.Server.KeyLocation,
+		m)))
 }
