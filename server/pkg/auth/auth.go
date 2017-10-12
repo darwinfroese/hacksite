@@ -63,12 +63,12 @@ func GetSaltedPassword(password string, salt string) (string, error) {
 }
 
 // CreateSession returns the session token to store in the cookie
-func CreateSession(id int) models.Session {
+func CreateSession(username string) models.Session {
 	session := CreateSessionToken()
 
 	return models.Session{
 		Token:      session,
-		UserID:     id,
+		Username:   username,
 		Expiration: time.Now().Add(time.Second * time.Duration(SessionMaxAge)),
 	}
 }

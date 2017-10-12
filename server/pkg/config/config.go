@@ -9,8 +9,10 @@ import (
 
 // EnvironmentConfig contains the configuration for the enivornment
 type EnvironmentConfig struct {
-	Server serverConfig
-	Logger logConfig
+	Server   serverConfig
+	Logger   logConfig
+	Database dbConfig
+	Aws      awsConfig
 }
 
 type serverConfig struct {
@@ -18,6 +20,12 @@ type serverConfig struct {
 }
 type logConfig struct {
 	LogFileLocation string
+}
+type dbConfig struct {
+	System string
+}
+type awsConfig struct {
+	AccessKey, SecretKey, Token, Region string
 }
 
 // ParseConfig reads the environmentconfig file and converts it into a struct

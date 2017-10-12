@@ -28,7 +28,7 @@ const router = new Router({
       name: 'Details',
       component: Details,
       props: (route) => {
-        return { pid: parseInt(route.params.pid) };
+        return { pid: route.params.pid };
       }
     },
     {
@@ -36,7 +36,7 @@ const router = new Router({
       name: 'Edit',
       component: Edit,
       props: (route) => {
-        return { pid: parseInt(route.params.pid) };
+        return { pid: route.params.pid };
       }
     },
     {
@@ -49,7 +49,7 @@ const router = new Router({
       name: 'CreateIteration',
       component: Iteration,
       props: (route) => {
-        return { pid: parseInt(route.params.pid) };
+        return { pid: route.params.pid };
       }
     },
     {
@@ -57,7 +57,7 @@ const router = new Router({
       name: 'AllIterations',
       component: IterationList,
       props: (route) => {
-        return { pid: parseInt(route.params.pid) };
+        return { pid: route.params.pid };
       }
     },
     {

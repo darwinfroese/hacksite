@@ -50,14 +50,8 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 
 	account.Password = password
 	account.Salt = salt
-	id, err := db.GetNextAccountID()
-	if err != nil {
-		logger.Error(fmt.Sprintf("Error: %s\n", err.Error()))
-		return err
-	}
 
-	account.ID = id
-	_, err = db.CreateAccount(*account)
+	err = db.CreateAccount(*account)
 	if err != nil {
 		return fmt.Errorf("an error occured inserting the account into the database: %s", err.Error())
 	}

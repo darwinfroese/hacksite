@@ -9,7 +9,7 @@ import (
 
 // Project contains a representation of a project
 type Project struct {
-	ID               int
+	ID               string
 	Name             string
 	Description      string
 	Status           string
@@ -19,8 +19,8 @@ type Project struct {
 
 // Task contains a representation of a task
 type Task struct {
-	ID              int
-	ProjectID       int
+	ID              uint64
+	ProjectID       string
 	Task            string
 	Completed       bool
 	IterationNumber int
@@ -30,14 +30,14 @@ type Task struct {
 type Iteration struct {
 	Number    int
 	Tasks     []Task
-	ProjectID int
+	ProjectID string
 }
 
 // Account contains the information for each user
 type Account struct {
-	ID                              int
+	// Username and Email are unique Identifiers
 	Username, Password, Email, Salt string
-	ProjectIds                      []int
+	ProjectIds                      []string
 }
 
 // LoginAccount is a simplified account object for login requests
@@ -48,7 +48,7 @@ type LoginAccount struct {
 // Session represents the contents of the cookie for the browser
 type Session struct {
 	Token      string
-	UserID     int
+	Username   string
 	Expiration time.Time
 }
 

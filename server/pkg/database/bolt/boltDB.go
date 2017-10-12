@@ -2,7 +2,6 @@ package bolt
 
 import (
 	"encoding/base64"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -82,7 +81,7 @@ func (b *boltDB) AddProject(project models.Project) error {
 			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
-		key := itob(int(project.ID))
+		key := []byte(project.ID)
 		value, err := json.Marshal(project)
 
 		if err != nil {
@@ -94,7 +93,7 @@ func (b *boltDB) AddProject(project models.Project) error {
 }
 
 // GetProject will lookup a project by id
-func (b *boltDB) GetProject(id int) (models.Project, error) {
+func (b *boltDB) GetProject(id string) (models.Project, error) {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
 		return models.Project{}, err
@@ -108,7 +107,7 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
-		v := bucket.Get(itob(id))
+		v := bucket.Get([]byte(id))
 		err := json.Unmarshal(v, &project)
 		if err != nil {
 			return err
@@ -118,11 +117,6 @@ func (b *boltDB) GetProject(id int) (models.Project, error) {
 	})
 
 	return project, err
-}
-
-// GetNextProjectID returns the next sequence ID for the ProjectsBucket
-func (b *boltDB) GetNextProjectID() (int, error) {
-	return getNextID(b, projectsBucket)
 }
 
 // UpdateProject will store the new project in the database
@@ -144,7 +138,7 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 			return err
 		}
 
-		err = bucket.Put(itob(p.ID), v)
+		err = bucket.Put([]byte(p.ID), v)
 		if err != nil {
 			return err
 		}
@@ -154,7 +148,7 @@ func (b *boltDB) UpdateProject(p models.Project) error {
 }
 
 // RemoveProject will remove a project from the database
-func (b *boltDB) RemoveProject(id int) error {
+func (b *boltDB) RemoveProject(id string) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
 		return err
@@ -167,7 +161,7 @@ func (b *boltDB) RemoveProject(id int) error {
 			return fmt.Errorf("bucket %q not found", projectsBucket)
 		}
 
-		err := bucket.Delete(itob(id))
+		err := bucket.Delete([]byte(id))
 		if err != nil {
 			return err
 		}
@@ -177,14 +171,14 @@ func (b *boltDB) RemoveProject(id int) error {
 }
 
 // CreateAccount creates a user in the database
-func (b *boltDB) CreateAccount(account models.Account) (int, error) {
+func (b *boltDB) CreateAccount(account models.Account) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
 	if err != nil {
-		return -1, err
+		return err
 	}
 	defer db.Close()
 
-	err = db.Update(func(tx *bolt.Tx) error {
+	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(accountsBucket)
 		if bucket == nil {
 			return fmt.Errorf("bucket %q not found", accountsBucket)
@@ -195,15 +189,8 @@ func (b *boltDB) CreateAccount(account models.Account) (int, error) {
 			return err
 		}
 
-		key := itob(account.ID)
-		return bucket.Put(key, a)
+		return bucket.Put([]byte(account.Username), a)
 	})
-
-	if err != nil {
-		return -1, err
-	}
-
-	return account.ID, nil
 }
 
 // GetAccountByUsername finds an account in the database if there is a matching username
@@ -280,34 +267,6 @@ func (b *boltDB) GetAccountByEmail(email string) (models.Account, error) {
 	return account, err
 }
 
-// GetAccountByID looksup an account by using the userID key
-func (b *boltDB) GetAccountByID(userID int) (models.Account, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return models.Account{}, err
-	}
-	defer db.Close()
-
-	var account models.Account
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(accountsBucket)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", accountsBucket)
-		}
-
-		a := bucket.Get(itob(userID))
-
-		return json.Unmarshal(a, &account)
-	})
-
-	return account, err
-}
-
-// GetNextAccountID returns the next sequence for the AccountsBucket
-func (b *boltDB) GetNextAccountID() (int, error) {
-	return getNextID(b, accountsBucket)
-}
-
 // UpdateAccount inserts a new account into the accounts location in the bucket
 func (b *boltDB) UpdateAccount(account models.Account) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
@@ -322,7 +281,7 @@ func (b *boltDB) UpdateAccount(account models.Account) error {
 			return fmt.Errorf("bucket %q not found", accountsBucket)
 		}
 
-		key := itob(account.ID)
+		key := []byte(account.Username)
 		value, err := json.Marshal(account)
 		if err != nil {
 			return err
@@ -419,11 +378,6 @@ func (b *boltDB) GetAllSessions() ([]models.Session, error) {
 	return sessions, err
 }
 
-// GetNextSessionID returns the next sequence for the sessionBucket
-func (b *boltDB) GetNextSessionID() (int, error) {
-	return getNextID(b, sessionsBucket)
-}
-
 // RemoveSession removes the token from the database, typically for loguout
 func (b *boltDB) RemoveSession(sessionToken string) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
@@ -445,37 +399,4 @@ func (b *boltDB) RemoveSession(sessionToken string) error {
 
 		return bucket.Delete(key)
 	})
-}
-
-// Helper Functions
-func itob(v int) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
-	return b
-}
-
-func getNextID(b *boltDB, bucketName []byte) (int, error) {
-	db, err := bolt.Open(b.dbLocation, 0644, nil)
-	if err != nil {
-		return -1, err
-	}
-	defer db.Close()
-
-	id := -1
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(bucketName)
-		if bucket == nil {
-			return fmt.Errorf("bucket %q not found", bucketName)
-		}
-
-		i, err := bucket.NextSequence()
-		if err != nil {
-			return err
-		}
-
-		id = int(i)
-		return nil
-	})
-
-	return id, err
 }

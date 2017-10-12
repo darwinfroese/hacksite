@@ -14,7 +14,6 @@ var db database.Database
 
 var username = "test-user"
 var password = "secure-password"
-var id = 1234
 
 func TestMain(m *testing.M) {
 	db = bolt.New()
@@ -23,7 +22,6 @@ func TestMain(m *testing.M) {
 	salt, hash, _ := SaltPassword(password)
 	db.CreateAccount(models.Account{
 		Username: username,
-		ID:       id,
 		Password: hash,
 		Salt:     salt,
 	})
@@ -71,9 +69,7 @@ func TestGetSaltedPassword(t *testing.T) {
 func TestCreateSession(t *testing.T) {
 	t.Log("[ 01 ] Testing CreateSession should return a session that expires in the future...")
 
-	id := 10
-
-	session := CreateSession(id)
+	session := CreateSession("test-username")
 
 	if time.Now().After(session.Expiration) {
 		t.Error("[ FAIL ] The session created already expired.\n")
