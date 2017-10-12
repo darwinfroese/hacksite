@@ -2,21 +2,19 @@ package iterations
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"reflect"
-
-	"github.com/darwinfroese/hacksite/server/pkg/projects"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
 // CreateIteration creates a new iteration and stores it in the database
-func CreateIteration(db database.Database, iteration models.Iteration) (models.Project, error) {
+func CreateIteration(db database.Database, logger log.Logger, iteration models.Iteration) (models.Project, error) {
 	project, err := db.GetProject(iteration.ProjectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -25,7 +23,7 @@ func CreateIteration(db database.Database, iteration models.Iteration) (models.P
 
 	err = projects.UpdateProject(db, &project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -33,10 +31,10 @@ func CreateIteration(db database.Database, iteration models.Iteration) (models.P
 }
 
 // SwapCurrentIteration swaps the current iteration for a project
-func SwapCurrentIteration(db database.Database, iteration models.Iteration) (models.Project, error) {
+func SwapCurrentIteration(db database.Database, logger log.Logger, iteration models.Iteration) (models.Project, error) {
 	project, err := db.GetProject(iteration.ProjectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -49,7 +47,7 @@ func SwapCurrentIteration(db database.Database, iteration models.Iteration) (mod
 	project.CurrentIteration = iteration
 	err = projects.UpdateProject(db, &project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 

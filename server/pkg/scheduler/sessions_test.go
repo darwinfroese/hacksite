@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
-
-	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/log/testLogger"
 )
 
 var expiredSession = models.Session{
@@ -23,9 +24,11 @@ var unexpiredSession = models.Session{
 }
 
 var db database.Database
+var logger log.Logger
 
 func TestMain(m *testing.M) {
 	db = bolt.New()
+	logger = testLogger.New()
 	db.StoreSession(expiredSession)
 	db.StoreSession(unexpiredSession)
 
@@ -52,7 +55,7 @@ func TestCleanSessions(t *testing.T) {
 	for i, tc := range sessionTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		count, err := cleanSessions(db)
+		count, err := cleanSessions(db, logger)
 		if err != nil {
 			t.Errorf("[ FAIL ] An error occured trying to remove expried sessions: %s\n", err.Error())
 		}

@@ -3,12 +3,12 @@ package accounts
 import (
 	"errors"
 	"fmt"
-	"os"
 	"reflect"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
 const (
@@ -16,12 +16,12 @@ const (
 )
 
 // CreateAccount will create an account and insert it into the database
-func CreateAccount(db database.Database, account *models.Account) error {
+func CreateAccount(db database.Database, logger log.Logger, account *models.Account) error {
 
 	//Check if the username already exists
 	acc, err := db.GetAccountByUsername(account.Username)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting account: %s\n", err.Error())
+		logger.Error(fmt.Sprintf("Error getting account: %s", err.Error()))
 		return err
 	}
 	if !reflect.DeepEqual(acc, (models.Account{})) {
@@ -31,7 +31,7 @@ func CreateAccount(db database.Database, account *models.Account) error {
 	//Check if the email already exists
 	acc, err = db.GetAccountByEmail(account.Email)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting account: %s\n", err.Error())
+		logger.Error(fmt.Sprintf("Error getting account: %s\n", err.Error()))
 		return err
 	}
 	if !reflect.DeepEqual(acc, (models.Account{})) {
@@ -52,7 +52,7 @@ func CreateAccount(db database.Database, account *models.Account) error {
 	account.Salt = salt
 	id, err := db.GetNextAccountID()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(fmt.Sprintf("Error: %s\n", err.Error()))
 		return err
 	}
 

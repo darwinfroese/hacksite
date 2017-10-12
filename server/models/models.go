@@ -52,11 +52,7 @@ type Session struct {
 	Expiration time.Time
 }
 
-// ServerConfig contains server configuration settings
-type ServerConfig struct {
-	Port, KeyLocation, CertLocation, WebFileLocation string
-}
-
+// ResponseObject is a wrapper for responding to error requests
 type ResponseObject struct {
 	StatusCode   int
 	ErrorMessage string

@@ -1,19 +1,17 @@
 package tasks
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
 	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
 // UpdateTask updates a task in a project and pushes the change into the database
-func UpdateTask(db database.Database, task models.Task) (models.Project, error) {
+func UpdateTask(db database.Database, logger log.Logger, task models.Task) (models.Project, error) {
 	project, err := db.GetProject(task.ProjectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error Getting Project: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -37,7 +35,7 @@ func UpdateTask(db database.Database, task models.Task) (models.Project, error) 
 
 	err = db.UpdateProject(project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error Updating Project: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -45,10 +43,10 @@ func UpdateTask(db database.Database, task models.Task) (models.Project, error) 
 }
 
 // RemoveTask removes a task from a project and pushes the change into the database
-func RemoveTask(db database.Database, task models.Task) (models.Project, error) {
+func RemoveTask(db database.Database, logger log.Logger, task models.Task) (models.Project, error) {
 	project, err := db.GetProject(task.ProjectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 
@@ -72,7 +70,7 @@ func RemoveTask(db database.Database, task models.Task) (models.Project, error) 
 
 	err = projects.UpdateProject(db, &project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return project, err
 	}
 

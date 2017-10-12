@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
 )
 
 // RedirectToHTTPS will take the request coming in on *:80 and forward it to *:443
@@ -14,7 +13,6 @@ func RedirectToHTTPS(w http.ResponseWriter, r *http.Request) {
 		target += "?" + r.URL.RawQuery
 	}
 
-	fmt.Fprintf(os.Stdout, "Redirecting to: %s\n", target)
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }
 
@@ -24,6 +22,7 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // unsupportedMethodHandler is a default handler that will send a 405 error
-func unsupportedMethodHandler(ctx Context, w http.ResponseWriter, r *http.Request) {
+func unsupportedMethodHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+	(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Method not allowed on endpoint")
 	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 }

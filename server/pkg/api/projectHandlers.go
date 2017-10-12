@@ -2,9 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -30,33 +28,34 @@ var projectsHandlersMap = map[string]handler{
 	"DELETE": deleteProject,
 }
 
-func (ctx Context) projectRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx *Context) projectRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, projectHandlersMap)
 }
 
-func (ctx Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx *Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, projectsHandlersMap)
 }
 
-func getProject(ctx Context, w http.ResponseWriter, r *http.Request) {
+func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	args := r.URL.Query()
 	str := args.Get("id")
 
 	if str == "" {
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Bad request received")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	id, err := strconv.Atoi(str)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	project, err := (*ctx.DB).GetProject(id)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -65,16 +64,17 @@ func getProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 }
 
 // Handlers for specific methods on /projects
-func getAllProjects(ctx Context, w http.ResponseWriter, r *http.Request) {
-	session, err := auth.GetCurrentSession(*ctx.DB, r)
+func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
+	session, err := auth.GetCurrentSession(*ctx.DB, *ctx.Logger, r)
 	if err != nil {
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Unauthorized access")
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	projects, err := projects.GetUserProjects(*ctx.DB, session.UserID)
+	projects, err := projects.GetUserProjects(*ctx.DB, *ctx.Logger, session.UserID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -82,30 +82,30 @@ func getAllProjects(ctx Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(projects)
 }
 
-func createProject(ctx Context, w http.ResponseWriter, r *http.Request) {
+func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	if !projects.ValidateProject(project) {
 		// TODO: Make this return an error (validate)
-		fmt.Fprintf(os.Stderr, "Error: %s\n", "Project was invalid!")
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Project was invalid")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	session, err := auth.GetCurrentSession(*ctx.DB, r)
+	session, err := auth.GetCurrentSession(*ctx.DB, *ctx.Logger, r)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	err = projects.CreateProject(*ctx.DB, &project, session.UserID)
+	err = projects.CreateProject(*ctx.DB, *ctx.Logger, &project, session.UserID)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -115,19 +115,20 @@ func createProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func updateProject(ctx Context, w http.ResponseWriter, r *http.Request) {
+func updateProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	// TODO: this can be refactored
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
 	if err != nil {
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Bad project request")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	err = projects.UpdateProject(*ctx.DB, &project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -136,26 +137,26 @@ func updateProject(ctx Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func deleteProject(ctx Context, w http.ResponseWriter, r *http.Request) {
+func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	session, err := auth.GetCurrentSession(*ctx.DB, r)
+	session, err := auth.GetCurrentSession(*ctx.DB, *ctx.Logger, r)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
-	err = projects.DeleteProject(*ctx.DB, session.UserID, project.ID)
+	err = projects.DeleteProject(*ctx.DB, *ctx.Logger, session.UserID, project.ID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

@@ -8,9 +8,12 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/log/testLogger"
 )
 
 var db database.Database
+var logger log.Logger
 var testSession = models.Session{
 	Token:  "TestSession",
 	UserID: 1,
@@ -18,6 +21,7 @@ var testSession = models.Session{
 
 func TestMain(m *testing.M) {
 	db = bolt.New()
+	logger = testLogger.New()
 	db.CreateAccount(models.Account{
 		ID: 1,
 	})
@@ -57,7 +61,7 @@ func TestCreateProject(t *testing.T) {
 	for i, tc := range createProjectTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		err := CreateProject(db, &tc.ProjectToCreate, testSession.UserID)
+		err := CreateProject(db, logger, &tc.ProjectToCreate, testSession.UserID)
 		if err != nil {
 			t.Errorf("[ FAIL ] An unexpected error occured creating the project: %s\n", err.Error())
 		}
@@ -85,7 +89,7 @@ func TestGetUserProjects(t *testing.T) {
 	for i, tc := range getUserProjectsTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		projects, err := GetUserProjects(db, testSession.UserID)
+		projects, err := GetUserProjects(db, logger, testSession.UserID)
 		if err != nil {
 			t.Errorf("[ FAIL ] An unexpected error getting the projects for a user: %s\n", err.Error())
 		}
@@ -184,7 +188,7 @@ func TestDeleteProject(t *testing.T) {
 	for i, tc := range deleteProjectTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		err := DeleteProject(db, testSession.UserID, tc.ProjectIDToRemove)
+		err := DeleteProject(db, logger, testSession.UserID, tc.ProjectIDToRemove)
 		if err != nil {
 			t.Errorf("[ FAIL ] An unexpected error occurred deleting the project: %s.\n", err.Error())
 		}
