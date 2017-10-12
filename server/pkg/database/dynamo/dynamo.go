@@ -14,9 +14,12 @@ const (
 	accountsTable = "hacksite-accounts"
 	projectsTable = "hacksite-projects"
 	sessionsTable = "hacksite-sessions"
-
-	projectsKey = "ID"
+	emailsTable   = "hacksite-emails"
 )
+
+type emailEntry struct {
+	Email, Username string
+}
 
 type dynamoDB struct {
 	db *dynamodb.DynamoDB
@@ -75,7 +78,16 @@ func (d *dynamoDB) RemoveProject(id string) error {
 }
 
 func (d *dynamoDB) CreateAccount(account models.Account) error {
-	return putItem(d.db, account, accountsTable)
+	err := putItem(d.db, account, accountsTable)
+	if err != nil {
+		return err
+	}
+
+	entry := emailEntry{
+		Username: account.Username,
+		Email:    account.Email,
+	}
+	return putItem(d.db, entry, emailsTable)
 }
 
 func (d *dynamoDB) GetAccountByUsername(username string) (models.Account, error) {
@@ -101,7 +113,34 @@ func (d *dynamoDB) GetAccountByUsername(username string) (models.Account, error)
 }
 
 func (d *dynamoDB) GetAccountByEmail(email string) (models.Account, error) {
-	return models.Account{}, nil
+	var entry emailEntry
+	var account models.Account
+
+	input := &dynamodb.GetItemInput{
+		TableName: aws.String(emailsTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			"Email": {
+				S: aws.String(email),
+			},
+		},
+	}
+
+	result, err := d.db.GetItem(input)
+	if err != nil {
+		return account, err
+	}
+
+	err = dynamodbattribute.UnmarshalMap(result.Item, &entry)
+	if err != nil {
+		return account, err
+	}
+
+	// if we don't have a username, we don't have an account
+	if entry.Username == "" {
+		return account, nil
+	}
+
+	return d.GetAccountByUsername(entry.Username)
 }
 
 func (d *dynamoDB) UpdateAccount(account models.Account) error {
@@ -139,7 +178,18 @@ func (d *dynamoDB) GetAllSessions() ([]models.Session, error) {
 }
 
 func (d *dynamoDB) RemoveSession(sessionToken string) error {
-	return nil
+	input := &dynamodb.DeleteItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"Token": {
+				S: aws.String(sessionToken),
+			},
+		},
+		TableName: aws.String(sessionsTable),
+	}
+
+	_, err := d.db.DeleteItem(input)
+
+	return err
 }
 
 func putItem(db *dynamodb.DynamoDB, item interface{}, tableName string) error {
@@ -150,7 +200,7 @@ func putItem(db *dynamodb.DynamoDB, item interface{}, tableName string) error {
 
 	input := &dynamodb.PutItemInput{
 		Item:      attr,
-		TableName: aws.String(accountsTable),
+		TableName: aws.String(tableName),
 	}
 
 	_, err = db.PutItem(input)
