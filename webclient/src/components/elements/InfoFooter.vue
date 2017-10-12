@@ -1,6 +1,6 @@
 <template>
   <div class='bottom'>
-    <p> <b> Hacksite </b> -- v0.3.0 </p>
+    <p> <b> Hacksite </b> -- v0.5.0 </p>
     <p> Have an problem? <a href="https://github.com/darwinfroese/hacksite/issues"> Submit an issue </a> </p>
   </div>
 </template>

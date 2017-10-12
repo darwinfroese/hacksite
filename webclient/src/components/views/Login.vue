@@ -13,6 +13,12 @@
           <input type='password' v-model="account.Password" placeholder='Password'>
         </div>
         <div class='message-container'>
+          <span class='message'>
+            Thanks for your interest in Hacksite! While in alpha, the project is always changing! If you created
+            your account <b>before October 13, 2017</b> you will have to make it again since we performed a database 
+            migration. Please submit an issue if you have any data that needs to be migrated. We hope this hasn't caused
+            any inconvenience and you continue to enjoy using Hacksite.
+          </span>
           <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
         </div>
         <div class='create-account'>
