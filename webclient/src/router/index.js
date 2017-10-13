@@ -9,6 +9,7 @@ import Evolution from '@/components/views/Evolution';
 import EvolutionList from '@/components/views/EvolutionList';
 import CreateAccount from '@/components/views/CreateAccount';
 import Login from '@/components/views/Login';
+import ReleaseNotes from '@/components/views/ReleaseNotes';
 import { Authenticate } from '@/database';
 
 Vue.use(Router);
@@ -69,6 +70,11 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/releasenotes',
+      name: 'ReleaseNotes',
+      component: ReleaseNotes
     }
   ]
 });

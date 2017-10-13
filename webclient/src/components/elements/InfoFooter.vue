@@ -1,6 +1,6 @@
 <template>
   <div class='bottom'>
-    <p> <b> Hacksite </b> -- v0.5.0 </p>
+    <p><router-link to='/releasenotes'>View the Release Notes</router-link></p>
     <p> Have an problem? <a href="https://github.com/darwinfroese/hacksite/issues"> Submit an issue </a> </p>
   </div>
 </template>
@@ -9,6 +9,7 @@
 p {
   font-size: 12px; 
   font-style: italic;
+  margin: 0;
 }
 .bottom {
   margin-top: 30px;
