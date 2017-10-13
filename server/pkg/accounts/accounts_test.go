@@ -42,7 +42,6 @@ var createAccountTests = []struct {
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
-		ID:       1,
 	},
 	ExpectedErrorMessage: "",
 }, {
@@ -56,7 +55,6 @@ var createAccountTests = []struct {
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
-		ID:       2,
 	},
 	ExpectedErrorMessage: "",
 }, {

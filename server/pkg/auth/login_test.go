@@ -9,13 +9,11 @@ var loginTests = []struct {
 	Description        string
 	Username, Password string
 	ExpectedError      string
-	ExpectedID         int
 }{{
 	Description:   "Logging in with valid account should succeed.",
 	Username:      username,
 	Password:      password,
 	ExpectedError: "",
-	ExpectedID:    id,
 }, {
 	Description:   "Logging in with an invalid account should not succeed.",
 	Username:      username,
@@ -37,8 +35,8 @@ func TestLogin(t *testing.T) {
 		}
 
 		if tc.ExpectedError == "" {
-			if tc.ExpectedID != sesh.UserID {
-				t.Errorf("[ FAIL ] The wrong user id was returned. Expected %d but got %d\n", tc.ExpectedID, sesh.UserID)
+			if tc.Username != sesh.Username {
+				t.Errorf("[ FAIL ] The wrong user username was returned. Expected %s but got %s\n", tc.Username, sesh.Username)
 			}
 		}
 	}

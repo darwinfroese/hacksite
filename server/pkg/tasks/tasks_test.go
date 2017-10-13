@@ -15,12 +15,14 @@ import (
 var db database.Database
 var logger log.Logger
 var testProject = models.Project{
+	ID:   "1234",
 	Name: "Test Project",
 	CurrentIteration: models.Iteration{
-		Number: 1,
+		Number:    1,
+		ProjectID: "1234",
 		Tasks: []models.Task{
-			models.Task{ID: 0, Task: "Test Task"},
-			models.Task{ID: 1, Task: "Test Task 2"},
+			models.Task{ID: 0, ProjectID: "1234", Task: "Test Task"},
+			models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"},
 		},
 	},
 }
@@ -43,19 +45,20 @@ var updateTaskTests = []struct {
 	Description: "Testing updating a task in a project returns the updated task in the project.",
 	NewTask: models.Task{
 		ID:        0,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Task:      "New Task",
 		Completed: true,
 	},
 	ExpectedProject: models.Project{
-		ID:     0,
+		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusInProgress,
 		CurrentIteration: models.Iteration{
-			Number: 1,
+			ProjectID: "1234",
+			Number:    1,
 			Tasks: []models.Task{
-				models.Task{ID: 0, ProjectID: 0, Task: "New Task", Completed: true},
-				models.Task{ID: 1, Task: "Test Task 2"},
+				models.Task{ID: 0, ProjectID: "1234", Task: "New Task", Completed: true},
+				models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"},
 			},
 		},
 	},
@@ -63,19 +66,20 @@ var updateTaskTests = []struct {
 	Description: "Testing updating a task not in a project returns the existing project.",
 	NewTask: models.Task{
 		ID:        10,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Task:      "Non-Existent task",
 		Completed: true,
 	},
 	ExpectedProject: models.Project{
-		ID:     0,
+		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusInProgress,
 		CurrentIteration: models.Iteration{
-			Number: 1,
+			Number:    1,
+			ProjectID: "1234",
 			Tasks: []models.Task{
-				models.Task{ID: 0, ProjectID: 0, Task: "New Task", Completed: true},
-				models.Task{ID: 1, Task: "Test Task 2"},
+				models.Task{ID: 0, ProjectID: "1234", Task: "New Task", Completed: true},
+				models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"},
 			},
 		},
 	},
@@ -109,34 +113,36 @@ var removeTaskTests = []struct {
 	Description: "Testing removing a task from a project returns a project without the task.",
 	TaskToRemove: models.Task{
 		ID:        0,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Task:      "New Task",
 		Completed: true,
 	},
 	ExpectedProject: models.Project{
-		ID:     0,
+		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusNew,
 		CurrentIteration: models.Iteration{
-			Number: 1,
-			Tasks:  []models.Task{models.Task{ID: 1, Task: "Test Task 2"}},
+			Number:    1,
+			ProjectID: "1234",
+			Tasks:     []models.Task{models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"}},
 		},
 	},
 }, {
 	Description: "Testing removing a task from a project that doesn't exist returns the same project.",
 	TaskToRemove: models.Task{
 		ID:        10,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Task:      "Non Existant Task",
 		Completed: true,
 	},
 	ExpectedProject: models.Project{
-		ID:     0,
+		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusNew,
 		CurrentIteration: models.Iteration{
-			Number: 1,
-			Tasks:  []models.Task{models.Task{ID: 1, Task: "Test Task 2"}},
+			ProjectID: "1234",
+			Number:    1,
+			Tasks:     []models.Task{models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"}},
 		},
 	},
 }}

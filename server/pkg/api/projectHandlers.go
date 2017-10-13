@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -38,18 +37,11 @@ func (ctx *Context) projectsRoute(w http.ResponseWriter, r *http.Request) {
 
 func getProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	args := r.URL.Query()
-	str := args.Get("id")
+	id := args.Get("id")
 
-	if str == "" {
+	if id == "" {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Bad request received")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	id, err := strconv.Atoi(str)
-	if err != nil {
-		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -72,7 +64,7 @@ func getAllProjects(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projects, err := projects.GetUserProjects(*ctx.DB, *ctx.Logger, session.UserID)
+	projects, err := projects.GetUserProjects(*ctx.DB, *ctx.Logger, session.Username)
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -105,7 +97,7 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.CreateProject(*ctx.DB, *ctx.Logger, &project, session.UserID)
+	err = projects.CreateProject(*ctx.DB, *ctx.Logger, &project, session.Username)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -154,7 +146,7 @@ func deleteProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = projects.DeleteProject(*ctx.DB, *ctx.Logger, session.UserID, project.ID)
+	err = projects.DeleteProject(*ctx.DB, *ctx.Logger, session.Username, project.ID)
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

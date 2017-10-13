@@ -11,26 +11,22 @@ import (
 type Database interface {
 	// Projects
 	AddProject(project models.Project) error
-	GetProject(id int) (models.Project, error)
-	GetNextProjectID() (int, error)
+	GetProject(id string) (models.Project, error)
 	// TODO: UpdateProject - models.Project could probably be removed
 	// and the project passed in returned since no internal changes
 	// are happening
 	UpdateProject(project models.Project) error
-	RemoveProject(id int) error
+	RemoveProject(id string) error
 
 	// Accounts
-	CreateAccount(account models.Account) (int, error)
+	CreateAccount(account models.Account) error
 	GetAccountByUsername(username string) (models.Account, error)
-	GetAccountByID(userID int) (models.Account, error)
 	GetAccountByEmail(email string) (models.Account, error)
-	GetNextAccountID() (int, error)
 	UpdateAccount(account models.Account) error
 
 	// Sessions
 	StoreSession(session models.Session) error
 	GetSession(sessionToken string) (models.Session, error)
 	GetAllSessions() ([]models.Session, error)
-	GetNextSessionID() (int, error)
 	RemoveSession(sessionToken string) error
 }

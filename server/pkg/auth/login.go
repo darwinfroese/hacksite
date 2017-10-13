@@ -32,7 +32,7 @@ func Login(db database.Database, username, password string) (models.Session, err
 		return models.Session{}, fmt.Errorf("Error: %s", UnathorizedErrorMessage)
 	}
 
-	session := CreateSession(account.ID)
+	session := CreateSession(account.Username)
 	err = db.StoreSession(session)
 
 	if err != nil {

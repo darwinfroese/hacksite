@@ -6,8 +6,11 @@ import (
 	"os"
 
 	"github.com/darwinfroese/hacksite/server/pkg/api"
+	"github.com/darwinfroese/hacksite/server/pkg/aws"
 	"github.com/darwinfroese/hacksite/server/pkg/config"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/database/dynamo"
 	"github.com/darwinfroese/hacksite/server/pkg/log/logrus"
 	"github.com/darwinfroese/hacksite/server/pkg/scheduler"
 )
@@ -26,8 +29,15 @@ func main() {
 
 	// Setup
 	m := http.NewServeMux()
-	db := bolt.New()
 	c := config.ParseConfig(envFile)
+
+	var db database.Database
+	if c.Database.System == "dynamo" {
+		cfg := aws.New(c.Aws.Region, c.Aws.SecretKey, c.Aws.AccessKey, c.Aws.Token)
+		db = dynamo.New(cfg.Config)
+	} else {
+		db = bolt.New()
+	}
 	logger := logrus.New(c.Logger.LogFileLocation)
 
 	ctx := api.Context{DB: &db, Config: &c, Logger: &logger}

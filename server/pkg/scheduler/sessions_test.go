@@ -14,12 +14,12 @@ import (
 
 var expiredSession = models.Session{
 	Token:      "TestSession1",
-	UserID:     1234,
+	Username:   "test-account",
 	Expiration: time.Now().Add(time.Duration(-1) * time.Hour),
 }
 var unexpiredSession = models.Session{
 	Token:      "TestSession2",
-	UserID:     1234,
+	Username:   "test-account",
 	Expiration: time.Now().Add(time.Duration(10) * time.Hour),
 }
 

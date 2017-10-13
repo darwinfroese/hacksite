@@ -17,6 +17,7 @@ var db database.Database
 var logger log.Logger
 
 var testProject = models.Project{
+	ID:               "1234",
 	Name:             "Test Project",
 	CurrentIteration: models.Iteration{},
 }
@@ -44,9 +45,9 @@ var createIterationTests = []struct {
 	Description: "Creating a new iteration should add it to the list and set it as the next iteration",
 	NewIteration: models.Iteration{
 		Number:    1,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Tasks: []models.Task{
-			models.Task{Task: "Test Task", Completed: false, IterationNumber: 1},
+			models.Task{Task: "Test Task", ProjectID: "1234", Completed: false, IterationNumber: 1},
 		},
 	},
 	ExpectedIterationCount: 1,
@@ -54,9 +55,9 @@ var createIterationTests = []struct {
 	Description: "Adding a second iteration to the project should replace the curent iteration and add it the list.",
 	NewIteration: models.Iteration{
 		Number:    2,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Tasks: []models.Task{
-			models.Task{Task: "Second Iteration Task", Completed: true, IterationNumber: 2},
+			models.Task{Task: "Second Iteration Task", ProjectID: "1234", Completed: true, IterationNumber: 2},
 		},
 	},
 	ExpectedIterationCount: 2,
@@ -95,9 +96,9 @@ var swapIterationsTests = []struct {
 	Description: "Testing swapping an iteration should set the current iteration to the one selected.",
 	SwapIteration: models.Iteration{
 		Number:    1,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Tasks: []models.Task{
-			models.Task{Task: "Test Task", Completed: false, ProjectID: 0, ID: 0, IterationNumber: 1},
+			models.Task{Task: "Test Task", Completed: false, ProjectID: "1234", ID: 0, IterationNumber: 1},
 		},
 	},
 	ShouldBeSet: true,
@@ -105,9 +106,9 @@ var swapIterationsTests = []struct {
 	Description: "Attempting to swap to an iteration that does not exist should fail.",
 	SwapIteration: models.Iteration{
 		Number:    10,
-		ProjectID: 0,
+		ProjectID: "1234",
 		Tasks: []models.Task{
-			models.Task{Task: "Unknown iteration", Completed: true, ProjectID: 0, ID: 0, IterationNumber: 10},
+			models.Task{Task: "Unknown iteration", Completed: true, ProjectID: "1234", ID: 0, IterationNumber: 10},
 		},
 	},
 	ShouldBeSet: false,
@@ -125,7 +126,8 @@ func TestSwapCurrentIteration(t *testing.T) {
 		}
 
 		if reflect.DeepEqual(project.CurrentIteration, tc.SwapIteration) != tc.ShouldBeSet {
-			t.Error("[ FAIL ] The current iteration was incorrectly updated.")
+			t.Errorf("[ FAIL ] The current iteration was incorrectly updated.\nExpected: %+v\nBut Got:  %+v\n",
+				project.CurrentIteration, tc.SwapIteration)
 		}
 	}
 }
