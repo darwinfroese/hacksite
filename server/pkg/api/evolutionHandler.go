@@ -5,28 +5,28 @@ import (
 	"net/http"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/iterations"
+	"github.com/darwinfroese/hacksite/server/pkg/evolutions"
 )
 
 var iterHandlersMap = map[string]handler{
-	"POST": addIteration,
+	"POST": addEvolution,
 }
 
 var currIterHandlersMap = map[string]handler{
-	"POST": switchIteration,
+	"POST": switchEvolution,
 }
 
-func (ctx *Context) iterationsRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx *Context) evolutionsRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, iterHandlersMap)
 }
 
-func (ctx *Context) currentIterationRoute(w http.ResponseWriter, r *http.Request) {
+func (ctx *Context) currentEvolutionRoute(w http.ResponseWriter, r *http.Request) {
 	callHandler(ctx, w, r, currIterHandlersMap)
 }
 
-func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	var iteration models.Iteration
-	err := json.NewDecoder(r.Body).Decode(&iteration)
+func addEvolution(ctx *Context, w http.ResponseWriter, r *http.Request) {
+	var evolution models.Evolution
+	err := json.NewDecoder(r.Body).Decode(&evolution)
 
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
@@ -34,7 +34,7 @@ func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := iterations.CreateIteration(*ctx.DB, *ctx.Logger, iteration)
+	project, err := evolutions.CreateEvolution(*ctx.DB, *ctx.Logger, evolution)
 
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
@@ -45,9 +45,9 @@ func addIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(project)
 }
 
-func switchIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
-	var iteration models.Iteration
-	err := json.NewDecoder(r.Body).Decode(&iteration)
+func switchEvolution(ctx *Context, w http.ResponseWriter, r *http.Request) {
+	var evolution models.Evolution
+	err := json.NewDecoder(r.Body).Decode(&evolution)
 
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
@@ -55,7 +55,7 @@ func switchIteration(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := iterations.SwapCurrentIteration(*ctx.DB, *ctx.Logger, iteration)
+	project, err := evolutions.SwapCurrentEvolution(*ctx.DB, *ctx.Logger, evolution)
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

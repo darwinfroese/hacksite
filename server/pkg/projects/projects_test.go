@@ -42,15 +42,15 @@ var createProjectTests = []struct {
 	Description: "Testing that creating a project with a valid model returns a new project.",
 	ProjectToCreate: models.Project{
 		Name:             "test-project",
-		CurrentIteration: models.Iteration{},
+		CurrentEvolution: models.Evolution{},
 	},
 	ExpectedProject: models.Project{
 		Name: "test-project",
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			Number: 1,
 		},
-		Iterations: []models.Iteration{
-			models.Iteration{Number: 1},
+		Evolutions: []models.Evolution{
+			models.Evolution{Number: 1},
 		},
 		Status: models.StatusCompleted,
 	},
@@ -69,8 +69,8 @@ func TestCreateProject(t *testing.T) {
 
 		// ID is randomly generated so we need to copy it
 		tc.ExpectedProject.ID = tc.ProjectToCreate.ID
-		tc.ExpectedProject.CurrentIteration.ProjectID = tc.ProjectToCreate.ID
-		tc.ExpectedProject.Iterations[0].ProjectID = tc.ProjectToCreate.ID
+		tc.ExpectedProject.CurrentEvolution.ProjectID = tc.ProjectToCreate.ID
+		tc.ExpectedProject.Evolutions[0].ProjectID = tc.ProjectToCreate.ID
 
 		if !reflect.DeepEqual(tc.ProjectToCreate, tc.ExpectedProject) {
 			t.Errorf("[ FAIL ] The project created has unexpected values.\nExpected: %+v\nBut got:  %+v\n",
@@ -114,17 +114,17 @@ var updateProjectTests = []struct {
 	NewProject: models.Project{
 		ID:   "1",
 		Name: "test-project",
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			Number: 1, ProjectID: "1",
 			Tasks: []models.Task{
-				models.Task{Task: "test", IterationNumber: 1},
+				models.Task{Task: "test", EvolutionNumber: 1},
 			},
 		},
-		Iterations: []models.Iteration{
-			models.Iteration{
+		Evolutions: []models.Evolution{
+			models.Evolution{
 				Number: 1, ProjectID: "1",
 				Tasks: []models.Task{
-					models.Task{Task: "test", IterationNumber: 1},
+					models.Task{Task: "test", EvolutionNumber: 1},
 				},
 			},
 		},
@@ -132,17 +132,17 @@ var updateProjectTests = []struct {
 	ExpectedProject: models.Project{
 		ID:   "1",
 		Name: "test-project",
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			Number: 1, ProjectID: "1",
 			Tasks: []models.Task{
-				models.Task{Task: "test", IterationNumber: 1},
+				models.Task{Task: "test", EvolutionNumber: 1},
 			},
 		},
-		Iterations: []models.Iteration{
-			models.Iteration{
+		Evolutions: []models.Evolution{
+			models.Evolution{
 				Number: 1, ProjectID: "1",
 				Tasks: []models.Task{
-					models.Task{Task: "test", IterationNumber: 1},
+					models.Task{Task: "test", EvolutionNumber: 1},
 				},
 			},
 		},

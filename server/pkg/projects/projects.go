@@ -45,10 +45,10 @@ func CreateProject(db database.Database, logger log.Logger, project *models.Proj
 	}
 
 	project.ID = id.String()
-	updateIteration(project.ID, 1, &project.CurrentIteration)
-	project.Iterations = append(project.Iterations, project.CurrentIteration)
-	project.CurrentIteration.Tasks = updateTasks(
-		project.ID, project.CurrentIteration.Number, project.CurrentIteration.Tasks)
+	updateEvolution(project.ID, 1, &project.CurrentEvolution)
+	project.Evolutions = append(project.Evolutions, project.CurrentEvolution)
+	project.CurrentEvolution.Tasks = updateTasks(
+		project.ID, project.CurrentEvolution.Number, project.CurrentEvolution.Tasks)
 
 	addProjectToUser(db, logger, username, id.String())
 	err = db.AddProject(*project)
@@ -93,9 +93,9 @@ func UpdateProject(db database.Database, project *models.Project) error {
 }
 
 // HelperFunctions
-func updateIteration(id string, number int, iteration *models.Iteration) {
-	iteration.ProjectID = id
-	iteration.Number = number
+func updateEvolution(id string, number int, evolution *models.Evolution) {
+	evolution.ProjectID = id
+	evolution.Number = number
 }
 
 func updateTasks(id string, number int, tasks []models.Task) []models.Task {
@@ -103,7 +103,7 @@ func updateTasks(id string, number int, tasks []models.Task) []models.Task {
 
 	for _, t := range tasks {
 		t.ProjectID = id
-		t.IterationNumber = number
+		t.EvolutionNumber = number
 
 		newTasks = append(newTasks, t)
 	}
@@ -145,7 +145,7 @@ func updateProjectStatus(project models.Project) string {
 	complete := 0
 	status := models.StatusNew
 
-	tasks := project.CurrentIteration.Tasks
+	tasks := project.CurrentEvolution.Tasks
 	for _, task := range tasks {
 		if task.Completed {
 			complete++

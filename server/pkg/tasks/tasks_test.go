@@ -17,7 +17,7 @@ var logger log.Logger
 var testProject = models.Project{
 	ID:   "1234",
 	Name: "Test Project",
-	CurrentIteration: models.Iteration{
+	CurrentEvolution: models.Evolution{
 		Number:    1,
 		ProjectID: "1234",
 		Tasks: []models.Task{
@@ -53,7 +53,7 @@ var updateTaskTests = []struct {
 		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusInProgress,
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			ProjectID: "1234",
 			Number:    1,
 			Tasks: []models.Task{
@@ -74,7 +74,7 @@ var updateTaskTests = []struct {
 		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusInProgress,
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			Number:    1,
 			ProjectID: "1234",
 			Tasks: []models.Task{
@@ -121,7 +121,7 @@ var removeTaskTests = []struct {
 		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusNew,
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			Number:    1,
 			ProjectID: "1234",
 			Tasks:     []models.Task{models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"}},
@@ -139,7 +139,7 @@ var removeTaskTests = []struct {
 		ID:     "1234",
 		Name:   "Test Project",
 		Status: models.StatusNew,
-		CurrentIteration: models.Iteration{
+		CurrentEvolution: models.Evolution{
 			ProjectID: "1234",
 			Number:    1,
 			Tasks:     []models.Task{models.Task{ID: 1, ProjectID: "1234", Task: "Test Task 2"}},

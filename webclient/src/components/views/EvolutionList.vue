@@ -16,10 +16,10 @@
             <span class='value'> {{ project.Name }} </span>
           </div>
         </div>
-        <div class='iteration-container' v-if="project.Iterations">
-          <section v-for="iteration in project.Iterations" :key="iteration.Number">
-            <div class='iteration-label'> Iteration {{ iteration.Number }} </div>
-            <div v-for="task in iteration.Tasks" :key="task.ID" class='iteration' v-bind:class="{ completed: task.Completed }">
+        <div class='evolution-container' v-if="project.Evolutions">
+          <section v-for="evolution in project.Evolutions" :key="evolution.Number">
+            <div class='evolution-label'> Evolution {{ evolution.Number }} </div>
+            <div v-for="task in evolution.Tasks" :key="task.ID" class='evolution' v-bind:class="{ completed: task.Completed }">
               {{ task.Task }}
             </div>
           </section>
@@ -110,14 +110,14 @@ export default {
 .value {
   margin-left: 15px;
 }
-.iteration-container {
+.evolution-container {
   margin: 25px;
   margin-top: 35px;
 }
-.iteration-label {
+.evolution-label {
   font-weight: 600;
 }
-.iteration {
+.evolution {
   margin-left: 10px;
   padding: 2px;
   font-size: 16px;

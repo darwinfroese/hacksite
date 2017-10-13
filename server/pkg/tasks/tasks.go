@@ -15,7 +15,7 @@ func UpdateTask(db database.Database, logger log.Logger, task models.Task) (mode
 		return project, err
 	}
 
-	tasks := project.CurrentIteration.Tasks
+	tasks := project.CurrentEvolution.Tasks
 
 	for i, t := range tasks {
 		if task.ID == t.ID {
@@ -24,10 +24,10 @@ func UpdateTask(db database.Database, logger log.Logger, task models.Task) (mode
 		}
 	}
 
-	project.CurrentIteration.Tasks = tasks
-	for i, iter := range project.Iterations {
-		if iter.Number == project.CurrentIteration.Number {
-			project.Iterations[i] = project.CurrentIteration
+	project.CurrentEvolution.Tasks = tasks
+	for i, iter := range project.Evolutions {
+		if iter.Number == project.CurrentEvolution.Number {
+			project.Evolutions[i] = project.CurrentEvolution
 		}
 	}
 
@@ -50,7 +50,7 @@ func RemoveTask(db database.Database, logger log.Logger, task models.Task) (mode
 		return project, err
 	}
 
-	tasks := project.CurrentIteration.Tasks
+	tasks := project.CurrentEvolution.Tasks
 
 	for i, t := range tasks {
 		if task.ID == t.ID {
@@ -59,12 +59,12 @@ func RemoveTask(db database.Database, logger log.Logger, task models.Task) (mode
 		}
 	}
 
-	// updates both current iteration as well as the same iteration in the
-	// iterations list
-	project.CurrentIteration.Tasks = tasks
-	for i, iter := range project.Iterations {
-		if iter.Number == project.CurrentIteration.Number {
-			project.Iterations[i] = project.CurrentIteration
+	// updates both current evolution as well as the same evolution in the
+	// evolutions list
+	project.CurrentEvolution.Tasks = tasks
+	for i, iter := range project.Evolutions {
+		if iter.Number == project.CurrentEvolution.Number {
+			project.Evolutions[i] = project.CurrentEvolution
 		}
 	}
 

@@ -13,8 +13,8 @@ type Project struct {
 	Name             string
 	Description      string
 	Status           string
-	CurrentIteration Iteration
-	Iterations       []Iteration
+	CurrentEvolution Evolution
+	Evolutions       []Evolution
 }
 
 // Task contains a representation of a task
@@ -23,11 +23,11 @@ type Task struct {
 	ProjectID       string
 	Task            string
 	Completed       bool
-	IterationNumber int
+	EvolutionNumber int
 }
 
-// Iteration contains iteration information for a project
-type Iteration struct {
+// Evolution contains evolution information for a project
+type Evolution struct {
 	Number    int
 	Tasks     []Task
 	ProjectID string
@@ -66,5 +66,5 @@ const (
 	StatusNew                    = "New"
 	UsernameTakenErrorMessage    = "username is already taken"
 	EmailTakenErrorMessage       = "this email is already in use"
-	InvalidIterationErrorMessage = "iteration selected does not exist"
+	InvalidEvolutionErrorMessage = "evolution selected does not exist"
 )

@@ -3,7 +3,7 @@
     <LoggedInHeader />
     <div class='container'>
       <div class='card'>
-        <h4> Enter Iteration Information </h4>
+        <h4> Enter Evolution Information </h4>
         <div class='form'>
           <div class='field'>
             <span class='label'> Project Name </span>
@@ -15,7 +15,7 @@
           </div>
           <TaskInputs />
           <div class='menu-bar'>
-            <button class='menu-button' @click="AddIteration"> Start Iteration </button>
+            <button class='menu-button' @click="AddEvolution"> Start Evolution </button>
             <router-link to='/'> Cancel </router-link>
           </div>
         </div>
@@ -26,7 +26,7 @@
 
 <script>
 import router from '@/router';
-import { GetProject, AddIteration } from '@/database';
+import { GetProject, AddEvolution } from '@/database';
 import TaskInputs from '@/components/elements/TaskInputs';
 import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
@@ -64,17 +64,17 @@ export default {
           }
         }
 
-        this.project.CurrentIteration.Tasks = tasks;
+        this.project.CurrentEvolution.Tasks = tasks;
       });
 
-      this.project.CurrentIteration.Tasks = tasks;
+      this.project.CurrentEvolution.Tasks = tasks;
     },
-    AddIteration: function () {
+    AddEvolution: function () {
       this.GetTasks();
-      let iteration = this.project.CurrentIteration;
-      iteration.Number++;
+      let evolution = this.project.CurrentEvolution;
+      evolution.Number++;
 
-      AddIteration(iteration)
+      AddEvolution(evolution)
         .then((response) => {
           return response.json();
         })

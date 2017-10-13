@@ -11,27 +11,27 @@
           <i class='fa fa-pencil'></i>
           Edit Project
         </router-link>
-        <router-link class='menu-button' :to="iterationRoute">
+        <router-link class='menu-button' :to="evolutionRoute">
           <i class='fa fa-plus'></i>
-          Add Iteration
+          Add Evolution
         </router-link>
-        <router-link class='menu-button' :to="allIterations">
+        <router-link class='menu-button' :to="allEvolutions">
           <i class='fa fa-history'></i>
-          View iterations
+          View evolutions
         </router-link>
       </div>
       <br>
       <div class='detail-card'>
         <div class='project-header'>
           {{ project.Name }}
-          <span class='iteration' v-if="project.CurrentIteration" title='Current Iteration'>
-            ( Iteration {{ project.CurrentIteration.Number }} )
+          <span class='evolution' v-if="project.CurrentEvolution" title='Current Evolution'>
+            ( Evolution {{ project.CurrentEvolution.Number }} )
           </span>
-          <span class='swap-link' v-if="swappable" title='Swap Iterations'>
-            Swap Iterations
-            <select @change="SwapIterations" v-model="selectedIteration">
-              <option v-for="iteration in project.Iterations" :key="iteration.Number" :value="iteration.Number">
-                {{ iteration.Number }}
+          <span class='swap-link' v-if="swappable" title='Swap Evolutions'>
+            Swap Evolutions
+            <select @change="SwapEvolutions" v-model="selectedEvolution">
+              <option v-for="evolution in project.Evolutions" :key="evolution.Number" :value="evolution.Number">
+                {{ evolution.Number }}
               </option>
             </select>
           </span>
@@ -39,8 +39,8 @@
         <div class='description'>
           {{ project.Description }}
         </div>
-        <div class='tasks' v-if="project.CurrentIteration">
-          <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
+        <div class='tasks' v-if="project.CurrentEvolution">
+          <Task v-for="task in project.CurrentEvolution.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" :pname="project.Name" v-on:GetProject="Update" />
         </div>
       </div>
     </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { GetProject, ChangeCurrentIteration } from '@/database';
+import { GetProject, ChangeCurrentEvolution } from '@/database';
 import Task from '@/components/elements/Task';
 import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
@@ -61,22 +61,22 @@ export default {
     editRoute: function () {
       return '/edit/' + this.project.ID;
     },
-    iterationRoute: function () {
-      return '/iteration/' + this.project.ID;
+    evolutionRoute: function () {
+      return '/evolution/' + this.project.ID;
     },
-    allIterations: function () {
-      return '/iterations/' + this.project.ID;
+    allEvolutions: function () {
+      return '/evolutions/' + this.project.ID;
     },
     swappable: function () {
-      return this.project.Iterations.length > 1;
+      return this.project.Evolutions.length > 1;
     }
   },
   data () {
     return {
       project: {
-        Iterations: []
+        Evolutions: []
       },
-      selectedIteration: {}
+      selectedEvolution: {}
     };
   },
   props: ['pid'],
@@ -88,20 +88,20 @@ export default {
         })
         .then((json) => {
           this.project = json;
-          this.selectedIteration = this.project.CurrentIteration.Number;
+          this.selectedEvolution = this.project.CurrentEvolution.Number;
         });
     },
-    SwapIterations: function () {
-      let selected = this.project.Iterations.filter((iter) => {
-        return iter.Number === this.selectedIteration;
+    SwapEvolutions: function () {
+      let selected = this.project.Evolutions.filter((iter) => {
+        return iter.Number === this.selectedEvolution;
       })[0];
-      ChangeCurrentIteration(selected)
+      ChangeCurrentEvolution(selected)
         .then((response) => {
           return response.json();
         })
         .then((json) => {
           this.project = json;
-          this.selectedIteration = this.project.CurrentIteration.Number;
+          this.selectedEvolution = this.project.CurrentEvolution.Number;
         });
     }
   },
@@ -163,7 +163,7 @@ label:hover {
   font-size: 18px;
   font-weight: 500;
 }
-.iteration {
+.evolution {
   margin-left: 25px;
   font-size: 14px;
 }

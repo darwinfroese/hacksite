@@ -5,8 +5,8 @@ import Projects from '@/components/views/ProjectList';
 import Details from '@/components/views/Details';
 import Create from '@/components/views/Create';
 import Edit from '@/components/views/Edit';
-import Iteration from '@/components/views/Iteration';
-import IterationList from '@/components/views/IterationList';
+import Evolution from '@/components/views/Evolution';
+import EvolutionList from '@/components/views/EvolutionList';
 import CreateAccount from '@/components/views/CreateAccount';
 import Login from '@/components/views/Login';
 import { Authenticate } from '@/database';
@@ -15,7 +15,7 @@ Vue.use(Router);
 Vue.use(VeeValidate);
 
 // TODO: Route better - use the project id inside the
-// route better (ie. :pid/details, :pid/iterations, etc.)
+// route better (ie. :pid/details, :pid/evolutions, etc.)
 const router = new Router({
   routes: [
     {
@@ -45,17 +45,17 @@ const router = new Router({
       component: Create
     },
     {
-      path: '/iteration/:pid',
-      name: 'CreateIteration',
-      component: Iteration,
+      path: '/evolution/:pid',
+      name: 'CreateEvolution',
+      component: Evolution,
       props: (route) => {
         return { pid: route.params.pid };
       }
     },
     {
-      path: '/iterations/:pid',
-      name: 'AllIterations',
-      component: IterationList,
+      path: '/evolutions/:pid',
+      name: 'AllEvolutions',
+      component: EvolutionList,
       props: (route) => {
         return { pid: route.params.pid };
       }

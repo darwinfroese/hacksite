@@ -21,7 +21,6 @@ var sessionsBucket = []byte("sessions")
 
 // TODO: Make sure the objects passed aren't being passed by copy so that we can just update
 // fields and they're returned instead of having to explicitly return the object
-// TODO: Iterations and tasks should be in their own buckets
 // TODO: Wrap db calls better - take function as argument, call after opening db and getting bucket
 
 // New creates a basic database struct
