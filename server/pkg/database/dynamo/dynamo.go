@@ -1,10 +1,13 @@
 package dynamo
 
 import (
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 )
@@ -174,7 +177,42 @@ func (d *dynamoDB) GetSession(sessionToken string) (models.Session, error) {
 }
 
 func (d *dynamoDB) GetAllSessions() ([]models.Session, error) {
-	return nil, nil
+	var sessions []models.Session
+	curr := time.Now()
+
+	filt := expression.Name("Expiration").LessThanEqual(expression.Value(curr))
+	proj := expression.NamesList(expression.Name("Token"), expression.Name("Expiration"), expression.Name("Username"))
+
+	expr, err := expression.NewBuilder().WithFilter(filt).WithProjection(proj).Build()
+	if err != nil {
+		return sessions, err
+	}
+
+	params := &dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(sessionsTable),
+	}
+
+	result, err := d.db.Scan(params)
+	if err != nil {
+		return sessions, err
+	}
+
+	for _, i := range result.Items {
+		var session models.Session
+
+		err = dynamodbattribute.UnmarshalMap(i, &session)
+		if err != nil {
+			return sessions, err
+		}
+
+		sessions = append(sessions, session)
+	}
+
+	return sessions, nil
 }
 
 func (d *dynamoDB) RemoveSession(sessionToken string) error {
