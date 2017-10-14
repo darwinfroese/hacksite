@@ -5,12 +5,20 @@
     <div class='container'>
       <div class='card'>
         <div class='input-container'>
-          <span class='input-label'> Username </span>
-          <input type='text' v-model="account.Username" placeholder='Username'>
+          <ValidatedTextBox 
+          :fieldLabel = "'Username *'" 
+          :placeholder = "'Username'" 
+          :model= 'account.Username' 
+          :fieldName = "'Username'"
+          :validateExpression = "'required'" />
         </div>
         <div class='input-container'>
-          <span class='input-label'> Password </span>
-          <input type='password' v-model="account.Password" placeholder='Password'>
+          <ValidatedTextBox 
+          :fieldLabel = "'Password *'" 
+          :placeholder = "'Password'" 
+          :model= 'account.Password' 
+          :fieldName = "'Password'"
+          :validateExpression = "'required'" />
         </div>
         <div class='message-container'>
           <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
@@ -32,10 +40,12 @@
 import router from '@/router';
 import { Login } from '@/database';
 import LoginHeader from '@/components/elements/LoginHeader.vue';
+import ValidatedTextBox from '@/components/elements/ValidatedTextBox';
 
 export default {
   components: {
-    'LoginHeader': LoginHeader
+    'LoginHeader': LoginHeader,
+    'ValidatedTextBox': ValidatedTextBox
   },
   data () {
     return {

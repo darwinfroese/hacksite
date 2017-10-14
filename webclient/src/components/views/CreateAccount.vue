@@ -8,32 +8,36 @@
         </section>
         <section class='form'>
           <div class='input-container'>
-            <label class="label" for="username">Username</label>
-            <p :class="{ 'control': true }">
-              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'required|alpha_num|min:3'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
-              <span v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
-            </p>
+            <ValidatedTextBox 
+            :fieldLabel = "'Username *'" 
+            :placeholder = "'Username'" 
+            :model= 'account.Username' 
+            :fieldName = "'Username'"
+            :validateExpression = "'required|alpha_num|min:3'" />
           </div>
           <div class='input-container'>
-            <label class="label" for="email">Email</label>
-            <p :class="{ 'control': true }">
-              <input id="email" placeholder='someone@email.com' v-model="account.Email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text">
-              <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
-            </p>
+            <ValidatedTextBox 
+            :fieldLabel = "'Email *'" 
+            :placeholder = "'someone@email.com'" 
+            :model= 'account.Email' 
+            :fieldName = "'email'"
+            :validateExpression = "'required|email'" />       
           </div>
           <div class='input-container'>
-            <label class="label" for="password">Password</label>
-            <p :class="{ 'control': true }">
-              <input id="password" placeholder='Password' v-model="account.Password" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('password') }" name="password" type="password">
-              <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
-            </p>
+            <ValidatedTextBox 
+            :fieldLabel = "'Password *'" 
+            :placeholder = "'Password'" 
+            :model= 'account.Password' 
+            :fieldName = "'password'"
+            :validateExpression = "'required'" />
           </div>
           <div class='input-container'>
-            <label class="label" for="ConfirmPassword">Confirm your password</label>
-            <p :class="{ 'control': true }">
-              <input id="ConfirmPassword" placeholder='Confirm Password' v-model="account.ConfirmPassword" v-validate="'required|confirmed:password'" :class="{'input': true, 'is-danger': errors.has('ConfirmPassword') }" name="ConfirmPassword" type="password">
-              <span v-show="errors.has('ConfirmPassword')" class="help is-danger">{{ errors.first('ConfirmPassword') }}</span>
-            </p>
+            <ValidatedTextBox 
+            :fieldLabel = "'Confirm your password *'" 
+            :placeholder = "'Confirm Password'" 
+            :model= 'account.ConfirmPassword' 
+            :fieldName = "'ConfirmPassword'"
+            :validateExpression = "'required|confirmed:password'" />
           </div>
         </section>
         <section class='message-container'>
@@ -52,10 +56,12 @@
 import router from '@/router';
 import { CreateAccount } from '@/database';
 import LoginHeader from '@/components/elements/LoginHeader';
+import ValidatedTextBox from '@/components/elements/ValidatedTextBox';
 
 export default {
   components: {
-    'LoginHeader': LoginHeader
+    'LoginHeader': LoginHeader,
+    'ValidatedTextBox': ValidatedTextBox
   },
   data () {
     return {
@@ -192,13 +198,5 @@ button:hover {
 }
 .success {
   color: #4e9155;
-}
-
-.help.is-danger {
-  display: inline-block;
-  font-style: italic;
-  font-size: 14px;
-  color: #ff4949;
-  position: absolute;
 }
 </style>

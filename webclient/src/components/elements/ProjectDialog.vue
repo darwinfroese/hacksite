@@ -2,11 +2,12 @@
   <div class='card'>
     <h4>{{ title }}</h4>
     <div class='form'>
-      <RequiredTextBox 
+      <ValidatedTextBox 
         :fieldLabel = "'Project Name *'" 
         :placeholder = "'Enter your project name'" 
         :model= 'project.Name' 
-        :fieldName = "'Name'" />
+        :fieldName = "'Name'"
+        :validateExpression = "'required'" />
       <div class='input'>
         <span class='input-label'> Project Description </span>
         <textarea placeholder='Enter your project description' v-model='project.Description'></textarea>
@@ -25,13 +26,13 @@
 
 <script>
 import TaskInputs from '@/components/elements/TaskInputs';
-import RequiredTextBox from '@/components/elements/RequiredTextBox';
+import ValidatedTextBox from '@/components/elements/ValidatedTextBox';
 
 export default {
   props: ['title', 'project', 'buttonText'],
   components: {
     'TaskInputs': TaskInputs,
-    'RequiredTextBox': RequiredTextBox
+    'ValidatedTextBox': ValidatedTextBox
   },
   methods: {
     Handler: function () {
