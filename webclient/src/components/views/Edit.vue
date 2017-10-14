@@ -31,6 +31,7 @@ export default {
     };
   },
   mounted () {
+    this.$root.loading = true;
     this.GetProject();
   },
   methods: {
@@ -63,8 +64,11 @@ export default {
         return response.json();
       })
       .then((json) => {
+        this.$root.loading = false;
         this.project = json;
         this.hasProject = true;
+      }).catch(() => {
+        this.$root.loading = false;
       });
     }
   },

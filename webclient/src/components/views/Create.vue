@@ -8,9 +8,6 @@
         :project="project"
         v-on:Handle="SaveProject" />
     </div>
-    <div v-if="loading">
-      <vue-simple-spinner></vue-simple-spinner>
-    </div>
   </div>
 </template>
 
@@ -35,7 +32,6 @@ export default {
         },
         Completed: false
       },
-      loading: true,
       taskCount: 1,
       warningDisplayed: false
     };
@@ -61,6 +57,9 @@ export default {
           router.push('/details/' + project.ID);
         });
     }
+  },
+  mounted () {
+    this.$root.loading = false;
   }
 };
 </script>

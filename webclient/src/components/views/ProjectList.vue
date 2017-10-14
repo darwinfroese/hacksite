@@ -4,17 +4,14 @@
     <LoggedInHeader />
     <div class='list'>
       <div class='menu-bar'>
-          <router-link class='menu-button' to='/create'>
+          <router-link class='menu-button' to='/create' v-on:click.native="$root.loading = true">
             <i class='fa fa-plus'></i>
             Add a project
           </router-link>
       </div>
       <div class='list-container'>
-        <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
+        <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" v-on:click.native="$root.loading = true" />
       </div>
-    </div>
-    <div>
-      <vue-simple-spinner></vue-simple-spinner>
     </div>
   </div>
 </template>
@@ -23,32 +20,32 @@
 import { GetProjects } from '@/database';
 import Project from '@/components/elements/Project';
 import LoggedInHeader from '@/components/elements/LoggedInHeader';
-import VueSimpleSpinner from 'vue-simple-spinner/src/components/Spinner';
 
 export default {
   components: {
-    'vue-simple-spinner': VueSimpleSpinner,
     'Project': Project,
     'LoggedInHeader': LoggedInHeader
   },
   data () {
     return {
-      projects: [],
-      loading: true
+      projects: []
     };
   },
   methods: {
     Update: function () {
       let promise = GetProjects();
       promise.then((response) => {
-        this.loading = false;
+        this.$root.loading = false;
         return response.json();
       }).then((json) => {
         this.projects = json;
+      }).catch(() => {
+        this.$root.loading = false;
       });
     }
   },
   mounted () {
+    this.$root.loading = true;
     this.Update();
   }
 };

@@ -3,7 +3,7 @@
     <LoggedInHeader />
     <div class='container'>
       <div class='menu-bar'>
-        <router-link class='menu-button' :to="detailsRoute">
+        <router-link class='menu-button' :to="detailsRoute" v-on:click.native="$root.loading = true">
           <i class='fa fa-chevron-left'></i>
           Back to Project
         </router-link>
@@ -56,11 +56,15 @@ export default {
         })
         .then((json) => {
           this.project = json;
+          this.$root.loading = false;
+        }).catch(() => {
+          this.$root.loading = false;
         });
     }
   },
   mounted () {
     this.Update();
+    this.$root.loading = true;
   }
 };
 </script>

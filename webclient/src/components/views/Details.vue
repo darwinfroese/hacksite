@@ -3,19 +3,19 @@
     <LoggedInHeader />
     <div class='details-container'>
       <div class='menu-bar'>
-        <router-link class='menu-button' to='/'>
+        <router-link class='menu-button' to='/' v-on:click.native="$root.loading = true">
           <i class='fa fa-chevron-left'></i>
           Back to Projects
         </router-link>
-        <router-link class='menu-button' :to="editRoute">
+        <router-link class='menu-button' :to="editRoute" v-on:click.native="$root.loading = true">
           <i class='fa fa-pencil'></i>
           Edit Project
         </router-link>
-        <router-link class='menu-button' :to="iterationRoute">
+        <router-link class='menu-button' :to="iterationRoute" v-on:click.native="$root.loading = true">
           <i class='fa fa-plus'></i>
           Add Iteration
         </router-link>
-        <router-link class='menu-button' :to="allIterations">
+        <router-link class='menu-button' :to="allIterations" v-on:click.native="$root.loading = true">
           <i class='fa fa-history'></i>
           View iterations
         </router-link>
@@ -40,7 +40,7 @@
           {{ project.Description }}
         </div>
         <div class='tasks' v-if="project.CurrentIteration">
-          <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" />
+          <Task v-for="task in project.CurrentIteration.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" v-on:GetProject="Update" v-on:click="$root.loading = true" />
         </div>
       </div>
     </div>
@@ -84,11 +84,14 @@ export default {
     Update: function () {
       GetProject(this.pid)
         .then((response) => {
+          this.$root.loading = false;
           return response.json();
         })
         .then((json) => {
           this.project = json;
           this.selectedIteration = this.project.CurrentIteration.Number;
+        }).catch(() => {
+          this.$root.loading = false;
         });
     },
     SwapIterations: function () {
@@ -106,6 +109,7 @@ export default {
     }
   },
   mounted () {
+    this.$root.loading = true;
     this.Update();
   }
 };

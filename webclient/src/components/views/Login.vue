@@ -20,8 +20,8 @@
           <router-link to='/createaccount'> Create one now. </router-link>
         </div>
         <div class='menu-bar'>
-          <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
-          <router-link to='/'> Cancel </router-link>          
+          <button class='menu-button' @click="Login" v-on:click="$root.loading = true" :disabled="!valid"> Login </button>
+          <router-link to='/' v-on:click="$root.loading = true"> Cancel </router-link>
         </div>
       </div>
     </div>
@@ -76,6 +76,9 @@ export default {
   },
   updated () {
     this.Validate();
+  },
+  mounted () {
+    this.$root.loading = false;
   }
 };
 </script>
