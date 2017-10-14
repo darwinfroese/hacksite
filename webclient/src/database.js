@@ -77,27 +77,27 @@ export const RemoveTask = (task) => {
   });
 };
 
-export const AddIteration = (iteration) => {
-  return fetch(apiBaseUrl + '/iteration', {
+export const AddEvolution = (evolution) => {
+  return fetch(apiBaseUrl + '/evolution', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
     mode: 'cors',
-    body: JSON.stringify(iteration)
+    body: JSON.stringify(evolution)
   });
 };
 
-export const ChangeCurrentIteration = (iteration) => {
-  return fetch(apiBaseUrl + '/currentiteration', {
+export const ChangeCurrentEvolution = (evolution) => {
+  return fetch(apiBaseUrl + '/currentevolution', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
     mode: 'cors',
-    body: JSON.stringify(iteration)
+    body: JSON.stringify(evolution)
   });
 };
 

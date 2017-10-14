@@ -6,16 +6,20 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/darwinfroese/hacksite/server/pkg/database"
-
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
+	"github.com/darwinfroese/hacksite/server/pkg/log/testLogger"
 )
 
 var db database.Database
+var logger log.Logger
 
 // TestMain lets us setup the database and then remove it when we are done
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
+	logger = testLogger.New()
 
 	retCode := m.Run()
 
@@ -38,7 +42,6 @@ var createAccountTests = []struct {
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
-		ID:       1,
 	},
 	ExpectedErrorMessage: "",
 }, {
@@ -52,7 +55,6 @@ var createAccountTests = []struct {
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
-		ID:       2,
 	},
 	ExpectedErrorMessage: "",
 }, {
@@ -110,7 +112,7 @@ func TestCreateAccount(t *testing.T) {
 
 	for i, tc := range createAccountTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
-		err := CreateAccount(db, &tc.Account)
+		err := CreateAccount(db, logger, &tc.Account)
 
 		if err != nil && err.Error() != tc.ExpectedErrorMessage {
 			t.Errorf("[ FAIL ] The test failed because of an unexpected error: %s\n", err.Error())

@@ -37,7 +37,7 @@ export default {
   methods: {
     Update: function () {
       let inputs = document.getElementsByName('taskInput');
-      let tasks = this.project.CurrentIteration.Tasks;
+      let tasks = this.project.CurrentEvolution.Tasks;
 
       inputs.forEach((i, idx) => {
         let contents = i.value;
@@ -51,7 +51,7 @@ export default {
         }
       });
 
-      this.project.CurrentIteration.Tasks = tasks;
+      this.project.CurrentEvolution.Tasks = tasks;
 
       UpdateProject(this.project)
         .then(() => {

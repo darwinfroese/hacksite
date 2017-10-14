@@ -2,37 +2,38 @@ package scheduler
 
 import (
 	"fmt"
-	"os"
 	"time"
 
+	"github.com/darwinfroese/hacksite/server/pkg/api"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
 // Start executes the scheduler that will run tasks periodically in the background
-func Start(db database.Database) {
+func Start(ctx api.Context) {
 	ticker := time.NewTicker(5 * time.Minute)
 
 	go func() {
 		for range ticker.C {
 			// TODO: These should be logs
-			count, err := cleanSessions(db)
+			count, err := cleanSessions(*ctx.DB, *ctx.Logger)
 
 			if err != nil {
-				fmt.Printf("[ERROR] An error occured trying to clean sessions from the database: %s\n", err.Error())
+				(*ctx.Logger).Error(fmt.Sprintf("Attempting to clean sessions from database: %s", err.Error()))
 			} else {
-				fmt.Printf("[INFO] Removed %d expired sessions\n", count)
+				(*ctx.Logger).Info(fmt.Sprintf("Removed %d expired sessions", count))
 			}
 		}
 	}()
 }
 
 // cleanSessions grabs all the sessions from the database and removes the ones that are expired
-func cleanSessions(db database.Database) (int, error) {
+func cleanSessions(db database.Database, logger log.Logger) (int, error) {
 	count := 0
 
 	sessions, err := db.GetAllSessions()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return count, err
 	}
 
@@ -41,7 +42,7 @@ func cleanSessions(db database.Database) (int, error) {
 			err = db.RemoveSession(sesh.Token)
 			if err != nil {
 				// since this is just removing one at a time we can continue on if one fails
-				fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+				logger.Error(err.Error())
 			} else {
 				count++
 			}

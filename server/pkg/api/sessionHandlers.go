@@ -1,42 +1,38 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
 )
 
 var sessionHandlersMap = map[string]handler{
-	"GET":     sessionHandler,
-	"OPTIONS": optionsHandler,
+	"GET": sessionHandler,
 }
 
-func sessionRoute(ctx apiContext, w http.ResponseWriter, r *http.Request) http.HandlerFunc {
-	return callHandler(ctx, w, r, sessionHandlersMap)
+func (ctx *Context) sessionRoute(w http.ResponseWriter, r *http.Request) {
+	callHandler(ctx, w, r, sessionHandlersMap)
 }
 
-func sessionHandler(ctx apiContext, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
+func sessionHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
+	session, err := auth.GetCurrentSession(*ctx.DB, *ctx.Logger, r)
 
-	session, err := auth.GetCurrentSession(r, ctx.db)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 	if time.Now().After(session.Expiration) {
-		fmt.Println(err.Error())
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Session was expired")
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 
 	session.Expiration = time.Now().Add(time.Second * auth.SessionMaxAge)
-	err = ctx.db.StoreSession(session)
+	err = (*ctx.DB).StoreSession(session)
 	if err != nil {
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

@@ -27,7 +27,7 @@ export default {
       project: {
         Name: '',
         Description: '',
-        CurrentIteration: {
+        CurrentEvolution: {
           Tasks: []
         },
         Completed: false
@@ -44,7 +44,7 @@ export default {
         let contents = i.value;
 
         if (/\S/.test(contents)) {
-          this.project.CurrentIteration.Tasks.push({'task': contents, 'id': idx, 'completed': false});
+          this.project.CurrentEvolution.Tasks.push({'task': contents, 'id': idx, 'completed': false});
         }
       });
 

@@ -7,22 +7,21 @@ import (
 
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/database/bolt"
 )
 
 var db database.Database
 
 var username = "test-user"
 var password = "secure-password"
-var id = 1234
 
 func TestMain(m *testing.M) {
-	db = database.CreateDB()
+	db = bolt.New()
 
 	// Setup for login_test
 	salt, hash, _ := SaltPassword(password)
 	db.CreateAccount(models.Account{
 		Username: username,
-		ID:       id,
 		Password: hash,
 		Salt:     salt,
 	})
@@ -70,9 +69,7 @@ func TestGetSaltedPassword(t *testing.T) {
 func TestCreateSession(t *testing.T) {
 	t.Log("[ 01 ] Testing CreateSession should return a session that expires in the future...")
 
-	id := 10
-
-	session := CreateSession(id)
+	session := CreateSession("test-username")
 
 	if time.Now().After(session.Expiration) {
 		t.Error("[ FAIL ] The session created already expired.\n")

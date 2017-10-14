@@ -5,16 +5,35 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/darwinfroese/hacksite/server/models"
 )
+
+// EnvironmentConfig contains the configuration for the enivornment
+type EnvironmentConfig struct {
+	Server   serverConfig
+	Logger   logConfig
+	Database dbConfig
+	Aws      awsConfig
+}
+
+type serverConfig struct {
+	Port, KeyLocation, CertLocation, WebFileLocation string
+}
+type logConfig struct {
+	LogFileLocation string
+}
+type dbConfig struct {
+	System string
+}
+type awsConfig struct {
+	AccessKey, SecretKey, Token, Region string
+}
 
 // ParseConfig reads the environmentconfig file and converts it into a struct
 // that can be used to setup the server
-func ParseConfig(environmentFile string) models.ServerConfig {
-	var config models.ServerConfig
+func ParseConfig(environmentFile string) EnvironmentConfig {
+	var config EnvironmentConfig
 
-	fmt.Fprintf(os.Stdout, "Using config file: %s\n", environmentFile)
+	fmt.Printf("Using config file: %s\n", environmentFile)
 
 	if _, err := os.Stat(environmentFile); os.IsNotExist(err) {
 		fmt.Fprintf(os.Stderr, "Couldn't find the file: %s\n", environmentFile)
