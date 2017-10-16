@@ -5,7 +5,7 @@
       <i class='fa fa-clock-o' aria-hidden='true' v-if="project.Status === 'InProgress'"></i>
       <i class='fa fa-exclamation-triangle' aria-hidden='true' v-if="project.Status === 'New'"></i>
     </span>
-    <span class='name' @click="ShowProject()" v-bind:class="{completed: project.Status === 'Completed'}">
+    <span class='name' @click="ShowProject()" v-on:click.native="$root.loading = true" v-bind:class="{completed: project.Status === 'Completed'}">
       {{ project.Name }}
     </span>
     <span class='description'> {{ project.Description }} </span>
@@ -52,9 +52,11 @@ export default {
       this.active = !this.active;
     },
     ShowProject: function () {
+      this.$root.loading = true;
       router.push('/details/' + this.project.ID);
     },
     EditProject: function () {
+      this.$root.loading = true;
       router.push('/edit/' + this.project.ID);
     },
     RemoveProject: function () {

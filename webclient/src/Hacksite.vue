@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="full-screen-modal" v-if="$root.loading">
+    <div class="full-screen-modal" v-if="$root.loading" @click.stop="">
       <vue-simple-spinner class="simple-spinner" line-fg-color="#325778"></vue-simple-spinner>
     </div>
     <router-view></router-view>
@@ -44,7 +44,8 @@ hr {
   position: fixed;
   width: 100%;
   top: 0;
-  background: rgba(0, 0, 0, .25)
+  background: rgba(0, 0, 0, .25);
+  z-index: 2;
 }
 .full-screen-modal .simple-spinner {
   height: 100%;
