@@ -1,5 +1,5 @@
 <template>
-  <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
+  <div class='card'>
     <h4>{{ title }}</h4>
     <div class='form'>
       <div class='input'>
@@ -46,11 +46,6 @@ export default {
         this.valid = true;
       } else {
         this.valid = false;
-      }
-    },
-    enterKeyPressHandler: function () {
-      if (this.valid) {
-        this.Handler();
       }
     }
   },
