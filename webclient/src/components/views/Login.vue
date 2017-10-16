@@ -2,7 +2,7 @@
   <div>
     <LoginHeader />
     <!-- TODO: All of these inputs should accept 'enter' as the default action -->
-    <div class='container'>
+    <div class='container' v-on:keyup.enter = "enterKeyPressHandler">
       <div class='card'>
         <div class='input-container'>
           <span class='input-label'> Username </span>
@@ -76,6 +76,11 @@ export default {
   },
   updated () {
     this.Validate();
+  },
+  enterKeyPressHandler: function () {
+    if (this.valid) {
+      this.Login();
+    }
   }
 };
 </script>
