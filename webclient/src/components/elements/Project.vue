@@ -12,9 +12,9 @@
     <span class='control-icon'>
       <i class='fa fa-eye' title='View Project' @click="ShowProject()"></i>
       <i class='fa fa-pencil' title='Edit Project' @click="EditProject()"></i>
-      <i class='fa fa-trash-o' title='Delete Project' @click="RenderDeleteDialog()"></i>
+      <i class='fa fa-trash-o' title='Delete Project' @click.stop="RenderDeleteDialog()"></i>
     </span>
-    <Modal 
+    <Modal
       :message="RemoveProjectMessage"
       :acceptText="'Yes'"
       :rejectText="'No'"
@@ -59,6 +59,7 @@ export default {
     },
     RemoveProject: function () {
       this.active = false;
+      this.$root.loading = true;
       RemoveProject(this.project)
         .then((response) => {
           this.$emit('update');
@@ -126,7 +127,7 @@ i {
   cursor: pointer;
 }
 /* Icon (Color) Overrides */
-.fa-check { 
+.fa-check {
   color: green;
 }
 .fa-clock-o {

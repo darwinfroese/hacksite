@@ -44,7 +44,7 @@ hr {
   position: fixed;
   width: 100%;
   top: 0;
-  background: rgba(255, 255, 255, .8)
+  background: rgba(0, 0, 0, .25)
 }
 .full-screen-modal .simple-spinner {
   height: 100%;
