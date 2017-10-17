@@ -15,8 +15,8 @@
         <div class='infoMessage'> * indicates a required field </div>
       </section>
       <div class='menu-bar'>
-        <button class='menu-button' @click="Handler" :disabled="!valid"> {{ buttonText }} </button>
-        <router-link to='/'> Cancel </router-link>
+        <button class='menu-button' @click="Handler" :disabled="!valid" v-on:click.native="$root.loading = true"> {{ buttonText }} </button>
+        <router-link to='/' v-on:click.native="$root.loading = true"> Cancel </router-link>
       </div>
     </div>
   </div>

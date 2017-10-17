@@ -15,8 +15,8 @@
           </div>
           <TaskInputs />
           <div class='menu-bar'>
-            <button class='menu-button' @click="AddEvolution"> Start Evolution </button>
-            <router-link to='/'> Cancel </router-link>
+            <button class='menu-button' @click="AddEvolution" v-on:click.native="$root.loading = true"> Start Evolution </button>
+            <router-link to='/' v-on:click.native="$root.loading = true"> Cancel </router-link>
           </div>
         </div>
       </div>
@@ -49,6 +49,9 @@ export default {
         })
         .then((json) => {
           this.project = json;
+          this.$root.loading = false;
+        }).catch(() => {
+          this.$root.loading = false;
         });
     },
     GetTasks: function () {
@@ -85,6 +88,7 @@ export default {
   },
   mounted () {
     this.Update();
+    this.$root.loading = true;
   }
 };
 </script>

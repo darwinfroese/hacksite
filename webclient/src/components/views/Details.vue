@@ -3,19 +3,19 @@
     <LoggedInHeader />
     <div class='details-container'>
       <div class='menu-bar'>
-        <router-link class='menu-button' to='/'>
+        <router-link class='menu-button' to='/' v-on:click.native="$root.loading = true">
           <i class='fa fa-chevron-left'></i>
           Back to Projects
         </router-link>
-        <router-link class='menu-button' :to="editRoute">
+        <router-link class='menu-button' :to="editRoute" v-on:click.native="$root.loading = true">
           <i class='fa fa-pencil'></i>
           Edit Project
         </router-link>
-        <router-link class='menu-button' :to="evolutionRoute">
+        <router-link class='menu-button' :to="evolutionRoute" v-on:click.native="$root.loading = true">
           <i class='fa fa-plus'></i>
           Add Evolution
         </router-link>
-        <router-link class='menu-button' :to="allEvolutions">
+        <router-link class='menu-button' :to="allEvolutions" v-on:click.native="$root.loading = true">
           <i class='fa fa-history'></i>
           View evolutions
         </router-link>
@@ -40,7 +40,7 @@
           {{ project.Description }}
         </div>
         <div class='tasks' v-if="project.CurrentEvolution">
-          <Task v-for="task in project.CurrentEvolution.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" :pname="project.Name" v-on:GetProject="Update" />
+          <Task v-for="task in project.CurrentEvolution.Tasks" v-bind:key='task.ID' :task="task" :pid="project.ID" :pname="project.Name" v-on:GetProject="Update" v-on:click="$root.loading = true" />
         </div>
       </div>
     </div>
@@ -84,11 +84,14 @@ export default {
     Update: function () {
       GetProject(this.pid)
         .then((response) => {
+          this.$root.loading = false;
           return response.json();
         })
         .then((json) => {
           this.project = json;
           this.selectedEvolution = this.project.CurrentEvolution.Number;
+        }).catch(() => {
+          this.$root.loading = false;
         });
     },
     SwapEvolutions: function () {
@@ -106,6 +109,7 @@ export default {
     }
   },
   mounted () {
+    this.$root.loading = true;
     this.Update();
   }
 };

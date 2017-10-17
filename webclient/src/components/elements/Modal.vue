@@ -1,5 +1,5 @@
 <template>
-  <div class='modal-container'>
+  <div class='modal-container' @click.stop="">
     <div class='modal'>
       <div class='content'>
         {{ this.message }}
@@ -46,7 +46,7 @@ export default {
   width: 50%;
 }
 .content {
-  margin: 25px;  
+  margin: 25px;
 }
 button, a {
   border-radius: 0;

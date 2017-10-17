@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     SaveProject: function () {
+      this.$root.loading = true;
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
@@ -50,12 +51,16 @@ export default {
 
       AddProject(this.project)
         .then((response) => {
+          this.loading = false;
           return response.json();
         })
         .then((project) => {
           router.push('/details/' + project.ID);
         });
     }
+  },
+  mounted () {
+    this.$root.loading = false;
   }
 };
 </script>

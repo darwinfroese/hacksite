@@ -40,8 +40,8 @@
           <span class='message' v-bind:class="{success: success}"> {{ message }} </span>
         </section>
         <div class='menu-bar'>
-          <button class='menu-button' @click="Create" :disabled="!valid"> Create </button>
-          <router-link to='/'> Cancel </router-link>
+          <button class='menu-button' @click="Create" :disabled="!valid" v-on:click="$root.loading = true"> Create </button>
+          <router-link to='/' v-on:click="$root.loading = true"> Cancel </router-link>
         </div>
       </div>
     </div>

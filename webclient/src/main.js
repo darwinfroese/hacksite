@@ -11,5 +11,6 @@ new Vue({
   el: '#hacksite',
   router,
   template: '<Hacksite/>',
-  components: { Hacksite }
+  components: { Hacksite },
+  data: {loading: false}
 });

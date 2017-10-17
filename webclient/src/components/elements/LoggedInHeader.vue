@@ -6,7 +6,7 @@
         <span @click="navHome"> Hacksite </span>
       </span>
       <span class='account'>
-        <span @click="logout" class='logout-button'>
+        <span @click="logout" class='logout-button' v-on:click="$root.loading = true">
           Logout
           <i class='fa fa-sign-out icon'></i>
         </span>
