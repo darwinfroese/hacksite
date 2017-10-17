@@ -74,7 +74,7 @@ export default {
   },
   computed: {
     editTitle: function () {
-      return 'Edit Project ' + this.project.ID;
+      return 'Edit Project';
     }
   }
 };
