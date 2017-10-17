@@ -36,8 +36,11 @@ type Evolution struct {
 // Account contains the information for each user
 type Account struct {
 	// Username and Email are unique Identifiers
-	Username, Password, Email, Salt string
-	ProjectIds                      []string
+	Username string
+	Password string 	`json:"-"`
+	Email string
+	Salt string 		`json:"-"`
+	ProjectIds []string `json:"-"`
 }
 
 // LoginAccount is a simplified account object for login requests

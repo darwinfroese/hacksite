@@ -23,6 +23,7 @@ func RegisterAPIRoutes(ctx *Context, mux *http.ServeMux) {
 	mux.HandleFunc(apiPrefix+"/evolution", Apply(ctx, ctx.evolutionsRoute))
 	mux.HandleFunc(apiPrefix+"/currentevolution", Apply(ctx, ctx.currentEvolutionRoute))
 	mux.HandleFunc(apiPrefix+"/accounts", Apply(ctx, ctx.accountsRoute))
+	mux.HandleFunc(apiPrefix+"/account", Apply(ctx, ctx.accountRoute))
 	mux.HandleFunc(apiPrefix+"/login", Apply(ctx, ctx.loginRoute))
 	mux.HandleFunc(apiPrefix+"/logout", Apply(ctx, ctx.logoutRoute))
 	mux.HandleFunc(apiPrefix+"/session", Apply(ctx, ctx.sessionRoute))
