@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
@@ -43,7 +46,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 		return fmt.Errorf("an error occured salting the account password: %s", err.Error())
 	}
 
-	err = validateAccount(*account)
+	err = &account.validateAccount()
 	if err != nil {
 		return fmt.Errorf("account could not be validated: %s", err.Error())
 	}
@@ -59,13 +62,9 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 	return nil
 }
 
-func validateAccount(account models.Account) error {
-	if account.Email == "" {
-		return fmt.Errorf(invalidAccountFormatter, "email")
-	}
-	if account.Username == "" {
-		return fmt.Errorf(invalidAccountFormatter, "username")
-	}
-
-	return nil
+func (account models.Account) validateAccount() error {
+	return validation.ValidateStruct(&account,
+		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3)),
+		validation.Field(&account.Email, validation.Required, is.Email)
+	)
 }
