@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -65,6 +65,6 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 func (account models.Account) validateAccount() error {
 	return validation.ValidateStruct(&account,
 		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3)),
-		validation.Field(&account.Email, validation.Required, is.Email)
+		validation.Field(&account.Email, validation.Required, is.Email),
 	)
 }
