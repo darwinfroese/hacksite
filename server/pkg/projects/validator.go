@@ -3,7 +3,7 @@ package projects
 import (
 	"github.com/darwinfroese/hacksite/server/models"
 
-	"github.com/go-ozzo/ozzo-validation"	
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 // ValidateProject checks if the model is valid
