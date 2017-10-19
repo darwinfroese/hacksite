@@ -2,6 +2,9 @@ package models
 
 import (
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 // TODO: ID values should be scaled up to UINT64 values so that they
@@ -15,6 +18,13 @@ type Project struct {
 	Status           string
 	CurrentEvolution Evolution
 	Evolutions       []Evolution
+}
+
+// Validate checks if the model is valid
+func (project Project) Validate() error {
+	return validation.ValidateStruct(&project,
+		validation.Field(&project.Name, validation.Required),
+	)
 }
 
 // Task contains a representation of a task
@@ -33,12 +43,19 @@ type Evolution struct {
 	ProjectID string
 }
 
-//No Longer Need, Already moved on the pkg/accounts
 // Account contains the information for each user
 type Account struct {
 	// Username and Email are unique Identifiers
 	Username, Password, Email, Salt string
 	ProjectIds                      []string
+}
+
+//Validate account method
+func (account Account) Validate() error {
+	return validation.ValidateStruct(&account,
+		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Min(3)),
+		validation.Field(&account.Email, validation.Required, is.Email),
+	)
 }
 
 // LoginAccount is a simplified account object for login requests

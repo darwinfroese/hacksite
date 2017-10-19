@@ -137,7 +137,7 @@ func TestValidateAccount(t *testing.T) {
 	for i, tc := range validateProjectTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
-		result := tc.ValidateAccount()
+		result := tc.Validate()
 		if result != tc.ExpectedResult {
 			t.Errorf("[ FAIL ] ValidateProject did not return expected value. Expected \"%v\" but got \"%v\".",
 				result, tc.ExpectedResult)
