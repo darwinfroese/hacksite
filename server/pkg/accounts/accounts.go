@@ -15,18 +15,18 @@ import (
 )
 
 // Account contains the information for each user
-type Account struct {
-	// Username and Email are unique Identifiers
-	Username, Password, Email, Salt string
-	ProjectIds                      []string
-}
+// type Account struct {
+// 	// Username and Email are unique Identifiers
+// 	Username, Password, Email, Salt string
+// 	ProjectIds                      []string
+// }
 
 const (
 	invalidAccountFormatter = "create account request is missing: %s"
 )
 
 // CreateAccount will create an account and insert it into the database
-func CreateAccount(db database.Database, logger log.Logger, account *Account) error {
+func CreateAccount(db database.Database, logger log.Logger, account *models.Account) error {
 
 	//Check if the username already exists
 	acc, err := db.GetAccountByUsername(account.Username)
@@ -34,7 +34,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *Account) er
 		logger.Error(fmt.Sprintf("Error getting account: %s", err.Error()))
 		return err
 	}
-	if !reflect.DeepEqual(acc, (Account{})) {
+	if !reflect.DeepEqual(acc, (models.Account{})) {
 		return errors.New(models.UsernameTakenErrorMessage)
 	}
 
@@ -44,7 +44,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *Account) er
 		logger.Error(fmt.Sprintf("Error getting account: %s\n", err.Error()))
 		return err
 	}
-	if !reflect.DeepEqual(acc, (Account{})) {
+	if !reflect.DeepEqual(acc, (models.Account{})) {
 		return errors.New(models.EmailTakenErrorMessage)
 	}
 
@@ -69,7 +69,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *Account) er
 	return nil
 }
 
-func (account Account) validateAccount() error {
+func (account models.Account) validateAccount() error {
 	return validation.ValidateStruct(&account,
 		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Min(3)),
 		validation.Field(&account.Email, validation.Required, is.Email),

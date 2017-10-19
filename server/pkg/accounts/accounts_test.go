@@ -29,16 +29,16 @@ func TestMain(m *testing.M) {
 
 var createAccountTests = []struct {
 	Description              string
-	Account, ExpectedAccount Account
+	Account, ExpectedAccount models.Account
 	ExpectedErrorMessage     string
 }{{
 	Description: "Creating an account should return a valid account model.",
-	Account: Account{
+	Account: models.Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
@@ -46,12 +46,12 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: "",
 }, {
 	Description: "Creating a second account should increment the ID by one.",
-	Account: Account{
+	Account: models.Account{
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
@@ -59,34 +59,34 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: "",
 }, {
 	Description: "Attempting to create an account without an email should fail.",
-	Account: Account{
+	Account: models.Account{
 		Username: "test-account3",
 		Password: "secure-password",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Username: "test-account3",
 		Password: "secure-password",
 	},
 	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "email"),
 }, {
 	Description: "Attempting to create an account without an username should fail.",
-	Account: Account{
+	Account: models.Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
 	},
 	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "username"),
 }, {
 	Description: "Attempting to create an account with an username already in use shoud fail.",
-	Account: Account{
+	Account: models.Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
@@ -94,12 +94,12 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: models.UsernameTakenErrorMessage,
 }, {
 	Description: "Attempting to create an account with an email already in use should fail.",
-	Account: Account{
+	Account: models.Account{
 		Username: "account-test",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
-	ExpectedAccount: Account{
+	ExpectedAccount: models.Account{
 		Username: "account-test",
 		Password: "secure-password",
 		Email:    "test@email.com",

@@ -2,7 +2,6 @@ package database
 
 import (
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/account"
 )
 
 // TODO: Database needs to be a singleton that if it's already
@@ -20,10 +19,10 @@ type Database interface {
 	RemoveProject(id string) error
 
 	// Accounts
-	CreateAccount(account account.Account) error
-	GetAccountByUsername(username string) (account.Account, error)
-	GetAccountByEmail(email string) (account.Account, error)
-	UpdateAccount(account account.Account) error
+	CreateAccount(account models.Account) error
+	GetAccountByUsername(username string) (models.Account, error)
+	GetAccountByEmail(email string) (models.Account, error)
+	UpdateAccount(account models.Account) error
 
 	// Sessions
 	StoreSession(session models.Session) error
