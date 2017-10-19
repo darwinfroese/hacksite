@@ -33,6 +33,7 @@ type Evolution struct {
 	ProjectID string
 }
 
+//No Longer Need, Already moved on the pkg/accounts
 // Account contains the information for each user
 type Account struct {
 	// Username and Email are unique Identifiers

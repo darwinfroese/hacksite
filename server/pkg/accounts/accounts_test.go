@@ -29,16 +29,16 @@ func TestMain(m *testing.M) {
 
 var createAccountTests = []struct {
 	Description              string
-	Account, ExpectedAccount models.Account
+	Account, ExpectedAccount Account
 	ExpectedErrorMessage     string
 }{{
 	Description: "Creating an account should return a valid account model.",
-	Account: models.Account{
+	Account: Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "test@email.com",
@@ -46,12 +46,12 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: "",
 }, {
 	Description: "Creating a second account should increment the ID by one.",
-	Account: models.Account{
+	Account: Account{
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Username: "test-account2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
@@ -59,34 +59,34 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: "",
 }, {
 	Description: "Attempting to create an account without an email should fail.",
-	Account: models.Account{
+	Account: Account{
 		Username: "test-account3",
 		Password: "secure-password",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Username: "test-account3",
 		Password: "secure-password",
 	},
 	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "email"),
 }, {
 	Description: "Attempting to create an account without an username should fail.",
-	Account: models.Account{
+	Account: Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
 	},
 	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "username"),
 }, {
 	Description: "Attempting to create an account with an username already in use shoud fail.",
-	Account: models.Account{
+	Account: Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Username: "test-account",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
@@ -94,12 +94,12 @@ var createAccountTests = []struct {
 	ExpectedErrorMessage: models.UsernameTakenErrorMessage,
 }, {
 	Description: "Attempting to create an account with an email already in use should fail.",
-	Account: models.Account{
+	Account: Account{
 		Username: "account-test",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
-	ExpectedAccount: models.Account{
+	ExpectedAccount: Account{
 		Username: "account-test",
 		Password: "secure-password",
 		Email:    "test@email.com",
@@ -127,6 +127,20 @@ func TestCreateAccount(t *testing.T) {
 		if !reflect.DeepEqual(tc.Account, tc.ExpectedAccount) {
 			t.Errorf("[ FAIL ] CreateAccount did not return the account expected.\nExpected: %v\nbut got:  %v\n",
 				tc.Account, tc.ExpectedAccount)
+		}
+	}
+}
+
+func TestValidateAccount(t *testing.T) {
+	t.Log("Testing ValidateAccount...")
+
+	for i, tc := range validateProjectTests {
+		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
+
+		result := tc.ValidateAccount()
+		if result != tc.ExpectedResult {
+			t.Errorf("[ FAIL ] ValidateProject did not return expected value. Expected \"%v\" but got \"%v\".",
+				result, tc.ExpectedResult)
 		}
 	}
 }
