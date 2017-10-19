@@ -35,11 +35,11 @@ type Evolution struct {
 
 //No Longer Need, Already moved on the pkg/accounts
 // Account contains the information for each user
-type Account struct {
-	// Username and Email are unique Identifiers
-	Username, Password, Email, Salt string
-	ProjectIds                      []string
-}
+// type Account struct {
+// 	// Username and Email are unique Identifiers
+// 	Username, Password, Email, Salt string
+// 	ProjectIds                      []string
+// }
 
 // LoginAccount is a simplified account object for login requests
 type LoginAccount struct {

@@ -53,7 +53,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *Account) er
 		return fmt.Errorf("an error occured salting the account password: %s", err.Error())
 	}
 
-	err = &account.validateAccount()
+	err = account.validateAccount()
 	if err != nil {
 		return fmt.Errorf("account could not be validated: %s", err.Error())
 	}
@@ -71,7 +71,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *Account) er
 
 func (account Account) validateAccount() error {
 	return validation.ValidateStruct(&account,
-		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3)),
+		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Min(3)),
 		validation.Field(&account.Email, validation.Required, is.Email),
 	)
 }

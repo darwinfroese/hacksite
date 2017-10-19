@@ -2,21 +2,23 @@ package projects
 
 import (
 	"testing"
+
+	"github.com/darwinfroese/hacksite/server/models"
 )
 
 var validateProjectTests = []struct {
 	Description    string
-	Project        Project
+	Project        models.Project
 	ExpectedResult bool
 }{{
 	Description: "Testing a valid project model should validate.",
-	Project: Project{
+	Project: models.Project{
 		Name: "Test Project",
 	},
 	ExpectedResult: true,
 }, {
 	Description:    "Testing a project missing a name value should not validate.",
-	Project:        Project{},
+	Project:        models.Project{},
 	ExpectedResult: false,
 }}
 

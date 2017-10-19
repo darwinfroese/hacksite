@@ -8,18 +8,8 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
-// Project contains a representation of a project
-type Project struct {
-	ID               string
-	Name             string
-	Description      string
-	Status           string
-	CurrentEvolution Evolution
-	Evolutions       []Evolution
-}
-
 // GetUserProjects grabs the project from database
-func GetUserProjects(db database.Database, logger log.Logger, username string) ([]Project, error) {
+func GetUserProjects(db database.Database, logger log.Logger, username string) ([]models.Project, error) {
 	account, err := db.GetAccountByUsername(username)
 	if err != nil {
 		logger.Error(err.Error())
@@ -42,7 +32,7 @@ func GetUserProjects(db database.Database, logger log.Logger, username string) (
 // CreateProject grabs the next sequence in the database, sets up the project
 // and inserts it into the database. CreateProject assumes the model has already
 // been validated.
-func CreateProject(db database.Database, logger log.Logger, project *Project, username string) error {
+func CreateProject(db database.Database, logger log.Logger, project *models.Project, username string) error {
 	// This is actually just setting the project status
 	project.Status = updateProjectStatus(*project)
 
@@ -94,7 +84,7 @@ func DeleteProject(db database.Database, logger log.Logger, username, projectID 
 }
 
 // UpdateProject will update the status and make the change in the database as well
-func UpdateProject(db database.Database, project *Project) error {
+func UpdateProject(db database.Database, project *models.Project) error {
 	project.Status = updateProjectStatus(*project)
 
 	return db.UpdateProject(*project)
@@ -149,7 +139,7 @@ func removeIDFromList(idToRemove string, idList []string) []string {
 	return idList
 }
 
-func updateProjectStatus(project Project) string {
+func updateProjectStatus(project models.Project) string {
 	complete := 0
 	status := models.StatusNew
 
