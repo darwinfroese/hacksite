@@ -2,7 +2,7 @@
   <div>
     <LoginHeader />
     <div class='container'>
-      <div class='card'>
+      <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
         <section class='header'>
           <h4> Create Your Account </h4>
         </section>
@@ -105,6 +105,11 @@ export default {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
+    },
+    enterKeyPressHandler: function () {
+      if (this.valid) {
+        this.Create();
+      }
     }
   }
 };
