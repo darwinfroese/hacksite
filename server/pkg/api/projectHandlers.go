@@ -84,7 +84,8 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !projects.ValidateProject(project) {
+	err = project.Validate()
+	if err != nil {
 		// TODO: Make this return an error (validate)
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Project was invalid")
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
