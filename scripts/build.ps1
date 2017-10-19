@@ -59,7 +59,7 @@ function Start-RunGoTests() {
 $env_file = "environments/dev.env.json"
 
 if (Test-Path env:environment_file) {
-    $env_file = Get-Item env:environment_file
+    $env_file = $env:environment_file
 }
 
 $command = "default"
@@ -71,9 +71,9 @@ if ($args.Length -eq 1) {
     $command = $args[0]
 }
 
-# Get-GoDependencies
-# Get-WebDependencies
-# Get-LocalCertificates
+Get-GoDependencies
+Get-WebDependencies
+Get-LocalCertificates
 
 Write-Output "Command: $command"
 
