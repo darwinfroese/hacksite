@@ -1,5 +1,5 @@
 <template>
-  <div class='modal-container'>
+  <div class='modal-container' tabindex="0" v-on:keyup.enter = "enterKeyPressHandler">
     <div class='modal'>
       <div class='content'>
         {{ this.message }}
@@ -21,6 +21,9 @@ export default {
     },
     Reject: function () {
       this.$emit('Reject');
+    },
+    enterKeyPressHandler: function () {
+      this.Accept();
     }
   }
 };

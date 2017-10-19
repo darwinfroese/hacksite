@@ -2,8 +2,8 @@
   <div>
     <LoginHeader />
     <!-- TODO: All of these inputs should accept 'enter' as the default action -->
-    <div class='container' v-on:keyup.enter = "enterKeyPressHandler">
-      <div class='card'>
+    <div class='container'>
+      <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
         <div class='input-container'>
           <span class='input-label'> Username </span>
           <input type='text' v-model="account.Username" placeholder='Username'>
@@ -72,15 +72,15 @@ export default {
       setTimeout(() => {
         router.push('/');
       }, 3000);
+    },
+    enterKeyPressHandler: function () {
+      if (this.valid) {
+        this.Login();
+      }
     }
   },
   updated () {
     this.Validate();
-  },
-  enterKeyPressHandler: function () {
-    if (this.valid) {
-      this.Login();
-    }
   }
 };
 </script>
