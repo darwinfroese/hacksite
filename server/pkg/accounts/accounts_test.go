@@ -34,12 +34,12 @@ var createAccountTests = []struct {
 }{{
 	Description: "Creating an account should return a valid account model.",
 	Account: models.Account{
-		Username: "test-account",
+		Username: "testAccount",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
 	ExpectedAccount: models.Account{
-		Username: "test-account",
+		Username: "testAccount",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
@@ -47,12 +47,12 @@ var createAccountTests = []struct {
 }, {
 	Description: "Creating a second account should increment the ID by one.",
 	Account: models.Account{
-		Username: "test-account2",
+		Username: "testAccount2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
 	},
 	ExpectedAccount: models.Account{
-		Username: "test-account2",
+		Username: "testAccount2",
 		Password: "secure-password",
 		Email:    "test2@email.com",
 	},
@@ -60,14 +60,14 @@ var createAccountTests = []struct {
 }, {
 	Description: "Attempting to create an account without an email should fail.",
 	Account: models.Account{
-		Username: "test-account3",
+		Username: "testAccount3",
 		Password: "secure-password",
 	},
 	ExpectedAccount: models.Account{
-		Username: "test-account3",
+		Username: "testAccount3",
 		Password: "secure-password",
 	},
-	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "email"),
+	ExpectedErrorMessage: "account could not be validated: Email: cannot be blank.",
 }, {
 	Description: "Attempting to create an account without an username should fail.",
 	Account: models.Account{
@@ -78,16 +78,16 @@ var createAccountTests = []struct {
 		Password: "secure-password",
 		Email:    "test3@email.com",
 	},
-	ExpectedErrorMessage: "account could not be validated: " + fmt.Sprintf(invalidAccountFormatter, "username"),
+	ExpectedErrorMessage: "account could not be validated: Username: cannot be blank.",
 }, {
 	Description: "Attempting to create an account with an username already in use shoud fail.",
 	Account: models.Account{
-		Username: "test-account",
+		Username: "testAccount",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
 	},
 	ExpectedAccount: models.Account{
-		Username: "test-account",
+		Username: "testAccount",
 		Password: "secure-password",
 		Email:    "testemail@email.com",
 	},
@@ -95,12 +95,12 @@ var createAccountTests = []struct {
 }, {
 	Description: "Attempting to create an account with an email already in use should fail.",
 	Account: models.Account{
-		Username: "account-test",
+		Username: "testAccount123",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
 	ExpectedAccount: models.Account{
-		Username: "account-test",
+		Username: "testAccount123",
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
@@ -115,6 +115,8 @@ func TestCreateAccount(t *testing.T) {
 		err := CreateAccount(db, logger, &tc.Account)
 
 		if err != nil && err.Error() != tc.ExpectedErrorMessage {
+			fmt.Println("err: ", err.Error())
+			fmt.Println("tc.ExpectedErrorMessage", tc.ExpectedErrorMessage)
 			t.Errorf("[ FAIL ] The test failed because of an unexpected error: %s\n", err.Error())
 			// go to the next test case since we want to still loop through all of them
 			break
