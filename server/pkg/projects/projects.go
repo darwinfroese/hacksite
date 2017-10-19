@@ -3,6 +3,8 @@ package projects
 import (
 	"fmt"
 
+	"github.com/nu7hatch/gouuid"
+
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/log"
