@@ -133,16 +133,26 @@ func TestCreateAccount(t *testing.T) {
 
 //Validator TEST
 var validateAccountTests = []struct {
-	Username    string
-	Email       string
+	Description    string
+	Account        models.Account
 	ExpectedResult bool
 }{{
-	Username: "alimasyhur",
-	Email:	"jegrag4ever@gmail.com"
+	Description: "Testing a valid account model should validate.",
+	Account: models.Account{
+		Username: "alimasyhur",
+		Email:    "jegrag4ever@gmail.com",
+	},
 	ExpectedResult: true,
 }, {
-	Username:    "am",
-	Email	: "jegrag4ever"
+	Description:    "Testing account missing a username and email value should not validate.",
+	Account:        models.Account{},
+	ExpectedResult: false,
+}, {
+	Description: "Testing account username length less than 3",
+	Account: models.Account{
+		Username: "a2",
+		Email:    "jegrag4ever@gmail.com",
+	},
 	ExpectedResult: false,
 }}
 
@@ -151,11 +161,19 @@ func TestValidateAccount(t *testing.T) {
 
 	for i, tc := range validateAccountTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
+		a := tc.Account
+		err := a.Validate()
+		resultValidateMethod := true
+		result := tc.ExpectedResult
 
-		result := tc.Validate()
-		if result != tc.ExpectedResult {
-			t.Errorf("[ FAIL ] ValidateProject did not return expected value. Expected \"%v\" but got \"%v\".",
-				result, tc.ExpectedResult)
+		if err != nil {
+			resultValidateMethod = false
+		}
+
+		if result != resultValidateMethod {
+			fmt.Println("index: ", i)
+			t.Errorf("[ FAIL ] ValidateAccount did not return expected value. Expected \"%v\" but got \"%v\".",
+				result, resultValidateMethod)
 		}
 	}
 }

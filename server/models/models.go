@@ -53,7 +53,7 @@ type Account struct {
 //Validate account method
 func (account Account) Validate() error {
 	return validation.ValidateStruct(&account,
-		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Min(3)),
+		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3, 50)),
 		validation.Field(&account.Email, validation.Required, is.Email),
 	)
 }
