@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/darwinfroese/hacksite/server/models"
+	"github.com/darwinfroese/hacksite/server/pkg/account"
 )
 
 // TODO: Database needs to be a singleton that if it's already
