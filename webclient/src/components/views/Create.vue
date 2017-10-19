@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     SaveProject: function () {
+      this.$root.loading = true;
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {

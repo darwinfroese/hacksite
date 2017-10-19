@@ -5,16 +5,16 @@
       <i class='fa fa-clock-o' aria-hidden='true' v-if="project.Status === 'InProgress'"></i>
       <i class='fa fa-exclamation-triangle' aria-hidden='true' v-if="project.Status === 'New'"></i>
     </span>
-    <span class='name' @click="ShowProject()" v-bind:class="{completed: project.Status === 'Completed'}">
+    <span class='name' @click="ShowProject()" v-on:click.native="$root.loading = true" v-bind:class="{completed: project.Status === 'Completed'}">
       {{ project.Name }}
     </span>
     <span class='description'> {{ project.Description }} </span>
     <span class='control-icon'>
       <i class='fa fa-eye' title='View Project' @click="ShowProject()"></i>
       <i class='fa fa-pencil' title='Edit Project' @click="EditProject()"></i>
-      <i class='fa fa-trash-o' title='Delete Project' @click="RenderDeleteDialog()"></i>
+      <i class='fa fa-trash-o' title='Delete Project' @click.stop="RenderDeleteDialog()"></i>
     </span>
-    <Modal 
+    <Modal
       :message="RemoveProjectMessage"
       :acceptText="'Yes'"
       :rejectText="'No'"
@@ -52,13 +52,16 @@ export default {
       this.active = !this.active;
     },
     ShowProject: function () {
+      this.$root.loading = true;
       router.push('/details/' + this.project.ID);
     },
     EditProject: function () {
+      this.$root.loading = true;
       router.push('/edit/' + this.project.ID);
     },
     RemoveProject: function () {
       this.active = false;
+      this.$root.loading = true;
       RemoveProject(this.project)
         .then((response) => {
           this.$emit('update');
@@ -126,7 +129,7 @@ i {
   cursor: pointer;
 }
 /* Icon (Color) Overrides */
-.fa-check { 
+.fa-check {
   color: green;
 }
 .fa-clock-o {

@@ -3,7 +3,7 @@
     <LoginHeader />
     <!-- TODO: All of these inputs should accept 'enter' as the default action -->
     <div class='container'>
-      <div class='card'>
+      <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
         <div class='input-container'>
           <span class='input-label'> Username </span>
           <input type='text' v-model="account.Username" placeholder='Username'>
@@ -15,7 +15,7 @@
         <div class='message-container'>
           <span class='message'>
             Thanks for your interest in Hacksite! While in alpha, the project is always changing! If you created
-            your account <b>before October 13, 2017</b> you will have to make it again since we performed a database 
+            your account <b>before October 13, 2017</b> you will have to make it again since we performed a database
             migration. Please submit an issue if you have any data that needs to be migrated. We hope this hasn't caused
             any inconvenience and you continue to enjoy using Hacksite.
           </span>
@@ -26,8 +26,8 @@
           <router-link to='/createaccount'> Create one now. </router-link>
         </div>
         <div class='menu-bar'>
-          <button class='menu-button' @click="Login" v-on:click="$root.loading = true" :disabled="!valid"> Login </button>
-          <router-link to='/' v-on:click="$root.loading = true"> Cancel </router-link>
+          <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
+          <router-link to='/'> Cancel </router-link>
         </div>
       </div>
     </div>
@@ -78,6 +78,11 @@ export default {
       setTimeout(() => {
         router.push('/');
       }, 3000);
+    },
+    enterKeyPressHandler: function () {
+      if (this.valid) {
+        this.Login();
+      }
     }
   },
   updated () {
