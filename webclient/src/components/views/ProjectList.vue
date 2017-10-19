@@ -4,11 +4,10 @@
     <LoggedInHeader />
     <div class='list'>
       <div class='menu-bar'>
-          <router-link class='menu-button' to='/create'>
+          <router-link class='menu-button' to='/create' v-on:click.native="$root.loading = true">
             <i class='fa fa-plus'></i>
             Add a project
           </router-link>
-        </span>
       </div>
       <div class='list-container'>
         <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
@@ -36,13 +35,17 @@ export default {
     Update: function () {
       let promise = GetProjects();
       promise.then((response) => {
+        this.$root.loading = false;
         return response.json();
       }).then((json) => {
         this.projects = json;
+      }).catch(() => {
+        this.$root.loading = false;
       });
     }
   },
   mounted () {
+    this.$root.loading = true;
     this.Update();
   }
 };

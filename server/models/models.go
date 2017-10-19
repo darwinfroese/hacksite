@@ -9,35 +9,35 @@ import (
 
 // Project contains a representation of a project
 type Project struct {
-	ID               int
+	ID               string
 	Name             string
 	Description      string
 	Status           string
-	CurrentIteration Iteration
-	Iterations       []Iteration
+	CurrentEvolution Evolution
+	Evolutions       []Evolution
 }
 
 // Task contains a representation of a task
 type Task struct {
-	ID              int
-	ProjectID       int
+	ID              uint64
+	ProjectID       string
 	Task            string
 	Completed       bool
-	IterationNumber int
+	EvolutionNumber int
 }
 
-// Iteration contains iteration information for a project
-type Iteration struct {
+// Evolution contains evolution information for a project
+type Evolution struct {
 	Number    int
 	Tasks     []Task
-	ProjectID int
+	ProjectID string
 }
 
 // Account contains the information for each user
 type Account struct {
-	ID                              int
+	// Username and Email are unique Identifiers
 	Username, Password, Email, Salt string
-	ProjectIds                      []int
+	ProjectIds                      []string
 }
 
 // LoginAccount is a simplified account object for login requests
@@ -48,18 +48,23 @@ type LoginAccount struct {
 // Session represents the contents of the cookie for the browser
 type Session struct {
 	Token      string
-	UserID     int
+	Username   string
 	Expiration time.Time
 }
 
-// ServerConfig contains server configuration settings
-type ServerConfig struct {
-	Port, KeyLocation, CertLocation, WebFileLocation string
+// ResponseObject is a wrapper for responding to error requests
+type ResponseObject struct {
+	StatusCode   int
+	ErrorMessage string
+	Message      string
 }
 
 // Status constants for projects
 const (
-	StatusCompleted  = "Completed"
-	StatusInProgress = "InProgress"
-	StatusNew        = "New"
+	StatusCompleted              = "Completed"
+	StatusInProgress             = "InProgress"
+	StatusNew                    = "New"
+	UsernameTakenErrorMessage    = "username is already taken"
+	EmailTakenErrorMessage       = "this email is already in use"
+	InvalidEvolutionErrorMessage = "evolution selected does not exist"
 )

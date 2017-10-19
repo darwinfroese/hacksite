@@ -27,7 +27,7 @@ export default {
       project: {
         Name: '',
         Description: '',
-        CurrentIteration: {
+        CurrentEvolution: {
           Tasks: []
         },
         Completed: false
@@ -38,24 +38,29 @@ export default {
   },
   methods: {
     SaveProject: function () {
+      this.$root.loading = true;
       let inputs = document.getElementsByName('taskInput');
 
       inputs.forEach((i, idx) => {
         let contents = i.value;
 
         if (/\S/.test(contents)) {
-          this.project.CurrentIteration.Tasks.push({'task': contents, 'id': idx, 'completed': false});
+          this.project.CurrentEvolution.Tasks.push({'task': contents, 'id': idx, 'completed': false});
         }
       });
 
       AddProject(this.project)
         .then((response) => {
+          this.loading = false;
           return response.json();
         })
         .then((project) => {
           router.push('/details/' + project.ID);
         });
     }
+  },
+  mounted () {
+    this.$root.loading = false;
   }
 };
 </script>

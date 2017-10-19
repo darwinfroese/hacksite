@@ -2,18 +2,19 @@ package projects
 
 import (
 	"fmt"
-	"os"
+
+	"github.com/nu7hatch/gouuid"
 
 	"github.com/darwinfroese/hacksite/server/models"
-	"github.com/darwinfroese/hacksite/server/pkg/auth"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
+	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
 // GetUserProjects grabs the project from database
-func GetUserProjects(db database.Database, session models.Session) ([]models.Project, error) {
-	account, err := auth.GetCurrentUser(db, session)
+func GetUserProjects(db database.Database, logger log.Logger, username string) ([]models.Project, error) {
+	account, err := db.GetAccountByUsername(username)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return nil, err
 	}
 
@@ -21,7 +22,7 @@ func GetUserProjects(db database.Database, session models.Session) ([]models.Pro
 	for _, id := range account.ProjectIds {
 		p, err := db.GetProject(id)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error Geting project from DB: %s\n", err.Error())
+			logger.Error(fmt.Sprintf("Error Geting project from DB: %s\n", err.Error()))
 		} else {
 			projects = append(projects, p)
 		}
@@ -31,50 +32,28 @@ func GetUserProjects(db database.Database, session models.Session) ([]models.Pro
 }
 
 // CreateProject grabs the next sequence in the database, sets up the project
-// and inserts it into the database
-func CreateProject(db database.Database, project *models.Project, session models.Session) error {
+// and inserts it into the database. CreateProject assumes the model has already
+// been validated.
+func CreateProject(db database.Database, logger log.Logger, project *models.Project, username string) error {
 	// This is actually just setting the project status
 	project.Status = updateProjectStatus(*project)
 
-	id, err := db.GetNextProjectID()
+	id, err := uuid.NewV4()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return err
 	}
 
-	project.ID = id
-	project.CurrentIteration.ProjectID = project.ID
-	project.CurrentIteration.Number = 1
-	project.Iterations = append(project.Iterations, project.CurrentIteration)
-	for i, task := range project.CurrentIteration.Tasks {
-		task.ProjectID = project.ID
-		task.IterationNumber = project.CurrentIteration.Number
-		project.CurrentIteration.Tasks[i] = task
-	}
+	project.ID = id.String()
+	updateEvolution(project.ID, 1, &project.CurrentEvolution)
+	project.Evolutions = append(project.Evolutions, project.CurrentEvolution)
+	project.CurrentEvolution.Tasks = updateTasks(
+		project.ID, project.CurrentEvolution.Number, project.CurrentEvolution.Tasks)
 
-	AddProjectToUser(db, session, id)
+	addProjectToUser(db, logger, username, id.String())
 	err = db.AddProject(*project)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		return err
-	}
-
-	return nil
-}
-
-// AddProjectToUser will add the project ID to the current users list
-func AddProjectToUser(db database.Database, session models.Session, projectID int) error {
-	account, err := auth.GetCurrentUser(db, session)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
-		return err
-	}
-
-	account.ProjectIds = append(account.ProjectIds, projectID)
-	err = db.UpdateAccount(account)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return err
 	}
 
@@ -82,20 +61,26 @@ func AddProjectToUser(db database.Database, session models.Session, projectID in
 }
 
 // DeleteProject will remove the project from the database as well as the users list of projects
-func DeleteProject(projectID int, db database.Database, session models.Session) error {
+func DeleteProject(db database.Database, logger log.Logger, username, projectID string) error {
 	err := db.RemoveProject(projectID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return err
 	}
 
-	account, err := auth.GetCurrentUser(db, session)
+	account, err := db.GetAccountByUsername(username)
+
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
+		logger.Error(err.Error())
 		return err
 	}
 
 	account.ProjectIds = removeIDFromList(projectID, account.ProjectIds)
+	err = db.UpdateAccount(account)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
 
 	return nil
 }
@@ -108,8 +93,45 @@ func UpdateProject(db database.Database, project *models.Project) error {
 }
 
 // HelperFunctions
-func removeIDFromList(idToRemove int, idList []int) []int {
-	for id, i := range idList {
+func updateEvolution(id string, number int, evolution *models.Evolution) {
+	evolution.ProjectID = id
+	evolution.Number = number
+}
+
+func updateTasks(id string, number int, tasks []models.Task) []models.Task {
+	var newTasks []models.Task
+
+	for _, t := range tasks {
+		t.ProjectID = id
+		t.EvolutionNumber = number
+
+		newTasks = append(newTasks, t)
+	}
+
+	return newTasks
+}
+
+// addProjectToUser will add the project ID to the current users list
+func addProjectToUser(db database.Database, logger log.Logger, username, projectID string) error {
+	account, err := db.GetAccountByUsername(username)
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+
+	account.ProjectIds = append(account.ProjectIds, projectID)
+	err = db.UpdateAccount(account)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func removeIDFromList(idToRemove string, idList []string) []string {
+	for i, id := range idList {
 		if id == idToRemove {
 			list := append(idList[:i], idList[i+1:]...)
 			return list
@@ -123,7 +145,7 @@ func updateProjectStatus(project models.Project) string {
 	complete := 0
 	status := models.StatusNew
 
-	tasks := project.CurrentIteration.Tasks
+	tasks := project.CurrentEvolution.Tasks
 	for _, task := range tasks {
 		if task.Completed {
 			complete++

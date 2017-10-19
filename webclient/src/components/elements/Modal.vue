@@ -49,7 +49,7 @@ export default {
   width: 50%;
 }
 .content {
-  margin: 25px;  
+  margin: 25px;
 }
 button, a {
   border-radius: 0;

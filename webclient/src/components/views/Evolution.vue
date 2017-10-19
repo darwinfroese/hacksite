@@ -3,7 +3,7 @@
     <LoggedInHeader />
     <div class='container'>
       <div class='card'>
-        <h4> Enter Iteration Information </h4>
+        <h4> Enter Evolution Information </h4>
         <div class='form'>
           <div class='field'>
             <span class='label'> Project Name </span>
@@ -15,8 +15,8 @@
           </div>
           <TaskInputs />
           <div class='menu-bar'>
-            <button class='menu-button' @click="AddIteration"> Start Iteration </button>
-            <router-link to='/'> Cancel </router-link>
+            <button class='menu-button' @click="AddEvolution" v-on:click.native="$root.loading = true"> Start Evolution </button>
+            <router-link to='/' v-on:click.native="$root.loading = true"> Cancel </router-link>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
 
 <script>
 import router from '@/router';
-import { GetProject, AddIteration } from '@/database';
+import { GetProject, AddEvolution } from '@/database';
 import TaskInputs from '@/components/elements/TaskInputs';
 import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
@@ -49,6 +49,9 @@ export default {
         })
         .then((json) => {
           this.project = json;
+          this.$root.loading = false;
+        }).catch(() => {
+          this.$root.loading = false;
         });
     },
     GetTasks: function () {
@@ -64,17 +67,17 @@ export default {
           }
         }
 
-        this.project.CurrentIteration.Tasks = tasks;
+        this.project.CurrentEvolution.Tasks = tasks;
       });
 
-      this.project.CurrentIteration.Tasks = tasks;
+      this.project.CurrentEvolution.Tasks = tasks;
     },
-    AddIteration: function () {
+    AddEvolution: function () {
       this.GetTasks();
-      let iteration = this.project.CurrentIteration;
-      iteration.Number++;
+      let evolution = this.project.CurrentEvolution;
+      evolution.Number++;
 
-      AddIteration(iteration)
+      AddEvolution(evolution)
         .then((response) => {
           return response.json();
         })
@@ -85,6 +88,7 @@ export default {
   },
   mounted () {
     this.Update();
+    this.$root.loading = true;
   }
 };
 </script>

@@ -31,12 +31,13 @@ export default {
     };
   },
   mounted () {
+    this.$root.loading = true;
     this.GetProject();
   },
   methods: {
     Update: function () {
       let inputs = document.getElementsByName('taskInput');
-      let tasks = this.project.CurrentIteration.Tasks;
+      let tasks = this.project.CurrentEvolution.Tasks;
 
       inputs.forEach((i, idx) => {
         let contents = i.value;
@@ -50,7 +51,7 @@ export default {
         }
       });
 
-      this.project.CurrentIteration.Tasks = tasks;
+      this.project.CurrentEvolution.Tasks = tasks;
 
       UpdateProject(this.project)
         .then(() => {
@@ -63,14 +64,17 @@ export default {
         return response.json();
       })
       .then((json) => {
+        this.$root.loading = false;
         this.project = json;
         this.hasProject = true;
+      }).catch(() => {
+        this.$root.loading = false;
       });
     }
   },
   computed: {
     editTitle: function () {
-      return 'Edit Project ' + this.project.ID;
+      return 'Edit Project';
     }
   }
 };

@@ -1,6 +1,8 @@
 package database
 
-import "github.com/darwinfroese/hacksite/server/models"
+import (
+	"github.com/darwinfroese/hacksite/server/models"
+)
 
 // TODO: Database needs to be a singleton that if it's already
 // been created, it should be returned instead of re-created
@@ -9,35 +11,22 @@ import "github.com/darwinfroese/hacksite/server/models"
 type Database interface {
 	// Projects
 	AddProject(project models.Project) error
-	GetProject(id int) (models.Project, error)
-	GetNextProjectID() (int, error)
+	GetProject(id string) (models.Project, error)
 	// TODO: UpdateProject - models.Project could probably be removed
 	// and the project passed in returned since no internal changes
 	// are happening
 	UpdateProject(project models.Project) error
-	RemoveProject(id int) error
+	RemoveProject(id string) error
 
 	// Accounts
-	CreateAccount(account models.Account) (int, error)
-	GetAccount(username string) (models.Account, error)
-	GetAccountByID(userID int) (models.Account, error)
-	GetNextAccountID() (int, error)
+	CreateAccount(account models.Account) error
+	GetAccountByUsername(username string) (models.Account, error)
+	GetAccountByEmail(email string) (models.Account, error)
 	UpdateAccount(account models.Account) error
 
 	// Sessions
 	StoreSession(session models.Session) error
 	GetSession(sessionToken string) (models.Session, error)
 	GetAllSessions() ([]models.Session, error)
-	GetNextSessionID() (int, error)
 	RemoveSession(sessionToken string) error
-}
-
-type boltDB struct {
-	dbLocation string
-}
-
-// CreateDB returns an instance of the database
-// depending on the environment
-func CreateDB() Database {
-	return createBoltDB()
 }

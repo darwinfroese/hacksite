@@ -6,10 +6,10 @@
     </label>
     <span class='removeButton' @click="RemoveTask()"> <i class='fa fa-times'></i> </span>
     <Modal 
-      :message="IterationMessage"
+      :message="CongratulationsMessage"
       :acceptText="'Yes'"
       :rejectText="'No'"
-      v-on:Accept="NavToIteration"
+      v-on:Accept="NavToEvolution"
       v-on:Reject="CloseModal"
       v-if="renderDialog" />
   </div>
@@ -21,22 +21,27 @@ import { UpdateTask, RemoveTask } from '@/database';
 import Modal from '@/components/elements/Modal';
 
 export default {
-  props: ['task', 'pid'],
+  props: ['task', 'pid', 'pname'],
   components: {
     'Modal': Modal
   },
+  computed: {
+    CongratulationsMessage: function () {
+      return 'Congratulations! You completed your current evolution of ' + this.pname +
+        '.\n\nWould you like to start a new one?';
+    }
+  },
   data () {
     return {
-      renderDialog: false,
-      IterationMessage: 'Congratulations! You completed your iteration.\n\nWould you like to start a new one?'
+      renderDialog: false
     };
   },
   methods: {
     RenderDialog: function () {
       this.renderDialog = true;
     },
-    NavToIteration: function () {
-      router.push('/iteration/' + this.pid);
+    NavToEvolution: function () {
+      router.push('/evolution/' + this.pid);
     },
     CloseModal: function () {
       this.renderDialog = false;
