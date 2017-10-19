@@ -131,10 +131,25 @@ func TestCreateAccount(t *testing.T) {
 	}
 }
 
+//Validator TEST
+var validateAccountTests = []struct {
+	Username    string
+	Email       string
+	ExpectedResult bool
+}{{
+	Username: "alimasyhur",
+	Email:	"jegrag4ever@gmail.com"
+	ExpectedResult: true,
+}, {
+	Username:    "am",
+	Email	: "jegrag4ever"
+	ExpectedResult: false,
+}}
+
 func TestValidateAccount(t *testing.T) {
 	t.Log("Testing ValidateAccount...")
 
-	for i, tc := range validateProjectTests {
+	for i, tc := range validateAccountTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
 		result := tc.Validate()
