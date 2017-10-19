@@ -19,10 +19,10 @@ type Database interface {
 	RemoveProject(id string) error
 
 	// Accounts
-	CreateAccount(account models.Account) error
-	GetAccountByUsername(username string) (models.Account, error)
-	GetAccountByEmail(email string) (models.Account, error)
-	UpdateAccount(account models.Account) error
+	CreateAccount(account account.Account) error
+	GetAccountByUsername(username string) (account.Account, error)
+	GetAccountByEmail(email string) (account.Account, error)
+	UpdateAccount(account account.Account) error
 
 	// Sessions
 	StoreSession(session models.Session) error
