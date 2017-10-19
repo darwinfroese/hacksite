@@ -6,6 +6,7 @@ import (
 	"github.com/darwinfroese/hacksite/server/models"
 	"github.com/darwinfroese/hacksite/server/pkg/database"
 	"github.com/darwinfroese/hacksite/server/pkg/log"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // GetUserProjects grabs the project from database
@@ -16,7 +17,7 @@ func GetUserProjects(db database.Database, logger log.Logger, username string) (
 		return nil, err
 	}
 
-	var projects []Project
+	var projects []models.Project
 	for _, id := range account.ProjectIds {
 		p, err := db.GetProject(id)
 		if err != nil {
@@ -158,4 +159,11 @@ func updateProjectStatus(project models.Project) string {
 	}
 
 	return status
+}
+
+// ValidateProject checks if the model is valid
+func (project models.Project) ValidateProject() error {
+	return validation.ValidateStruct(&project,
+		validation.Field(&project.Name, validation.Required),
+	)
 }
