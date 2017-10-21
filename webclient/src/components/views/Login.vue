@@ -1,16 +1,18 @@
 <template>
   <div>
     <LoginHeader />
-    <!-- TODO: All of these inputs should accept 'enter' as the default action -->
     <div class='container'>
-      <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
-        <div class='input-container'>
-          <span class='input-label'> Username </span>
-          <input type='text' v-model="account.Username" placeholder='Username'>
+      <form class='card'>
+        <div class='form-group input-container'>
+          <label for='username' class='input-label'> Username </label>
+          <input type='text' id='username' v-model='account.Username' placeholder='Username'>
         </div>
-        <div class='input-container'>
-          <span class='input-label'> Password </span>
-          <input type='password' v-model="account.Password" placeholder='Password'>
+        <div class='form-group input-container'>
+          <label for="password" class='input-label'> Password </label>
+          <input id='password' type='password' v-model="account.Password" placeholder='Password'>
+        </div>
+        <div class="input-container checkbox">
+          <label><input type="checkbox" v-model="account.RememberMe" checked> Remember me</label>
         </div>
         <div class='message-container'>
           <span class='message'>
@@ -29,7 +31,7 @@
           <button class='menu-button' @click="Login" :disabled="!valid"> Login </button>
           <router-link to='/'> Cancel </router-link>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -47,7 +49,8 @@ export default {
     return {
       account: {
         Username: '',
-        Password: ''
+        Password: '',
+        RememberMe: true
       },
       valid: false,
       message: '',
@@ -78,11 +81,6 @@ export default {
       setTimeout(() => {
         router.push('/');
       }, 3000);
-    },
-    enterKeyPressHandler: function () {
-      if (this.valid) {
-        this.Login();
-      }
     }
   },
   updated () {
@@ -116,6 +114,11 @@ input {
   border-bottom: 1px solid #eee;
   margin-top: 10px;
   transition: all 0.5s linear;
+}
+
+.checkbox input {
+  width: auto;
+  display: inline-block;
 }
 .input-container {
   margin-top: 25px;
