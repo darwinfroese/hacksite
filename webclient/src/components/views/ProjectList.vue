@@ -10,7 +10,7 @@
           </router-link>
       </div>
       <div class='list-container'>
-        <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" v-on:click.native="$root.loading = true" />
+        <Project v-for="project in projects" :project="project" :key="project.ID" v-on:update="Update" />
       </div>
     </div>
   </div>
