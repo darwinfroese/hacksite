@@ -12,7 +12,7 @@
           <input id='password' type='password' v-model="account.Password" placeholder='Password'>
         </div>
         <div class="input-container checkbox">
-          <label><input type="checkbox" v-model="account.RememberMe" checked> Remember me</label>
+          <label><input type="checkbox" v-model="account.RememberMe"> Remember me</label>
         </div>
         <div class='message-container'>
           <span class='message'>
@@ -50,7 +50,7 @@ export default {
       account: {
         Username: '',
         Password: '',
-        RememberMe: true
+        RememberMe: false
       },
       valid: false,
       message: '',

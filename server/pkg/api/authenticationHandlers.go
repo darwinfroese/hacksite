@@ -26,6 +26,8 @@ func (ctx *Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
 func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
 
+	rememberMe := r.URL.Query().Get("RememberMe")
+
 	if !ok {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "BasicAuth failed")
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -44,7 +46,7 @@ func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	auth.SetCookie(w, auth.SessionCookieName, session.Token)
+	auth.SetCookie(w, auth.SessionCookieName, session.Token, rememberMe)
 	w.WriteHeader(http.StatusOK)
 }
 

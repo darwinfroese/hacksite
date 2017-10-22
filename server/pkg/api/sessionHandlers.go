@@ -30,13 +30,15 @@ func sessionHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Expiration = time.Now().Add(time.Second * auth.SessionMaxAge)
+	session.RememberMe = r.URL.Query().Get("RememberMe")
+
 	err = (*ctx.DB).StoreSession(session)
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	auth.SetCookie(w, auth.SessionCookieName, session.Token)
+	//auth.SetCookie(w, auth.SessionCookieName, session.Token, "false")
 
 	w.WriteHeader(http.StatusOK)
 }
