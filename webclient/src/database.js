@@ -114,7 +114,7 @@ export const CreateAccount = (account) => {
 };
 
 export const Login = (account) => {
-  return fetch(apiBaseUrl + '/login', {
+  return fetch(apiBaseUrl + '/login?RememberMe=' + account.RememberMe, {
     method: 'GET',
     headers: {
       'Authorization': 'Basic ' + btoa(account.Username + ':' + account.Password)
