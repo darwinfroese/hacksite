@@ -11,6 +11,13 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
+// Account contains the information for each user
+// type Account struct {
+// 	// Username and Email are unique Identifiers
+// 	Username, Password, Email, Salt string
+// 	ProjectIds                      []string
+// }
+
 const (
 	invalidAccountFormatter = "create account request is missing: %s"
 )
@@ -43,7 +50,7 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 		return fmt.Errorf("an error occured salting the account password: %s", err.Error())
 	}
 
-	err = validateAccount(*account)
+	err = account.Validate()
 	if err != nil {
 		return fmt.Errorf("account could not be validated: %s", err.Error())
 	}
@@ -54,17 +61,6 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 	err = db.CreateAccount(*account)
 	if err != nil {
 		return fmt.Errorf("an error occured inserting the account into the database: %s", err.Error())
-	}
-
-	return nil
-}
-
-func validateAccount(account models.Account) error {
-	if account.Email == "" {
-		return fmt.Errorf(invalidAccountFormatter, "email")
-	}
-	if account.Username == "" {
-		return fmt.Errorf(invalidAccountFormatter, "username")
 	}
 
 	return nil
