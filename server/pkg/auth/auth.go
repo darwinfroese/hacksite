@@ -18,6 +18,9 @@ const sessionTokenSize = 64
 // SessionMaxAge is the cookie length in seconds
 const SessionMaxAge = 900
 
+// SessionMaxAge when RememberMe is true... 1000 years in seconds
+const SessionOfOneThousandYears = 31536000000
+
 // SessionCookieName is the name of the cookie
 const SessionCookieName = "HacksiteSession"
 
@@ -87,7 +90,7 @@ func SetCookie(w http.ResponseWriter, name, token string, rememberMe bool) {
 	maxAge := SessionMaxAge
 
 	if rememberMe == true {
-		maxAge = 31536000000 // 1000 years in seconds
+		maxAge = SessionOfOneThousandYears
 	}
 
 	http.SetCookie(w, &http.Cookie{
