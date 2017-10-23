@@ -87,7 +87,7 @@ func SetCookie(w http.ResponseWriter, name, token string, rememberMe string) {
 	maxAge := SessionMaxAge
 
 	if rememberMe == "true" {
-		maxAge = 0
+		maxAge = 1000 * 365 * 24 * 60 * 60
 	}
 
 	http.SetCookie(w, &http.Cookie{
