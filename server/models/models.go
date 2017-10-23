@@ -50,7 +50,7 @@ type Session struct {
 	Token      string
 	Username   string
 	Expiration time.Time
-	RememberMe string
+	RememberMe bool
 }
 
 // ResponseObject is a wrapper for responding to error requests

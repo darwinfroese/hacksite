@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/darwinfroese/hacksite/server/pkg/auth"
@@ -26,7 +27,7 @@ func (ctx *Context) logoutRoute(w http.ResponseWriter, r *http.Request) {
 func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
 
-	rememberMe := r.URL.Query().Get("RememberMe")
+	rememberMe, err := strconv.ParseBool(r.URL.Query().Get("RememberMe"))
 
 	if !ok {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "BasicAuth failed")

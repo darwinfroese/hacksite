@@ -38,7 +38,7 @@ func cleanSessions(db database.Database, logger log.Logger) (int, error) {
 	}
 
 	for _, sesh := range sessions {
-		if time.Now().After(sesh.Expiration) && sesh.RememberMe != "true" {
+		if time.Now().After(sesh.Expiration) && sesh.RememberMe != true {
 			err = db.RemoveSession(sesh.Token)
 			if err != nil {
 				// since this is just removing one at a time we can continue on if one fails

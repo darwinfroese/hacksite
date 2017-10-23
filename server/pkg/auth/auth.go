@@ -83,11 +83,11 @@ func CreateSessionToken() string {
 }
 
 // SetCookie creates an http cookie and sets it in the response
-func SetCookie(w http.ResponseWriter, name, token string, rememberMe string) {
+func SetCookie(w http.ResponseWriter, name, token string, rememberMe bool) {
 	maxAge := SessionMaxAge
 
-	if rememberMe == "true" {
-		maxAge = 1000 * 365 * 24 * 60 * 60
+	if rememberMe == true {
+		maxAge = 31536000000 // 1000 years in seconds
 	}
 
 	http.SetCookie(w, &http.Cookie{
