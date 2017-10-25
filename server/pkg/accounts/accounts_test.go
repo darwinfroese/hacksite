@@ -36,11 +36,13 @@ var createAccountTests = []struct {
 	Account: models.Account{
 		Username: "testAccount",
 		Password: "secure-password",
+		Name:     "Test",
 		Email:    "test@email.com",
 	},
 	ExpectedAccount: models.Account{
 		Username: "testAccount",
 		Password: "secure-password",
+		Name:     "Test",
 		Email:    "test@email.com",
 	},
 	ExpectedErrorMessage: "",
