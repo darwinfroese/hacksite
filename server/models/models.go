@@ -46,7 +46,7 @@ type Evolution struct {
 // Account contains the information for each user
 type Account struct {
 	// Username and Email are unique Identifiers
-	Username, Password, Email, Salt string
+	Username, Password, Name, Email, Salt string
 	ProjectIds                      []string
 }
 
