@@ -27,6 +27,45 @@ var testProject = models.Project{
 	},
 }
 
+var multiEvolutionTestProject = models.Project{
+	ID:   "4321",
+	Name: "Test Project 2",
+	CurrentEvolution: models.Evolution{
+		Number:    1,
+		ProjectID: "4321",
+		Tasks: []models.Task{
+			models.Task{ID: 0, ProjectID: "4321", Task: "Test Task", Completed: true},
+			models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 2"},
+		},
+	},
+	Evolutions: []models.Evolution{
+		models.Evolution{
+			Number:    1,
+			ProjectID: "4321",
+			Tasks: []models.Task{
+				models.Task{ID: 0, ProjectID: "4321", Task: "Test Task", Completed: true},
+				models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 2"},
+			},
+		},
+		models.Evolution{
+			Number:    2,
+			ProjectID: "4321",
+			Tasks: []models.Task{
+				models.Task{ID: 0, ProjectID: "4321", Task: "Test Task 5", Completed: true},
+				models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 6", Completed: true},
+			},
+		},
+		models.Evolution{
+			Number:    3,
+			ProjectID: "4321",
+			Tasks: []models.Task{
+				models.Task{ID: 0, ProjectID: "4321", Task: "Test Task 3"},
+				models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 4"},
+			},
+		},
+	},
+}
+
 func TestMain(m *testing.M) {
 	db = bolt.New()
 	logger = testLogger.New()
@@ -83,11 +122,80 @@ var updateTaskTests = []struct {
 			},
 		},
 	},
+}, {
+	Description: "Testing completing the last task should mark the project as completed.",
+	NewTask: models.Task{
+		ID:        1,
+		ProjectID: "1234",
+		Task:      "New Task 2",
+		Completed: true,
+	},
+	ExpectedProject: models.Project{
+		ID:     "1234",
+		Name:   "Test Project",
+		Status: "Completed",
+		CurrentEvolution: models.Evolution{
+			ProjectID: "1234",
+			Number:    1,
+			Tasks: []models.Task{
+				models.Task{ID: 0, ProjectID: "1234", Task: "New Task", Completed: true},
+				models.Task{ID: 1, ProjectID: "1234", Task: "New Task 2", Completed: true},
+			},
+		},
+	},
+}, {
+	Description: "Testing completing the last task should switch to the next evolution if it exists.",
+	NewTask: models.Task{
+		ID:        1,
+		ProjectID: "4321",
+		Task:      "Test Task 2",
+		Completed: true,
+	},
+	ExpectedProject: models.Project{
+		ID:     "4321",
+		Name:   "Test Project 2",
+		Status: "InProgress",
+		CurrentEvolution: models.Evolution{
+			Number:    3,
+			ProjectID: "4321",
+			Tasks: []models.Task{
+				models.Task{ID: 0, ProjectID: "4321", Task: "Test Task 3"},
+				models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 4"},
+			},
+		},
+		Evolutions: []models.Evolution{
+			models.Evolution{
+				Number:    1,
+				ProjectID: "4321",
+				Tasks: []models.Task{
+					models.Task{ID: 0, ProjectID: "4321", Task: "Test Task", Completed: true},
+					models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 2", Completed: true},
+				},
+			},
+			models.Evolution{
+				Number:    2,
+				ProjectID: "4321",
+				Tasks: []models.Task{
+					models.Task{ID: 0, ProjectID: "4321", Task: "Test Task 5", Completed: true},
+					models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 6", Completed: true},
+				},
+			},
+			models.Evolution{
+				Number:    3,
+				ProjectID: "4321",
+				Tasks: []models.Task{
+					models.Task{ID: 0, ProjectID: "4321", Task: "Test Task 3"},
+					models.Task{ID: 1, ProjectID: "4321", Task: "Test Task 4"},
+				},
+			},
+		},
+	},
 }}
 
 func TestUpdateTask(t *testing.T) {
 	t.Log("Testing UpdateTask...")
 	db.AddProject(testProject)
+	db.AddProject(multiEvolutionTestProject)
 
 	for i, tc := range updateTaskTests {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
@@ -103,6 +211,7 @@ func TestUpdateTask(t *testing.T) {
 	}
 
 	db.RemoveProject(testProject.ID)
+	db.RemoveProject(multiEvolutionTestProject.ID)
 }
 
 var removeTaskTests = []struct {
