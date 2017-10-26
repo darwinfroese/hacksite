@@ -42,7 +42,7 @@ func GetUserProjects(db database.Database, logger log.Logger, username string) (
 // been validated.
 func CreateProject(db database.Database, logger log.Logger, project *models.Project, username string) error {
 	// This is actually just setting the project status
-	project.Status = updateProjectStatus(*project)
+	project.Status = updateProjectStatus(project.CurrentEvolution)
 
 	id, err := uuid.NewV4()
 	if err != nil {
@@ -93,7 +93,8 @@ func DeleteProject(db database.Database, logger log.Logger, username, projectID 
 
 // UpdateProject will update the status and make the change in the database as well
 func UpdateProject(db database.Database, project *models.Project) error {
-	project.Status = updateProjectStatus(*project)
+	project.Status = updateProjectStatus(project.CurrentEvolution)
+	swapEvolution(project)
 
 	return db.UpdateProject(*project)
 }
@@ -147,11 +148,11 @@ func removeIDFromList(idToRemove string, idList []string) []string {
 	return idList
 }
 
-func updateProjectStatus(project models.Project) string {
+func updateProjectStatus(evolution models.Evolution) string {
 	complete := 0
 	status := statusNew
 
-	tasks := project.CurrentEvolution.Tasks
+	tasks := evolution.Tasks
 	for _, task := range tasks {
 		if task.Completed {
 			complete++
@@ -161,11 +162,24 @@ func updateProjectStatus(project models.Project) string {
 		status = statusCompleted
 	} else if complete > 0 {
 		status = statusInProgress
-	} else if complete == 0 && len(project.Evolutions) > 1 {
-		status = statusInProgress
 	} else {
 		status = statusNew
 	}
 
 	return status
+}
+
+func swapEvolution(project *models.Project) {
+	if project.Status != statusCompleted {
+		return
+	}
+
+	// is this the last iteration
+	for _, ev := range project.Evolutions {
+		if ev.Number > project.CurrentEvolution.Number && updateProjectStatus(ev) != statusCompleted {
+			project.Status = statusInProgress
+			project.CurrentEvolution = ev
+			return
+		}
+	}
 }
