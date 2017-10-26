@@ -1,8 +1,8 @@
 package accounts
 
 import (
-	"errors"
 	"fmt"
+	"net/http"
 	"reflect"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -11,48 +11,49 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
-// Account contains the information for each user
-// type Account struct {
-// 	// Username and Email are unique Identifiers
-// 	Username, Password, Email, Salt string
-// 	ProjectIds                      []string
-// }
-
 const (
-	invalidAccountFormatter = "create account request is missing: %s"
+	invalidAccountFormatter   = "create account request is missing: %s"
+	usernameTakenErrorMessage = "username is already taken"
+	emailTakenErrorMessage    = "this email is already in use"
 )
 
 // CreateAccount will create an account and insert it into the database
-func CreateAccount(db database.Database, logger log.Logger, account *models.Account) error {
+func CreateAccount(db database.Database, logger log.Logger, account *models.Account) *models.APIError {
 
 	//Check if the username already exists
 	acc, err := db.GetAccountByUsername(account.Username)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Error getting account: %s", err.Error()))
-		return err
+		return &models.APIError{Message: err.Error(), Code: http.StatusInternalServerError}
 	}
 	if !reflect.DeepEqual(acc, (models.Account{})) {
-		return errors.New(models.UsernameTakenErrorMessage)
+		return &models.APIError{Message: usernameTakenErrorMessage, Code: http.StatusConflict}
 	}
 
 	//Check if the email already exists
 	acc, err = db.GetAccountByEmail(account.Email)
 	if err != nil {
 		logger.Error(fmt.Sprintf("Error getting account: %s\n", err.Error()))
-		return err
+		return &models.APIError{Message: err.Error(), Code: http.StatusInternalServerError}
 	}
 	if !reflect.DeepEqual(acc, (models.Account{})) {
-		return errors.New(models.EmailTakenErrorMessage)
+		return &models.APIError{Message: emailTakenErrorMessage, Code: http.StatusConflict}
 	}
 
 	salt, password, err := auth.SaltPassword(account.Password)
 	if err != nil {
-		return fmt.Errorf("an error occured salting the account password: %s", err.Error())
+		return &models.APIError{
+			Message: fmt.Sprintf("an error occured salting the account password: %s", err.Error()),
+			Code:    http.StatusInternalServerError,
+		}
 	}
 
 	err = account.Validate()
 	if err != nil {
-		return fmt.Errorf("account could not be validated: %s", err.Error())
+		return &models.APIError{
+			Message: fmt.Sprintf("account could not be validated: %s", err.Error()),
+			Code:    http.StatusInternalServerError,
+		}
 	}
 
 	account.Password = password
@@ -60,7 +61,10 @@ func CreateAccount(db database.Database, logger log.Logger, account *models.Acco
 
 	err = db.CreateAccount(*account)
 	if err != nil {
-		return fmt.Errorf("an error occured inserting the account into the database: %s", err.Error())
+		return &models.APIError{
+			Message: fmt.Sprintf("an error occured inserting the account into the database: %s", err.Error()),
+			Code:    http.StatusInternalServerError,
+		}
 	}
 
 	return nil

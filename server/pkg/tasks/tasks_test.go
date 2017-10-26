@@ -52,7 +52,7 @@ var updateTaskTests = []struct {
 	ExpectedProject: models.Project{
 		ID:     "1234",
 		Name:   "Test Project",
-		Status: models.StatusInProgress,
+		Status: "InProgress",
 		CurrentEvolution: models.Evolution{
 			ProjectID: "1234",
 			Number:    1,
@@ -73,7 +73,7 @@ var updateTaskTests = []struct {
 	ExpectedProject: models.Project{
 		ID:     "1234",
 		Name:   "Test Project",
-		Status: models.StatusInProgress,
+		Status: "InProgress",
 		CurrentEvolution: models.Evolution{
 			Number:    1,
 			ProjectID: "1234",
@@ -120,7 +120,7 @@ var removeTaskTests = []struct {
 	ExpectedProject: models.Project{
 		ID:     "1234",
 		Name:   "Test Project",
-		Status: models.StatusNew,
+		Status: "New",
 		CurrentEvolution: models.Evolution{
 			Number:    1,
 			ProjectID: "1234",
@@ -138,7 +138,7 @@ var removeTaskTests = []struct {
 	ExpectedProject: models.Project{
 		ID:     "1234",
 		Name:   "Test Project",
-		Status: models.StatusNew,
+		Status: "New",
 		CurrentEvolution: models.Evolution{
 			ProjectID: "1234",
 			Number:    1,

@@ -93,7 +93,7 @@ var createAccountTests = []struct {
 		Password: "secure-password",
 		Email:    "testemail@email.com",
 	},
-	ExpectedErrorMessage: models.UsernameTakenErrorMessage,
+	ExpectedErrorMessage: usernameTakenErrorMessage,
 }, {
 	Description: "Attempting to create an account with an email already in use should fail.",
 	Account: models.Account{
@@ -106,7 +106,7 @@ var createAccountTests = []struct {
 		Password: "secure-password",
 		Email:    "test@email.com",
 	},
-	ExpectedErrorMessage: models.EmailTakenErrorMessage,
+	ExpectedErrorMessage: emailTakenErrorMessage,
 }}
 
 func TestCreateAccount(t *testing.T) {

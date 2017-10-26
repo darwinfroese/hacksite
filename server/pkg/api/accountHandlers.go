@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -26,20 +27,13 @@ func createAccount(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = accounts.CreateAccount(*ctx.DB, *ctx.Logger, &account)
+	apiErr := accounts.CreateAccount(*ctx.DB, *ctx.Logger, &account)
 
-	if err != nil {
-		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, err.Error())
-		if err.Error() == models.EmailTakenErrorMessage || err.Error() == models.UsernameTakenErrorMessage {
-			res := models.ResponseObject{
-				StatusCode:   http.StatusConflict,
-				ErrorMessage: err.Error(),
-			}
-			json.NewEncoder(w).Encode(res)
-			return
-		}
+	fmt.Println("ApiError: ", apiErr.FullError())
 
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	if apiErr != nil {
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, apiErr.Error())
+		http.Error(w, apiErr.Message, apiErr.Code)
 		return
 	}
 

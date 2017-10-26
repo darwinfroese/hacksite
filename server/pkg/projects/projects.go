@@ -10,6 +10,12 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
+const (
+	statusCompleted  = "Completed"
+	statusInProgress = "InProgress"
+	statusNew        = "New"
+)
+
 // GetUserProjects grabs the project from database
 func GetUserProjects(db database.Database, logger log.Logger, username string) ([]models.Project, error) {
 	account, err := db.GetAccountByUsername(username)
@@ -143,7 +149,7 @@ func removeIDFromList(idToRemove string, idList []string) []string {
 
 func updateProjectStatus(project models.Project) string {
 	complete := 0
-	status := models.StatusNew
+	status := statusNew
 
 	tasks := project.CurrentEvolution.Tasks
 	for _, task := range tasks {
@@ -152,11 +158,13 @@ func updateProjectStatus(project models.Project) string {
 		}
 	}
 	if complete == len(tasks) {
-		status = models.StatusCompleted
+		status = statusCompleted
 	} else if complete > 0 {
-		status = models.StatusInProgress
+		status = statusInProgress
+	} else if complete == 0 && len(project.Evolutions) > 1 {
+		status = statusInProgress
 	} else {
-		status = models.StatusNew
+		status = statusNew
 	}
 
 	return status
