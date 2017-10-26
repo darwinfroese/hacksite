@@ -121,7 +121,7 @@ func TestSwapCurrentEvolution(t *testing.T) {
 		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
 
 		project, err := SwapCurrentEvolution(db, logger, tc.SwapEvolution)
-		if err != nil && err.Error() != models.InvalidEvolutionErrorMessage {
+		if err != nil && err.Error() != invalidEvolutionErrorMessage {
 			t.Errorf("[ FAIL ] Couldn't swap the current evolution: %s\n", err.Error())
 		}
 
