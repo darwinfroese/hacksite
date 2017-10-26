@@ -27,10 +27,3 @@ type Session struct {
 	Expiration time.Time
 	RememberMe bool
 }
-
-// ResponseObject is a wrapper for responding to error requests
-type ResponseObject struct {
-	StatusCode   int
-	ErrorMessage string
-	Message      string
-}
