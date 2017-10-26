@@ -90,12 +90,11 @@ export default {
             this.success = true;
             this.Redirect();
           }
-          return response.json();
-        }).then((data) => {
-          if (data.ErrorMessage) {
-            this.message = data.ErrorMessage;
-            this.success = false;
-          }
+
+          return response.text();
+        }).then((text) => {
+          this.message = text;
+          this.success = false;
         });
     },
     ConfirmPasswords: function () {

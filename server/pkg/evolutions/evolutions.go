@@ -10,6 +10,10 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/projects"
 )
 
+const (
+	invalidEvolutionErrorMessage = "evolution selected does not exist"
+)
+
 // CreateEvolution creates a new evolution and stores it in the database
 func CreateEvolution(db database.Database, logger log.Logger, evolution models.Evolution) (models.Project, error) {
 	project, err := db.GetProject(evolution.ProjectID)
@@ -40,7 +44,7 @@ func SwapCurrentEvolution(db database.Database, logger log.Logger, evolution mod
 
 	valid := checkIfValidEvolution(evolution, project.Evolutions)
 	if !valid {
-		e := errors.New(models.InvalidEvolutionErrorMessage)
+		e := errors.New(invalidEvolutionErrorMessage)
 		return project, e
 	}
 
