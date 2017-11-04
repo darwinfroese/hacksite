@@ -19,6 +19,7 @@ func RedirectToHTTPS(w http.ResponseWriter, r *http.Request) {
 // healthCheckHandler responds with a simple "OK" to say the server is in a good state
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "OK")
+	w.WriteHeader(http.StatusOK)
 }
 
 // unsupportedMethodHandler is a default handler that will send a 405 error
