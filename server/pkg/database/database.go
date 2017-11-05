@@ -23,6 +23,7 @@ type Database interface {
 	GetAccountByUsername(username string) (models.Account, error)
 	GetAccountByEmail(email string) (models.Account, error)
 	UpdateAccount(account models.Account) error
+	RemoveAccount(username, email string) error
 
 	// Sessions
 	StoreSession(session models.Session) error
