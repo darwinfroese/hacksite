@@ -6,7 +6,7 @@ Hacksite is my take on the typical TODO list for agile project development. Focu
 
 Before contributing to Hacksite, please read the contributing guidelines [here](https://github.com/darwinfroese/hacksite/wiki/Contributing). 
 
-The current project in progress is [the beta release](https://github.com/darwinfroese/hacksite/projects/1) of Hacksite which is targetted to be completed by the end of October.
+The current project in progress is [the rebranding to Aigera](https://github.com/darwinfroese/hacksite/projects/2) of Hacksite which is targetted to be completed by the end of October.
 
 ## Building
 
