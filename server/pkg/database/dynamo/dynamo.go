@@ -150,6 +150,32 @@ func (d *dynamoDB) UpdateAccount(account models.Account) error {
 	return putItem(d.db, account, accountsTable)
 }
 
+func (d *dynamoDB) RemoveAccount(username, email string) error {
+	input := &dynamodb.DeleteItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"Username": {
+				S: aws.String(username),
+			},
+		},
+		TableName: aws.String(accountsTable),
+	}
+
+	_, err := d.db.DeleteItem(input)
+
+	input = &dynamodb.DeleteItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"Email": {
+				S: aws.String(email),
+			},
+		},
+		TableName: aws.String(emailsTable),
+	}
+
+	_, err = d.db.DeleteItem(input)
+
+	return err
+}
+
 func (d *dynamoDB) StoreSession(session models.Session) error {
 	return putItem(d.db, session, sessionsTable)
 }
