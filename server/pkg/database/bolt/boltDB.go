@@ -290,6 +290,29 @@ func (b *boltDB) UpdateAccount(account models.Account) error {
 	})
 }
 
+// RemoveAccount removes the account from the database
+func (b *boltDB) RemoveAccount(username, email string) error {
+	db, err := bolt.Open(b.dbLocation, 0644, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	return db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(accountsBucket)
+		if bucket == nil {
+			return fmt.Errorf("bucket %q not found", accountsBucket)
+		}
+
+		err := bucket.Delete([]byte(username))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
 // StoreSession inserts a session into the sessions bucket
 func (b *boltDB) StoreSession(session models.Session) error {
 	db, err := bolt.Open(b.dbLocation, 0644, nil)
