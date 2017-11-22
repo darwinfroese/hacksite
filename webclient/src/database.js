@@ -114,13 +114,14 @@ export const CreateAccount = (account) => {
 };
 
 export const Login = (account) => {
-  return fetch(apiBaseUrl + '/login?RememberMe=' + account.RememberMe, {
-    method: 'GET',
+  return fetch(apiBaseUrl + '/login', {
+    method: 'POST',
     headers: {
       'Authorization': 'Basic ' + btoa(account.Username + ':' + account.Password)
     },
     mode: 'cors',
-    credentials: 'include'
+    credentials: 'include',
+    body: JSON.stringify({ 'RememberMe': account.RememberMe })
   });
 };
 

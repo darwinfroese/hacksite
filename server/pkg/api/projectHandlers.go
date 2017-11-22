@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -87,7 +88,7 @@ func createProject(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	err = project.Validate()
 	if err != nil {
 		// TODO: Make this return an error (validate)
-		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Project was invalid")
+		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, fmt.Sprintf("Project was invalid: %s", err.Error()))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}

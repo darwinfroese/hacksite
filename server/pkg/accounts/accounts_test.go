@@ -47,27 +47,16 @@ var createAccountTests = []struct {
 	},
 	ExpectedErrorMessage: "",
 }, {
-	Description: "Creating a second account should increment the ID by one.",
-	Account: models.Account{
-		Username: "testAccount2",
-		Password: "secure-password",
-		Email:    "test2@email.com",
-	},
-	ExpectedAccount: models.Account{
-		Username: "testAccount2",
-		Password: "secure-password",
-		Email:    "test2@email.com",
-	},
-	ExpectedErrorMessage: "",
-}, {
 	Description: "Attempting to create an account without an email should fail.",
 	Account: models.Account{
 		Username: "testAccount3",
 		Password: "secure-password",
+		Name:     "test account",
 	},
 	ExpectedAccount: models.Account{
 		Username: "testAccount3",
 		Password: "secure-password",
+		Name:     "test account",
 	},
 	ExpectedErrorMessage: "account could not be validated: Email: cannot be blank.",
 }, {
@@ -75,12 +64,27 @@ var createAccountTests = []struct {
 	Account: models.Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
+		Name:     "test account",
 	},
 	ExpectedAccount: models.Account{
 		Password: "secure-password",
 		Email:    "test3@email.com",
+		Name:     "test account",
 	},
 	ExpectedErrorMessage: "account could not be validated: Username: cannot be blank.",
+}, {
+	Description: "Attempting to create an account without a name should fail.",
+	Account: models.Account{
+		Password: "secure-password",
+		Email:    "test3@email.com",
+		Username: "testaccount",
+	},
+	ExpectedAccount: models.Account{
+		Password: "secure-password",
+		Email:    "test3@email.com",
+		Username: "testaccount",
+	},
+	ExpectedErrorMessage: "account could not be validated: Name: cannot be blank.",
 }, {
 	Description: "Attempting to create an account with an username already in use shoud fail.",
 	Account: models.Account{
@@ -100,11 +104,13 @@ var createAccountTests = []struct {
 		Username: "testAccount123",
 		Password: "secure-password",
 		Email:    "test@email.com",
+		Name:     "account name",
 	},
 	ExpectedAccount: models.Account{
 		Username: "testAccount123",
 		Password: "secure-password",
 		Email:    "test@email.com",
+		Name:     "account name",
 	},
 	ExpectedErrorMessage: emailTakenErrorMessage,
 }}
@@ -143,19 +149,77 @@ var validateAccountTests = []struct {
 }{{
 	Description: "Testing a valid account model should validate.",
 	Account: models.Account{
-		Username: "alimasyhur",
-		Email:    "jegrag4ever@gmail.com",
+		Username: "testusername",
+		Email:    "test@email.com",
+		Name:     "test name",
+		Password: "password1",
 	},
 	ExpectedResult: true,
 }, {
-	Description:    "Testing account missing a username and email value should not validate.",
-	Account:        models.Account{},
+	Description: "Testing account missing an username value should not validate.",
+	Account: models.Account{
+		Email: "test@email.com",
+		Name:  "test name",
+	},
 	ExpectedResult: false,
 }, {
-	Description: "Testing account username length less than 3",
+	Description: "Testing account missing an email value should not validate.",
+	Account: models.Account{
+		Username: "testusername2",
+		Name:     "test username",
+		Password: "password1",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing account missing a name value should not validate.",
+	Account: models.Account{
+		Username: "testusername2",
+		Email:    "email@email.com",
+		Password: "password1",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing an account missing a password should not validate.",
+	Account: models.Account{
+		Username: "testusername2",
+		Email:    "email@email.com",
+		Name:     "test username",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing an email in an invalid format should not validate.",
+	Account: models.Account{
+		Username: "testusername2",
+		Email:    "myemail",
+		Name:     "test username",
+		Password: "password1",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing account username length less than 3 should not validate.",
 	Account: models.Account{
 		Username: "a2",
-		Email:    "jegrag4ever@gmail.com",
+		Email:    "test@email.com",
+		Name:     "test username",
+		Password: "password1",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing name greater than 32 should not validate.",
+	Account: models.Account{
+		Username: "testusername3",
+		Email:    "test@email.com",
+		Name:     "a really long name that is so much longer than 32 characters that the validation is going to fail.",
+		Password: "password1",
+	},
+	ExpectedResult: false,
+}, {
+	Description: "Testing password less than 8 characters should not validate.",
+	Account: models.Account{
+		Username: "testusername3",
+		Email:    "test@email.com",
+		Name:     "my awesome name",
+		Password: "2short",
 	},
 	ExpectedResult: false,
 }}

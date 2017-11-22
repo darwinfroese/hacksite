@@ -15,7 +15,9 @@ type Account struct {
 //Validate account method
 func (account Account) Validate() error {
 	return validation.ValidateStruct(&account,
-		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3, 50)),
+		validation.Field(&account.Username, validation.Required, is.Alphanumeric, validation.Length(3, 64)),
 		validation.Field(&account.Email, validation.Required, is.Email),
+		validation.Field(&account.Name, validation.Required, validation.Length(1, 64)),
+		validation.Field(&account.Password, validation.Required, validation.Length(8, 256)),
 	)
 }
