@@ -88,13 +88,14 @@ export default {
           if (response.status === 201) {
             this.message = 'Account successfully created. Redirecting to login page...';
             this.success = true;
+            this.$root.loading = false;
             this.Redirect();
+          } else {
+            let text = response.text();
+            this.message = text;
+            this.success = false;
+            this.$root.loading = false;
           }
-
-          return response.text();
-        }).then((text) => {
-          this.message = text;
-          this.success = false;
         });
     },
     ConfirmPasswords: function () {

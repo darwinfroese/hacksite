@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/darwinfroese/hacksite/server/models"
@@ -28,8 +27,6 @@ func createAccount(ctx *Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	apiErr := accounts.CreateAccount(*ctx.DB, *ctx.Logger, &account)
-
-	fmt.Println("ApiError: ", apiErr.FullError())
 
 	if apiErr != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, apiErr.Error())
