@@ -110,5 +110,24 @@ func GetCurrentSession(db database.Database, logger log.Logger, r *http.Request)
 		return models.Session{}, err
 	}
 
-	return db.GetSession(cookie.Value)
+	sesh, err := db.GetSession(cookie.Value)
+
+	if err != nil {
+		logger.Error(fmt.Sprintf("Error: %s\n", err.Error()))
+		return models.Session{}, err
+	}
+
+	return sesh, nil
+}
+
+// GetCurrentAccountFromSession gets the account information for the session
+func GetCurrentAccountFromSession(db database.Database, logger log.Logger, sesh models.Session) (models.Account, error) {
+	acc, err := db.GetAccountByUsername(sesh.Username)
+
+	if err != nil {
+		logger.Error(fmt.Sprintf("Error: %s\n", err.Error()))
+		return models.Account{}, err
+	}
+
+	return acc, nil
 }

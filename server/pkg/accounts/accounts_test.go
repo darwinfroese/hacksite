@@ -181,3 +181,53 @@ func TestValidateAccount(t *testing.T) {
 		}
 	}
 }
+
+var updateAccountTests = []struct {
+	Description            string
+	OldAccount, NewAccount models.Account
+}{{
+	Description: "Testing that updating an account returns the new account.",
+	OldAccount: models.Account{
+		Username: "OldUsername",
+		Email:    "oldemail@email.com",
+		Name:     "Old Name",
+		Password: "oldpassword",
+		Salt:     "oldsalt",
+	},
+	NewAccount: models.Account{
+		Username: "NewUsername",
+		Email:    "newemail@email.com",
+		Name:     "New Name",
+		Password: "oldpassword",
+		Salt:     "oldsalt",
+	},
+}}
+
+func TestUpdateAccount(t *testing.T) {
+	t.Log("Testing Updating an Account...")
+
+	for i, tc := range updateAccountTests {
+		t.Logf("[ %02d ] %s\n", i+1, tc.Description)
+		db.CreateAccount(tc.OldAccount)
+
+		apiErr := UpdateAccount(db, tc.OldAccount.Username, tc.OldAccount.Email, tc.NewAccount)
+		if apiErr != nil {
+			t.Errorf("[ FAIL ] UpdateAccount failed to update the account. %s\n", apiErr.FullError())
+			break
+		}
+
+		acc, err := db.GetAccountByUsername(tc.NewAccount.Username)
+		if err != nil {
+			t.Errorf("[ FAIL ] Failed to get the new account from the database. %s\n", err.Error())
+			break
+		}
+
+		if !reflect.DeepEqual(tc.NewAccount, acc) {
+			t.Errorf("[ FAIL ] The account was not updated correctly.\nExpected %+v\nbut got %+v\n",
+				tc.NewAccount, acc)
+			break
+		}
+
+		db.RemoveAccount(tc.NewAccount.Username, tc.NewAccount.Email)
+	}
+}

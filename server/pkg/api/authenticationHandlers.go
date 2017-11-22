@@ -39,6 +39,7 @@ func loginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	username = strings.ToLower(username)
 	rememberMe, err := strconv.ParseBool(r.URL.Query().Get("RememberMe"))
 	if err != nil {
 		(*ctx.Logger).ErrorWithRequest(r, ctx.RequestID, "Remember Me failed")
@@ -70,6 +71,7 @@ func postLoginHandler(ctx *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	username = strings.ToLower(username)
 	var content loginRequest
 	err := json.NewDecoder(r.Body).Decode(&content)
 
