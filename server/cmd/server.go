@@ -43,11 +43,12 @@ func main() {
 	ctx := api.Context{DB: &db, Config: &c, Logger: &logger}
 
 	logger.Info("Starting redirect server")
+
 	// Redirect *:80 to *:443
 	go http.ListenAndServe(":80", http.HandlerFunc(api.RedirectToHTTPS))
 	m.Handle("/", http.FileServer(http.Dir(c.Server.WebFileLocation)))
 
-	api.RegisterRoutes(m)
+	api.RegisterRoutes(&ctx, m)
 	api.RegisterAPIRoutes(&ctx, m)
 
 	logger.Info("Starting scheduler")

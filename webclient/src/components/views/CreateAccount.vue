@@ -8,9 +8,16 @@
         </section>
         <section class='form'>
           <div class='input-container'>
+            <label class="label" for="name">Name</label>
+            <p :class="{ 'control': true }">
+              <input id="name" placeholder='Name' v-model="account.Name" v-validate="'required|min:1|max:64'" :class="{'input': true, 'is-danger': errors.has('name') }" name="name" type="text">
+              <span v-show="errors.has('name')" class="help is-danger">{{ errors.first('name') }}</span>
+            </p>
+          </div>
+          <div class='input-container'>
             <label class="label" for="username">Username</label>
             <p :class="{ 'control': true }">
-              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'required|alpha_num|min:3'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
+              <input id="username" placeholder='Username' v-model="account.Username" v-validate="'required|alpha_num|min:3|max:64'" :class="{'input': true, 'is-danger': errors.has('username') }" name="username" type="text">
               <span v-show="errors.has('username')" class="help is-danger">{{ errors.first('username') }}</span>
             </p>
           </div>
@@ -24,15 +31,8 @@
           <div class='input-container'>
             <label class="label" for="password">Password</label>
             <p :class="{ 'control': true }">
-              <input id="password" placeholder='Password' v-model="account.Password" v-validate="'required'" :class="{'input': true, 'is-danger': errors.has('password') }" name="password" type="password">
+              <input id="password" placeholder='Password' v-model="account.Password" v-validate="'required|min:8|max:256'" :class="{'input': true, 'is-danger': errors.has('password') }" name="password" type="password">
               <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
-            </p>
-          </div>
-          <div class='input-container'>
-            <label class="label" for="ConfirmPassword">Confirm your password</label>
-            <p :class="{ 'control': true }">
-              <input id="ConfirmPassword" placeholder='Confirm Password' v-model="account.ConfirmPassword" v-validate="'required|confirmed:password'" :class="{'input': true, 'is-danger': errors.has('ConfirmPassword') }" name="ConfirmPassword" type="password">
-              <span v-show="errors.has('ConfirmPassword')" class="help is-danger">{{ errors.first('ConfirmPassword') }}</span>
             </p>
           </div>
         </section>
@@ -63,7 +63,7 @@ export default {
         Username: '',
         Email: '',
         Password: '',
-        ConfirmPassword: ''
+        Name: ''
       },
       valid: false,
       message: undefined,
@@ -77,9 +77,7 @@ export default {
     this.valid =
       this.account.Username !== '' &&
       this.account.Email !== '' &&
-      this.account.Password !== '' &&
-      this.account.ConfirmPassword !== '' &&
-      this.ConfirmPasswords();
+      this.account.Password !== '';
   },
   methods: {
     Create: function () {
@@ -88,18 +86,14 @@ export default {
           if (response.status === 201) {
             this.message = 'Account successfully created. Redirecting to login page...';
             this.success = true;
+            this.$root.loading = false;
             this.Redirect();
-          }
-          return response.json();
-        }).then((data) => {
-          if (data.ErrorMessage) {
-            this.message = data.ErrorMessage;
+          } else {
+            response.text().then((text) => { this.message = text; });
             this.success = false;
+            this.$root.loading = false;
           }
         });
-    },
-    ConfirmPasswords: function () {
-      return this.account.Password === this.account.ConfirmPassword;
     },
     Redirect: function () {
       setTimeout(() => {

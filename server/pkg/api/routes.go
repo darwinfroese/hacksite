@@ -8,13 +8,6 @@ const (
 	apiPrefix = "/api/v1"
 )
 
-var readWriteUpdateMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-var readWriteMethods = []string{"GET", "POST", "OPTIONS"}
-var readMethods = []string{"GET", "OPTIONS"}
-var writeMethods = []string{"POST", "OPTIONS"}
-
-// TODO: Implement logging
-
 // RegisterAPIRoutes registers all the api routes into the mux
 func RegisterAPIRoutes(ctx *Context, mux *http.ServeMux) {
 	mux.HandleFunc(apiPrefix+"/projects", Apply(ctx, ctx.projectsRoute))
@@ -29,6 +22,6 @@ func RegisterAPIRoutes(ctx *Context, mux *http.ServeMux) {
 }
 
 // RegisterRoutes registers all non api routes into the mux
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.Handle("/health", setCorsHeaders(nil, http.HandlerFunc(healthCheckHandler)))
+func RegisterRoutes(ctx *Context, mux *http.ServeMux) {
+	mux.Handle("/health", Apply(ctx, http.HandlerFunc(healthCheckHandler)))
 }

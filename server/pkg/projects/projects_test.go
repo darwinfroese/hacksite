@@ -52,7 +52,7 @@ var createProjectTests = []struct {
 		Evolutions: []models.Evolution{
 			models.Evolution{Number: 1},
 		},
-		Status: models.StatusCompleted,
+		Status: statusCompleted,
 	},
 }}
 
@@ -146,7 +146,7 @@ var updateProjectTests = []struct {
 				},
 			},
 		},
-		Status: models.StatusNew,
+		Status: statusNew,
 	},
 }}
 

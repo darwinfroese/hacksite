@@ -51,10 +51,11 @@ export default {
 
       AddProject(this.project)
         .then((response) => {
-          this.loading = false;
+          this.$root.loading = false;
           return response.json();
         })
         .then((project) => {
+          this.$root.loading = false;
           router.push('/details/' + project.ID);
         });
     }

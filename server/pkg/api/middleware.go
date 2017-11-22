@@ -13,8 +13,8 @@ const timeFormat = "2006-01-02 15:04:05"
 type adapter func(*Context, http.HandlerFunc) http.HandlerFunc
 
 var adapters = []adapter{
-	logRequestDuration,
 	setCorsHeaders,
+	logRequestDuration,
 }
 
 // Apply will call all middleware functions on the incoming handler request
@@ -38,7 +38,10 @@ func logRequestDuration(ctx *Context, h http.HandlerFunc) http.HandlerFunc {
 			(*ctx.Logger).InfoWithRequest(r, ctx.RequestID, dur)
 		}()
 
-		h(w, r)
+		// This middleware is hit first
+		sw := statusWriter{ResponseWriter: w, status: 200}
+
+		h(&sw, r)
 	}
 }
 

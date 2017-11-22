@@ -10,6 +10,12 @@ import (
 	"github.com/darwinfroese/hacksite/server/pkg/log"
 )
 
+const (
+	statusCompleted  = "Completed"
+	statusInProgress = "InProgress"
+	statusNew        = "New"
+)
+
 // GetUserProjects grabs the project from database
 func GetUserProjects(db database.Database, logger log.Logger, username string) ([]models.Project, error) {
 	account, err := db.GetAccountByUsername(username)
@@ -36,7 +42,7 @@ func GetUserProjects(db database.Database, logger log.Logger, username string) (
 // been validated.
 func CreateProject(db database.Database, logger log.Logger, project *models.Project, username string) error {
 	// This is actually just setting the project status
-	project.Status = updateProjectStatus(*project)
+	project.Status = updateProjectStatus(project.CurrentEvolution, len(project.Evolutions))
 
 	id, err := uuid.NewV4()
 	if err != nil {
@@ -87,7 +93,8 @@ func DeleteProject(db database.Database, logger log.Logger, username, projectID 
 
 // UpdateProject will update the status and make the change in the database as well
 func UpdateProject(db database.Database, project *models.Project) error {
-	project.Status = updateProjectStatus(*project)
+	project.Status = updateProjectStatus(project.CurrentEvolution, len(project.Evolutions))
+	swapEvolution(project)
 
 	return db.UpdateProject(*project)
 }
@@ -141,23 +148,40 @@ func removeIDFromList(idToRemove string, idList []string) []string {
 	return idList
 }
 
-func updateProjectStatus(project models.Project) string {
+func updateProjectStatus(evolution models.Evolution, evolutionCount int) string {
 	complete := 0
-	status := models.StatusNew
+	status := statusNew
 
-	tasks := project.CurrentEvolution.Tasks
+	tasks := evolution.Tasks
 	for _, task := range tasks {
 		if task.Completed {
 			complete++
 		}
 	}
 	if complete == len(tasks) {
-		status = models.StatusCompleted
+		status = statusCompleted
 	} else if complete > 0 {
-		status = models.StatusInProgress
+		status = statusInProgress
+	} else if complete == 0 && evolutionCount > 1 {
+		status = statusInProgress
 	} else {
-		status = models.StatusNew
+		status = statusNew
 	}
 
 	return status
+}
+
+func swapEvolution(project *models.Project) {
+	if project.Status != statusCompleted {
+		return
+	}
+
+	// is this the last iteration
+	for _, ev := range project.Evolutions {
+		if ev.Number > project.CurrentEvolution.Number && updateProjectStatus(ev, 0) != statusCompleted {
+			project.Status = statusInProgress
+			project.CurrentEvolution = ev
+			return
+		}
+	}
 }
