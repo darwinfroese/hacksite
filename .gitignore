@@ -18,3 +18,8 @@ hacksite.zip
 .idea
 certs/
 *.iml
+# Removing SASS generated files
+*.css.map
+*.scssc
+# Generate CSS files using SCSS
+*.css

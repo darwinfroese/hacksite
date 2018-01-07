@@ -29,8 +29,11 @@ function Get-LocalCertificates() {
 }
 
 function Start-BuildWebClient() {
-    Write-Output "Building web client..."
+    Write-Output "Compiling SASS files..."
     Set-Location $rootdir\webclient
+    sass --update static/sass/aigera.scss:static/aigera.css
+
+    Write-Output "Building web client..."
     yarn run build
     Set-Location $rootdir
 }
