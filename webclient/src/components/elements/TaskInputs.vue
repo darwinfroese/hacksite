@@ -4,7 +4,7 @@
       Project Tasks
       <i class='fa fa-info-circle info'>
         <span class='info-text'>
-          Hacksite only lets you select four tasks for your projects to keep them
+          Aigera only lets you select four tasks for your projects to keep them
           small and achievable!
         </span>
       </i>
@@ -67,7 +67,7 @@ input:focus {
   left: 25px;
   z-index: 1;
 }
-.info:hover .info-text{
+.info:hover .info-text {
   visibility: visible;
 }
 </style>

@@ -3,7 +3,7 @@
     <div class='bar'>
       <span class='spacer'> &nbsp; </span>
       <span class='title'>
-        <span @click="navHome"> Hacksite </span>
+        <span @click="navHome"> Aigera </span>
       </span>
       <span class='account'>
         <span @click="logout" class='logout-button' v-on:click="$root.loading = true">
@@ -53,7 +53,7 @@ export default {
   text-align: center;
   color: #fff;
   background-color: #325778;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 .title > span {
   font-size: 24px;
@@ -63,7 +63,7 @@ export default {
   cursor: pointer;
 }
 .logout-button:hover {
-  cursor: pointer
+  cursor: pointer;
 }
 .icon {
   padding-left: 15px;
