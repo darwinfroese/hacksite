@@ -1,7 +1,7 @@
 <template>
   <div class='header'>
     <div class='bar'>
-      <h3 @click="navHome"> Hacksite </h3>
+      <h3 @click="navHome"> Aigera </h3>
     </div>
   </div>
 </template>
@@ -26,10 +26,9 @@ export default {
   text-align: center;
   color: #fff;
   background-color: #325778;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 h3 {
-  font-size: 24px;
   margin: 0;
 }
 h3:hover {

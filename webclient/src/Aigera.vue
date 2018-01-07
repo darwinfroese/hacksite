@@ -14,7 +14,7 @@ import Spinner from 'vue-simple-spinner';
 export default {
   name: 'app',
   components: {
-    'InfoFooter': InfoFooter,
+    InfoFooter: InfoFooter,
     'vue-simple-spinner': Spinner
   }
 };
@@ -22,15 +22,13 @@ export default {
 
 <style>
 * {
-  font-family: 'Roboto', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 #app {
-  color: #2c3e50;
   min-height: 100%;
   margin: 0;
-  position: relative
+  position: relative;
 }
 a {
   text-decoration: none;
@@ -44,7 +42,7 @@ hr {
   position: fixed;
   width: 100%;
   top: 0;
-  background: rgba(0, 0, 0, .25);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 2;
 }
 .full-screen-modal .simple-spinner {
@@ -53,5 +51,4 @@ hr {
   width: 100%;
   top: 50%;
 }
-
 </style>

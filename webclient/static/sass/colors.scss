@@ -1,0 +1,13 @@
+@import "variables.scss";
+.primary {
+  color: $primaryColor;
+}
+
+.secondary {
+  color: $secondaryColor;
+}
+
+.primary.inverted {
+  background-color: $primaryColor;
+  color: $white;
+}

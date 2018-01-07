@@ -1,16 +1,20 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
-import Hacksite from './Hacksite';
+import Aigera from './Aigera';
 import router from './router';
 
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#hacksite',
+  el: '#aigera',
   router,
-  template: '<Hacksite/>',
-  components: { Hacksite },
-  data: {loading: false}
+  template: '<Aigera />',
+  components: {
+    Aigera
+  },
+  data: {
+    loading: false
+  }
 });
