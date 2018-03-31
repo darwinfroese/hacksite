@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoginHeader />
     <div class='container'>
       <h3> Hacksite Beta (v0.5) - Release Notes </h3>
       <hr />
@@ -41,12 +40,8 @@
 </template>
 
 <script>
-import LoginHeader from '@/components/elements/LoginHeader';
 
 export default {
-  components: {
-    'LoginHeader': LoginHeader
-  }
 };
 </script>
 

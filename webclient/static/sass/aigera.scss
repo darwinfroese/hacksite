@@ -5,3 +5,23 @@
 body {
   margin: 0;
 }
+
+.header {
+  height: 100px;
+  line-height: 100px;
+  display: flex;
+
+  h1 {
+    margin: 0;
+    margin-left: 20%;
+    flex-grow: 1;
+  }
+
+  h3 {
+    margin: 0;
+    margin-right: 5%;
+  }
+  h3:last-child {
+    margin-right: 20%;
+  }
+}

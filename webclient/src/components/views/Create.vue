@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoggedInHeader />
     <div class='create-container'>
       <ProjectDialog
         :title="'Create A New Project'"
@@ -15,12 +14,10 @@
 import { AddProject } from '@/database';
 import router from '@/router';
 import ProjectDialog from '@/components/elements/ProjectDialog';
-import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'ProjectDialog': ProjectDialog,
-    'LoggedInHeader': LoggedInHeader
+    'ProjectDialog': ProjectDialog
   },
   data () {
     return {

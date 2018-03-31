@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoginHeader />
     <div class='container'>
       <form class='card'>
         <div class='form-group input-container'>
@@ -33,12 +32,8 @@
 <script>
 import router from '@/router';
 import { Login } from '@/database';
-import LoginHeader from '@/components/elements/LoginHeader.vue';
 
 export default {
-  components: {
-    'LoginHeader': LoginHeader
-  },
   data () {
     return {
       account: {

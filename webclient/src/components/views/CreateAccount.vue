@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoginHeader />
     <div class='container'>
       <div class='card' v-on:keyup.enter = "enterKeyPressHandler">
         <section class='header'>
@@ -51,12 +50,8 @@
 <script>
 import router from '@/router';
 import { CreateAccount } from '@/database';
-import LoginHeader from '@/components/elements/LoginHeader';
 
 export default {
-  components: {
-    'LoginHeader': LoginHeader
-  },
   data () {
     return {
       account: {

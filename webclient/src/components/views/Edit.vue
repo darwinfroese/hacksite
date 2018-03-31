@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoggedInHeader />
     <div class='edit-container'>
       <ProjectDialog
         v-if="hasProject"
@@ -16,12 +15,10 @@
 import { GetProject, UpdateProject } from '@/database';
 import router from '@/router';
 import ProjectDialog from '@/components/elements/ProjectDialog';
-import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'ProjectDialog': ProjectDialog,
-    'LoggedInHeader': LoggedInHeader
+    'ProjectDialog': ProjectDialog
   },
   props: ['pid'],
   data () {

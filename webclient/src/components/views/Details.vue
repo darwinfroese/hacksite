@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoggedInHeader />
     <div class='details-container'>
       <div class='menu-bar'>
         <router-link class='menu-button' to='/' v-on:click.native="$root.loading = true">
@@ -50,12 +49,10 @@
 <script>
 import { GetProject, ChangeCurrentEvolution } from '@/database';
 import Task from '@/components/elements/Task';
-import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'Task': Task,
-    'LoggedInHeader': LoggedInHeader
+    'Task': Task
   },
   computed: {
     editRoute: function () {
@@ -176,4 +173,3 @@ label:hover {
   font-size: 14px;
 }
 </style>
-

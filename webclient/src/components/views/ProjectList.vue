@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- Log in should be one "page" and logged in should be another -->
-    <LoggedInHeader />
     <div class='list'>
       <div class='menu-bar'>
           <router-link class='menu-button' to='/create' v-on:click.native="$root.loading = true">
@@ -19,12 +17,10 @@
 <script>
 import { GetProjects } from '@/database';
 import Project from '@/components/elements/Project';
-import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'Project': Project,
-    'LoggedInHeader': LoggedInHeader
+    'Project': Project
   },
   data () {
     return {

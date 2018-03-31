@@ -1,6 +1,5 @@
 <template>
   <div>
-    <LoggedInHeader />
     <div class='container'>
       <div class='card'>
         <h4> Enter Evolution Information </h4>
@@ -28,12 +27,10 @@
 import router from '@/router';
 import { GetProject, AddEvolution } from '@/database';
 import TaskInputs from '@/components/elements/TaskInputs';
-import LoggedInHeader from '@/components/elements/LoggedInHeader';
 
 export default {
   components: {
-    'TaskInputs': TaskInputs,
-    'LoggedInHeader': LoggedInHeader
+    'TaskInputs': TaskInputs
   },
   data () {
     return {
