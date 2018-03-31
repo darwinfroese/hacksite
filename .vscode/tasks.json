@@ -1,0 +1,30 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Full Build - Local",
+            "type": "shell",
+            "command": "make local",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build Server Only",
+            "type": "shell",
+            "command": "make server",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Web Only",
+            "type": "shell",
+            "command": "make web",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
