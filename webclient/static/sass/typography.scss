@@ -5,17 +5,21 @@
 }
 
 h1 {
-  font-size: 48px;
+  font-family: $headerFont;
+  font-size: 24px;
 }
 
 h2 {
-  font-size: 36px;
+  font-family: $headerFont;
+  font-size: 20px;
 }
 
 h3 {
-  font-size: 28px;
+  font-family: $headerFont;
+  font-size: 18px;
 }
 
 h4 {
-  font-size: 18px;
+  font-family: $headerFont;
+  font-size: 16px;
 }
